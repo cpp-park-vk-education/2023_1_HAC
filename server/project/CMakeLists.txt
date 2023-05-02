@@ -2,9 +2,6 @@ ADD_SUBDIRECTORY(handlerlib)
 ADD_SUBDIRECTORY(serverlib)
 ADD_SUBDIRECTORY(dblib)
 
-#SET(TensorFlow_LIBRARIES "/usr/local/lib/libtensorflow.dylib")
-
-
 INCLUDE_DIRECTORIES(${HANDELR_INCLUDE_DIRS} ${SERVER_INCLUDE_DIRS} ${DB_INCLUDE_DIRS} include)
 ADD_EXECUTABLE(${PROJECT_NAME} src/main.cpp)
  

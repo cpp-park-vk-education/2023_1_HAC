@@ -13,12 +13,28 @@ build_server:
 build_gui:
 	./gui/build.sh
 
+rebuild_server: clean_server build_server
+
+rebuild_server: clean_gui build_gui
+
 start_server:
 	./server/start.sh
 
 start_gui:
 	./gui/start.sh
 
-rebuild_server: clean_server build_server
+test_server:
+	./server/build.sh
+	./server/run_tests.sh
 
-rebuild_server: clean_gui build_gui
+test_gui:
+	./gui/build.sh
+	./gui/run_tests.sh
+
+memtest_server:
+	./server/build.sh -DWITH_MEMCHECK=ON
+	./server/run_tests.sh --memcheck
+
+memtest_gui:
+	./gui/build.sh -DWITH_MEMCHECK=ON
+	./gui/run_tests.sh --memcheck

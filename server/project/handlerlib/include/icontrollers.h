@@ -1,6 +1,6 @@
 #pragma once // NO_LINT
 
-#include <json/value.h>
+#include <jsoncpp/json/value.h>
 #include "config_handler.h"
 
 #include <string>
@@ -17,7 +17,7 @@ struct TimeSeriesPredict {
 
 class IPredictController {
  public:
-    virtual void makePredict(IHTTPRequest request, IHTTPResponse response) = 0;
+    virtual void makePredict(IHTTPRequest_ request, IHTTPResponse_ response) = 0;
  protected:
     virtual DBRequestProtocol& parseInputHttpRequest(const httpRequest& request) = 0;
     virtual Json::Value& getPlotDataFromDB(const DBRequestProtocol& data_protocol) = 0;

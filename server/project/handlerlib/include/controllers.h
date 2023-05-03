@@ -1,6 +1,6 @@
 #pragma once // NO_LINT
 
-#include "icontroller.h"
+#include "icontrollers.h"
 #include "ihandler.h"
 
 namespace controllers {

@@ -1,9 +1,9 @@
-#include "session.h"
+// #include "session.h"
 
-Session::Session(tcp::socket&& socket) {
+// Session::Session(tcp::socket&& socket) {
 
-}
+// }
 
-Session::setRouterAdapter(routers::RouterAdapter* router_adapter) {
+// Session::setRouterAdapter(routers::RouterAdapter* router_adapter) {
     
-}
+// }

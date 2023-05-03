@@ -1,48 +1,49 @@
-#pragma once // NO_LINT
-#include <memory>
-#include <vector>
-#include <thread>
-#include <string>
-#include <boost/beast/core.hpp>
-#include <boost/beast/http.hpp>
-#include <boost/beast/version.hpp>
-#include <boost/asio/dispatch.hpp>
-#include <boost/asio/strand.hpp>
-#include <boost/config.hpp>
+// #pragma once // NO_LINT
+// #include <memory>
+// #include <vector>
+// #include <thread>
+// #include <string>
 
-namespace net = boost::asio; // from <boost/asio.hpp>
+// #include <boost/beast/core.hpp>
+// #include <boost/beast/http.hpp>
+// #include <boost/beast/version.hpp>
+// #include <boost/asio/dispatch.hpp>
+// #include <boost/asio/strand.hpp>
+// #include <boost/config.hpp>
 
-class Server {
- public:
-    Server() = delete;
-    Server(const std::string& path_to_config_file);
+// namespace net = boost::asio; // from <boost/asio.hpp>
 
-    struct Config {
-        std::string address;
-        int port;
-        int threads;
-    };
+// class Server {
+//  public:
+//     Server() = delete;
+//     Server(const std::string& path_to_config_file);
 
- private:
-    // controllers::DatabaseController database_controller;
-    // controllers::PredictController predict_controller;
-    // controllers::ShowPlotContoller show_plot_controller;
-    // controllers::RegisterController register_controller;
-    // controllers::AuthorizeController authorize_controller;
+//     struct Config {
+//         std::string address;
+//         int port;
+//         int threads;
+//     };
 
-    // hendlers::Hendler predict_hendler;
-    // hendlers::Hendler register_hendler;
-    // hendlers::Hendler authorize_hendler;
-    // hendlers::Hendler update_hendler;
+//  private:
+//     // controllers::DatabaseController database_controller;
+//     // controllers::PredictController predict_controller;
+//     // controllers::ShowPlotContoller show_plot_controller;
+//     // controllers::RegisterController register_controller;
+//     // controllers::AuthorizeController authorize_controller;
 
-    // Router router_;
-    // Listener lister_;
-    // net::io_context ioc
-    std::map<string, *IHandler> handlers;
-    std::vector<std::thread> listeners;
-    Config config_;
+//     // hendlers::Hendler predict_hendler;
+//     // hendlers::Hendler register_hendler;
+//     // hendlers::Hendler authorize_hendler;
+//     // hendlers::Hendler update_hendler;
 
-    void setHandlers();
-    Config parseConfigFhomFile(const std::string& path_to_config_file);
-    ProtocolAPI makeProtocolAPI(const std::string& path_to_API_config);
-};  
+//     // Router router_;
+//     // Listener lister_;
+//     // net::io_context ioc
+//     std::map<string, *IHandler> handlers;
+//     std::vector<std::thread> listeners;
+//     Config config_;
+
+//     void setHandlers();
+//     Config parseConfigFhomFile(const std::string& path_to_config_file);
+//     ProtocolAPI makeProtocolAPI(const std::string& path_to_API_config);
+// };  

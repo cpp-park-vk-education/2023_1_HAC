@@ -1,17 +1,17 @@
 #pragma once // NO_LINT
 
-#include <boost/beast/http.hpp>
+#include "http_protocol.h"
 
 
-using IHTTPRequest = boost::beast::http::request<http::string_body>;
-using IHTTPResponse = boost::beast::http::response<http::string_body>;
+using IHTTPRequest_ = *IHTTPRequest;
+using IHTTPResponse_ = *IHTTPResponse;
 
 
 namespace handlers {
 
 class IHandler {
  public:
-    virtual void handle(IHTTPRequest request, IHTTPResponse response) = 0;
+    virtual void handle(IHTTPRequest_ request, IHTTPResponse_ response) = 0;
  private:
 };
 

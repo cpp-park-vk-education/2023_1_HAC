@@ -204,4 +204,3 @@ TEST_F(RepositoryTest, BadConnectForGetAllSubscription) {
         sub_rep->GetAll();
     }, UnavailableDataBase);
 }
-

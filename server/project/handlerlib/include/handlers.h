@@ -16,7 +16,7 @@ using ptrToUpdateDataController = *controllers::IUpdateDataController;
 class PredictHandler : public IHandler {
  public:
     explicit PredictHandler(ptrToUpdateDataController controller);
-    httpRequest handle(httpRequest request) override;
+    void handle(IHTTPRequest request, IHTTPResponse response) override;
  private:
     ptrToPredictController controller_;
 };
@@ -25,7 +25,7 @@ class PredictHandler : public IHandler {
 class ShowPlotHandler : public IHandler {
  public:
     explicit ShowPlotHandler(ptrToShowPlotController controller);
-    httpRequest handle(httpRequest request) override;
+    void handle(IHTTPRequest request, IHTTPResponse response) override;
  private:
     ptrToShowPlotController controller_;  
 };
@@ -33,7 +33,7 @@ class ShowPlotHandler : public IHandler {
 class RegisterHandler : public IHandler {
  public:
     explicit RegisterHandler(ptrToRegisterController controller);
-    httpRequest handle(httpRequest request) override;
+    void handle(IHTTPRequest request, IHTTPResponse response) override;
  private:
     ptrToRegisterController controller_;  
 };
@@ -42,7 +42,7 @@ class RegisterHandler : public IHandler {
 class AuthorizeHandler : public IHandler {
  public:
     explicit AuthorizeHandler(ptrToAuthorizeController controller);
-    httpRequest handle(httpRequest request) override;
+    void handle(IHTTPRequest request, IHTTPResponse response) override;
  private:
     ptrToAuthorizeController controller_; 
 };

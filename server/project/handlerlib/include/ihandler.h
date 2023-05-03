@@ -3,15 +3,15 @@
 #include <boost/beast/http.hpp>
 
 
-using httpRequest = boost::beast::http::request<http::string_body>;
-using httpResponse = boost::beast::http::response<http::string_body>;
+using IHTTPRequest = boost::beast::http::request<http::string_body>;
+using IHTTPResponse = boost::beast::http::response<http::string_body>;
 
 
 namespace handlers {
 
 class IHandler {
  public:
-    virtual httpResponse hasndle(httpRequest request) = 0;
+    virtual void handle(IHTTPRequest request, IHTTPResponse response) = 0;
  private:
 };
 

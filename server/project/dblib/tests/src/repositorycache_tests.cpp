@@ -51,6 +51,3 @@ TEST_F(RepositoryCacheTest, NotHasCase) {
     std::string random_key = "test";
     EXPECT_FALSE(cache_->Has(random_key));
 }
-
-
-

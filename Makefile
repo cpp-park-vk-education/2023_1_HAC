@@ -13,11 +13,9 @@ build_server:
 build_gui:
 	./gui/build.sh
 
-
 rebuild_server: clean_server build_server
 
 rebuild_server: clean_gui build_gui
-
 
 start_server:
 	./server/start.sh
@@ -40,4 +38,3 @@ memtest_server:
 memtest_gui:
 	./gui/build.sh -DWITH_MEMCHECK=ON
 	./gui/run_tests.sh --memcheck
-

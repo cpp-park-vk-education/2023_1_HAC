@@ -2,7 +2,6 @@
 #include <iostream>
 #include <memory>
 #include <pqxx/pqxx>
-//#include "idatabase.hpp"
 #include "exception.hpp"
 
 namespace database {

@@ -1,84 +1,56 @@
 #include <gtest/gtest.h>
-#include <gmock/gmock.h>
 #include "repositorycache.hpp"
+
+using namespace cache;
 
 struct TestStruct {
     std::string name;
 };
+class RepositoryCacheTest: public ::testing::Test {
+public:
+    RepositoryCacheTest(): cache_(new RepositoryCache<std::string, TestStruct>){}
 
-TEST(RepositoryCacheTest, InsertCase) {
+protected:
+    std::unique_ptr<IRepositoryCache<std::string, TestStruct>> cache_;
+};
 
-    struct TestStruct {
-        std::string name;
-    };
-
-    std::unique_ptr<IRepositoryCache<std::string, TestStruct>> cache = std::make_unique<RepositoryCache<std::string, TestStruct>>();
+TEST_F(RepositoryCacheTest, InsertCase) {
     TestStruct data;
     data.name = "test";
      EXPECT_NO_THROW({
-         cache->Insert(data.name, data);
+         cache_->Insert(data.name, data);
      }); 
 }
 
-TEST(RepositoryCacheTest, DeleteCase) {
-struct TestStruct {
-    std::string name;
-};
-
-    std::unique_ptr<IRepositoryCache<std::string, TestStruct>> cache = std::make_unique<RepositoryCache<std::string, TestStruct>>();
+TEST_F(RepositoryCacheTest, HasCase) {
     TestStruct data;
     data.name = "test";
-    cache->Insert(data.name, data);    
-    EXPECT_NO_THROW({
-        cache->Delete(data.name);
-    });
+    cache_->Insert(data.name, data);
+    EXPECT_TRUE(cache_->Has(data.name));
 }
 
-TEST(RepositoryCacheTest, NotExistDeleteCase) {
+TEST_F(RepositoryCacheTest, GetCase) {
+    std::string key = "test";
+    TestStruct result = cache_->Get(key);
+    EXPECT_EQ(result.name, key);     
+}
 
-    struct TestStruct {
-    std::string name;
-};
+TEST_F(RepositoryCacheTest, DeleteCase) {
+    TestStruct data;
+    data.name = "test";
+    EXPECT_TRUE(cache_->Delete(data.name));
+}
 
-    std::unique_ptr<IRepositoryCache<std::string, TestStruct>> cache = std::make_unique<RepositoryCache<std::string, TestStruct>>();
+TEST_F(RepositoryCacheTest, NotExistDeleteCase) {
     std::string random_key = "test";
-    EXPECT_NO_THROW({
-        cache->Delete(random_key);
-    });
+    EXPECT_FALSE(cache_->Delete(random_key));
+
 }
 
-TEST(RepositoryCacheTest, HasCase) {
-    struct TestStruct {
-    std::string name;
-};
-
-    std::unique_ptr<IRepositoryCache<std::string, TestStruct>> cache = std::make_unique<RepositoryCache<std::string, TestStruct>>();
-    TestStruct data;
-    data.name = "test";
-    cache->Insert(data.name, data);
-    EXPECT_TRUE(cache->Has(data.name));
-}
-
-TEST(RepositoryCacheTest, NotHasCase) {
-    struct TestStruct {
-    std::string name;
-};
-
-    std::unique_ptr<IRepositoryCache<std::string, TestStruct>> cache = std::make_unique<RepositoryCache<std::string, TestStruct>>();
+TEST_F(RepositoryCacheTest, NotHasCase) {
     std::string random_key = "test";
-    EXPECT_FALSE(cache->Has(random_key));
+    EXPECT_FALSE(cache_->Has(random_key));
 }
 
-TEST(RepositoryCacheTest, GetCase) {
-    struct TestStruct {
-    std::string name;
-};
 
-    std::unique_ptr<IRepositoryCache<std::string, TestStruct>> cache = std::make_unique<RepositoryCache<std::string, TestStruct>>();
-    TestStruct data;
-    data.name = "test";
-    cache->Insert(data.name, data);
-    TestStruct result = cache->Get(data.name);
-    EXPECT_EQ(result.name, data.name);     
-}
 

@@ -1,242 +1,207 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
-
-// #include "postgresserver.hpp"
 #include "repositories.hpp"
-#include "data.hpp"
 
 using ::testing::Return;
+using ::testing::Throw;
+using ::testing::_;
 
-// std::string kIpAddr = "127.0.0.1";
-// std::string kPort = "5432";
-// std::string kName = "marketmentor";
-// std::string kUser = "marketmentor_server";
-// std::string kPass = "marketmentor_password";
+using namespace repository;
+using namespace database;
 
-// class IDataBase {
-// public:
-//     virtual ~IDataBase() {}
-//     virtual bool IsOpen() = 0;
-//     virtual bool SendQuery(const std::string& query) = 0;
-//     virtual std::vector<std::vector<std::string>> GetData(const std::string& query) = 0;
-//     virtual std::vector<std::string> GetRow(const std::string& query) = 0;
-// };
-
-class DatabaseMock: public IDataBase { 
+class DatabaseMock: public IDataBase {
 public:
-    MOCK_METHOD(bool, IsOpen, (), (override));
-    MOCK_METHOD(bool, SendQuery, (const std::string& query), (override));
-    MOCK_METHOD(std::vector<std::vector<std::string>>, GetData, (const std::string& query), (override));
-    MOCK_METHOD(std::vector<std::string>, GetRow, (const std::string& query), (override));
+    ~DatabaseMock() = default;
+    MOCK_METHOD(bool, IsOpen, (),(override));
+    MOCK_METHOD(bool, SendQuery, (const std::string& query),(override));
+    MOCK_METHOD(std::vector<std::vector<std::string>>, GetData, (const std::string& query),(override));
+    MOCK_METHOD(std::vector<std::string>, GetRow, (const std::string& query),(override));
+};
+
+class RepositoryTest: public ::testing::Test {
+public:
+    RepositoryTest(): db(new DatabaseMock), client_rep(new ClientRepository(db)),
+         timeseries_rep(new TimeSeriesRepository(db)) , sub_rep(new SubscriptionRepository(db)) {}
+
+protected:
+    std::shared_ptr<DatabaseMock> db;
+    std::shared_ptr<IClientRepository> client_rep;
+    std::shared_ptr<ITimeSeriesRepository> timeseries_rep;
+    std::shared_ptr<ISubscriptionRepository> sub_rep;
 };
 
 
 // ClientRepository
 
-TEST(RepositoryTest, InsertClientDataCase){
-    std::shared_ptr<IDataBase> db = std::make_shared<DatabaseMock>();
-    ClientRepository client_rep(db);
-    auto client = std::make_unique<ClientData>();
+TEST_F(RepositoryTest, InsertClientDataCase){
+    auto client = std::make_shared<ClientData>();
     client->login = "test";
     client->email = "test@email.com";
     client->hash_password = "pass";
 
-    // EXPECT_CALL(*db, IsOpen())
-    // .WillRepeatedly(true);
-
-    EXPECT_TRUE(client_rep.Insert(client));
+    EXPECT_CALL(*db, IsOpen()).WillOnce(Return(true));
+    EXPECT_CALL(*db, SendQuery(_)).WillOnce(Return(true)); 
+ 
+    EXPECT_TRUE(client_rep->Insert(client));
 }
 
-// // TEST(RepositoryTest, InsertClientDataCase){
-// //     std::shared_ptr<IDataBase> db = std::make_shared<PostgresServer>(kIpAddr, kPort, kName, kUser, kPass);
-// //     db->SendQuery("DELETE FROM client");
-// //     ClientRepository client_rep(db);
-// //     auto client = std::make_unique<ClientData>();
-// //     client->login = "test";
-// //     client->email = "test@email.com";
-// //     client->hash_password = "pass";
+// Получаем данные от БД и сравниваем их с данными, которые должны быть на выходе метода
+TEST_F(RepositoryTest, ClientGetCase){
+
+    auto client = std::make_shared<ClientData>();
+    client->login = "test";
+    client->email = "test@email.com";
+    client->hash_password = "pass";
+
+    std::vector<std::string> row;
+    row.push_back(client->login);
+    row.push_back(client->email);
+    row.push_back(client->hash_password);
+
+    EXPECT_CALL(*db, IsOpen()).WillOnce(Return(true));
+    EXPECT_CALL(*db, GetRow(_)).WillOnce(Return(row)); 
     
-// //     EXPECT_TRUE(client_rep.Insert(client));
-// // }
-
-// TEST(RepositoryTest, DeleteClientDataCase){
-//     std::shared_ptr<IDataBase> db = std::make_shared<PostgresServer>(kIpAddr, kPort, kName, kUser, kPass);
-//     db->SendQuery("DELETE FROM client");
-//     ClientRepository client_rep(db);
-//     auto client = std::make_unique<ClientData>();
-//     client->login = "test";
-//     client->email = "test@email.com";
-//     client->hash_password = "pass";
-
-//     client_rep.Insert(client);    
-//     EXPECT_TRUE(client_rep.Delete(client->login));
-// }
-
-// TEST(RepositoryTest, GetUserDataCase){
-//     std::shared_ptr<IDataBase> db = std::make_shared<PostgresServer>(kIpAddr, kPort, kName, kUser, kPass);
-//     db->SendQuery("DELETE FROM client");
-//     ClientRepository client_rep(db);
-//     auto client = std::make_unique<ClientData>();
-//     client->login = "test";
-//     client->email = "test@email.com";
-//     client->hash_password = "pass";
-//     client_rep.Insert(client);
-
-//     auto result = client_rep.GetByKey(client->login);
-//     EXPECT_EQ(result->login, client->login);
-// }
-
-// TEST(RepositoryTest, BadUserCase){
-//     std::shared_ptr<IDataBase> db = std::make_shared<PostgresServer>(kIpAddr, kPort, kName, kUser, kPass);
-//     db->SendQuery("DELETE FROM client");
-//     ClientRepository client_rep(db);
-//     auto client = std::make_unique<ClientData>();
-//     client->login = "test";
-
-//     EXPECT_FALSE(client_rep.Insert(client));
-
-// }
-
-// TEST(RepositoryTest, UpdateClientDataCase){
-//     std::shared_ptr<IDataBase> db = std::make_shared<PostgresServer>(kIpAddr, kPort, kName, kUser, kPass);
-//     db->SendQuery("DELETE FROM client");
-//     ClientRepository client_rep(db);
-//     auto client = std::make_unique<ClientData>();
-//     client->login = "test";
-//     client->email = "test@email.com";
-//     client->hash_password = "pass";
-//     client_rep.Insert(client);
-    
-//     // Меняем имя клиента
-
-//     auto update_client = std::make_unique<ClientData>();
-//     update_client->login = "updated_name";
-//     update_client->email = "test@email.com";
-//     update_client->hash_password = "pass";
+    EXPECT_NO_THROW(client_rep->GetByKey(client->login));
+}
 
 
-//     client_rep.Update(client->login, update_client);
-    
-//     auto result = client_rep.GetByKey(client->login);
-//     EXPECT_EQ(result->login, update_client->login);
-// }
-
-// // TimeSeries
-
-// TEST(RepositoryTest, TimeSeriesInsertCase){
-//     std::shared_ptr<IDataBase> db = std::make_shared<PostgresServer>(kIpAddr, kPort, kName, kUser, kPass);
-//     db->SendQuery("DELETE FROM timeseries");
-//     TimeSeriesRepository timeseries_rep(db);
-//     auto time = std::make_unique<TimeSeriesData>();
-//     time->name_stock = "test";
-//     time->date = "2021-01-02";
-//     std::string json_string = "{\"test\": 1}";
-//     Json::Reader reader;
-//     reader.parse(json_string, time->param);
-//     EXPECT_TRUE(timeseries_rep.Insert(time));
-// }
+TEST_F(RepositoryTest, DeleteClientDataCase){
+    std::string key = "test";    
+    EXPECT_CALL(*db, IsOpen()).WillOnce(Return(true));
+    EXPECT_CALL(*db, SendQuery(_)).WillOnce(Return(true)); 
+    EXPECT_TRUE(client_rep->Delete(key));
+}
 
 
-// TEST(RepositoryTest, TimeSeriesGetCase){
-//     std::shared_ptr<IDataBase> db = std::make_shared<PostgresServer>(kIpAddr, kPort, kName, kUser, kPass);
-//     db->SendQuery("DELETE FROM timeseries");
-//     TimeSeriesRepository timeseries_rep(db);
-//     auto time = std::make_unique<TimeSeriesData>();
-//     time->name_stock = "test";
-//     time->date = "2021-01-02";
-//     std::string json_string = "{\"test\": 1}";
-//     Json::Reader reader;
-//     reader.parse(json_string, time->param);
-//     timeseries_rep.Insert(time);
+TEST_F(RepositoryTest, BadUserCase){
+    auto client = std::make_shared<ClientData>();
+    client->login = "test";
 
-//     size_t len_lags = 1;
-//     auto result = timeseries_rep.GetByKey(time->name_stock, len_lags);
-//     EXPECT_EQ(result->name_stock, time->name_stock);
-// }
+    EXPECT_CALL(*db, IsOpen()).WillOnce(Return(true));
+    EXPECT_CALL(*db, SendQuery(_)).WillOnce(Return(true)); 
+    EXPECT_FALSE(client_rep->Insert(client));
+}
 
+TEST_F(RepositoryTest, UpdateClientDataCase){
+    std::string key = "test";    
 
-// TEST(RepositoryTest, TimeSeriesDeleteCase){
-//     std::shared_ptr<IDataBase> db = std::make_shared<PostgresServer>(kIpAddr, kPort, kName, kUser, kPass);
-//     db->SendQuery("DELETE FROM timeseries");
-//     TimeSeriesRepository timeseries_rep(db);
-//     auto time = std::make_unique<TimeSeriesData>();
-//     time->name_stock = "test";
-//     time->date = "2021-01-02";
-//     std::string json_string = "{\"test\": 1}";
-//     Json::Reader reader;
-//     reader.parse(json_string, time->param);
-//     timeseries_rep.Insert(time);
-    
-//     EXPECT_TRUE(timeseries_rep.Delete(time->name_stock));
-// }
+    // Меняем имя клиента
 
-// // TEST(RepositoryTest, TimeSeriesUpdateCase){
-// //     std::shared_ptr<IDataBase> db = std::make_shared<PostgresServer>(kIpAddr, kPort, kName, kUser, kPass);
-// //     db->SendQuery("DELETE FROM timeseries");
-// //     TimeSeriesRepository timeseries_rep(db);
-// //     auto time = std::make_unique<TimeSeriesData>();
-// //     time->name_stock = "test";
-// //     time->date = "2021-01-02";
-// //     std::string json_string = "{\"test\": 1}";
-// //     Json::Reader reader;
-// //     reader.parse(json_string, time->param);
-// //     timeseries_rep.Insert(time);
+    auto update_client = std::make_shared<ClientData>();
+    update_client->login = "updated_name";
+    update_client->email = "test@email.com";
+    update_client->hash_password = "pass";
 
-// //     TimeSeriesData new_time;
-// //     new_time.name = "new_test";
-// //     json_string = "{\"new_test\": 1}";
-// //     reader.parse(json_string, new_time.param);
-
-// //     EXPECT_TRUE(timeseries_rep.Update(time->name_stock, new_time));
-// // }
+    EXPECT_CALL(*db, IsOpen()).WillOnce(Return(true));
+    EXPECT_CALL(*db, SendQuery(_)).WillOnce(Return(true)); 
+    EXPECT_TRUE(client_rep->Update(key, update_client));
+}
 
 
-// // SubscriptionRepository
+TEST_F(RepositoryTest, BadQueryForPostUser){
+    auto client = std::make_shared<ClientData>();
+    client->login = "test";
+    client->email = "test@email.com";
+    client->hash_password = "pass";
 
-// TEST(RepositoryTest, SubscriptionRepositoryInsert) {
-//     std::shared_ptr<IDataBase> db = std::make_shared<PostgresServer>(kIpAddr, kPort, kName, kUser, kPass);
-//     db->SendQuery("DELETE FROM subscription");    
-//     SubscriptionRepository sub_rep(db);
-//     auto data = std::make_unique<SubscriptionData>();
-//     data->name = "test";
-//     data->count = 1;
-//     data->cost = 1;
+    EXPECT_CALL(*db, IsOpen()).WillOnce(Return(false));
+    EXPECT_CALL(*db, SendQuery(_)).WillOnce(Return(false)); 
 
-//     EXPECT_TRUE(sub_rep.Insert(data));
-// } 
+    EXPECT_FALSE(client_rep->Insert(client));
+    EXPECT_FALSE(client_rep->Delete(client->login));
+}
 
-// TEST(RepositoryTest, SubscriptionRepositoryGetByKey) {
-//     std::shared_ptr<IDataBase> db = std::make_shared<PostgresServer>(kIpAddr, kPort, kName, kUser, kPass);
-//     db->SendQuery("DELETE FROM subscription");    
-//     SubscriptionRepository sub_rep(db);
-//     auto data = std::make_unique<SubscriptionData>();
-//     data->name = "test";
-//     data->count = 1;
-//     data->cost = 1;
-//     sub_rep.Insert(data);
+TEST_F(RepositoryTest, BadQueryForGetUser){
+    auto client = std::make_shared<ClientData>();
+    std::string key = "test";
 
-//     auto result = sub_rep.GetByKey(data->name);
-//     EXPECT_EQ(result->name, data->name);
-// } 
+    EXPECT_CALL(*db, IsOpen()).WillOnce(Return(true));
+    EXPECT_CALL(*db, GetRow(_)).WillOnce(Throw(SqlError("Error"))); 
 
-// TEST(RepositoryTest, SubscriptionRepositoryGetAll) {
-//     std::shared_ptr<IDataBase> db = std::make_shared<PostgresServer>(kIpAddr, kPort, kName, kUser, kPass);
-//     db->SendQuery("DELETE FROM subscription");    
-//     SubscriptionRepository sub_rep(db);
-//     auto data_0 = std::make_unique<SubscriptionData>();
-//     data_0->name = "test";
-//     data_0->count = 1;
-//     data_0->cost = 1;
-//     sub_rep.Insert(data_0);
+    EXPECT_THROW({
+        client_rep->GetByKey(key);
+    }, UnavailableDataBase);
+}
 
-//     auto data_1 = std::make_unique<SubscriptionData>();
-//     data_1->name = "test2";
-//     data_1->count = 2;
-//     data_1->cost = 2;
-//     sub_rep.Insert(data_1);
+// TimeSeries
 
-//     const int kValueId = 1;
-//     auto result = sub_rep.GetAll();
-//     EXPECT_EQ(result->data[kValueId].name, data_1->name);
-// } 
+TEST_F(RepositoryTest, TimeSeriesInsertCase){
+    auto time = std::shared_ptr<TimeSeriesData>();
+    time->name_stock = "test";
+    time->date = "2021-01-02";
+    std::string json_string = "{\"test\": 1}";
+    Json::Reader reader;
+    reader.parse(json_string, time->param);
+    EXPECT_CALL(*db, IsOpen()).WillOnce(Return(true));
+    EXPECT_CALL(*db, SendQuery(_)).WillOnce(Return(true)); 
+    EXPECT_TRUE(timeseries_rep->Insert(time));
+}
+
+TEST_F(RepositoryTest, TimeSeriesGetCase){
+
+    auto time = std::make_shared<TimeSeriesData>();
+    time->name_stock = "test";
+    time->date = "2021-01-02";
+    std::string json_string = "{\"test\": 1}";
+    Json::Reader reader;
+    reader.parse(json_string, time->param);
+
+    std::vector<std::string> row;
+    row.push_back(time->name_stock);
+    row.push_back(time->date);
+    row.push_back(json_string);
+
+    size_t len_lags = 1;
+
+    EXPECT_CALL(*db, IsOpen()).WillOnce(Return(true));
+    EXPECT_CALL(*db, GetRow(_)).WillOnce(Return(row)); 
+
+    EXPECT_NO_THROW(timeseries_rep->GetByKey(time->name_stock, len_lags));
+}
+
+TEST_F(RepositoryTest, BadQueryForPostTimeSeries){
+    auto time = std::shared_ptr<TimeSeriesData>();
+    time->name_stock = "test";
+    time->date = "2021-01-02";
+    std::string json_string = "{\"test\": 1}";
+    Json::Reader reader;
+    reader.parse(json_string, time->param);
+
+    EXPECT_CALL(*db, IsOpen()).WillOnce(Return(false));
+    EXPECT_CALL(*db, SendQuery(_)).WillOnce(Return(false)); 
+    EXPECT_FALSE(timeseries_rep->Insert(time));
+}
+
+TEST_F(RepositoryTest, BadQueryForGetTimeSeries){
+    std::string name_stock = "test";
+    size_t len_lags = 1;
+    EXPECT_CALL(*db, IsOpen()).WillOnce(Return(true));
+    EXPECT_CALL(*db, GetRow(_)).WillOnce(Throw(SqlError("Error"))); 
+
+    EXPECT_THROW({
+        timeseries_rep->GetByKey(name_stock, len_lags);
+    }, UnavailableDataBase);
+}
+
+
+// SubscriptionRepository
+
+TEST_F(RepositoryTest, BadConnectForGetSubscription){
+    std::string key = "test";
+
+    EXPECT_CALL(*db, IsOpen()).WillOnce(Return(true));
+    EXPECT_CALL(*db, GetRow(_)).WillOnce(Throw(SqlError("Error"))); 
+
+    EXPECT_THROW({
+        sub_rep->GetByKey(key);
+    }, UnavailableDataBase);
+}
+
+TEST_F(RepositoryTest, BadConnectForGetAllSubscription) {
+    EXPECT_CALL(*db, IsOpen()).WillOnce(Return(true));
+    EXPECT_CALL(*db, GetRow(_)).WillOnce(Throw(SqlError("Error"))); 
+    EXPECT_THROW({
+        sub_rep->GetAll();
+    }, UnavailableDataBase);
+}
 

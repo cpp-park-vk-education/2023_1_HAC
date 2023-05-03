@@ -9,6 +9,16 @@
 #include <boost/asio/dispatch.hpp>
 #include <boost/asio/strand.hpp>
 #include <boost/config.hpp>
+#include "listener.h"
+#include "routers.h"
+
+#include "ihandler.h"
+#include "icontrollers.h"
+#include "handlers.h"
+#include "controllers.h"
+#include "config_handler.h"
+
+using prtToIHandler = std::unique_ptr<handlers::IHandler>
 
 namespace net = boost::asio; // from <boost/asio.hpp>
 
@@ -23,26 +33,28 @@ class Server {
         int threads;
     };
 
- private:
-    // controllers::DatabaseController database_controller;
-    // controllers::PredictController predict_controller;
-    // controllers::ShowPlotContoller show_plot_controller;
-    // controllers::RegisterController register_controller;
-    // controllers::AuthorizeController authorize_controller;
+ private:  
+    std::usique_ptr<controllers::IDatabaseController> database_controller 
+    std::usique_ptr<controllers::IModelController> model_controller 
+    std::usique_ptr<controllers::IShowPlotController> show_plot_controller 
+    std::usique_ptr<controllers::IRegisterController> register_contoller
+    std::usique_ptr<controllers::IAuthorizeController> aurhorize_controller
 
-    // hendlers::Hendler predict_hendler;
-    // hendlers::Hendler register_hendler;
-    // hendlers::Hendler authorize_hendler;
-    // hendlers::Hendler update_hendler;
-
-    // Router router_;
-    // Listener lister_;
-    // net::io_context ioc
+    prtToIHandler predict_handler;
+    prtToIHandler register_handler;
+    prtToIHandler authorize_handler;
+    prtToIHandler update_handler;
+    prtToIHandler router;
+    
+    std::usique_ptr<routers::IRouterAdapter> router_adapter;
+    std::shared_ptr<IListener> lister;
+    net::io_context ioc
     std::map<string, *IHandler> handlers;
     std::vector<std::thread> listeners;
     Config config_;
+    handlers::ProtocolAPI protocol_API;
 
     void setHandlers();
     Config parseConfigFhomFile(const std::string& path_to_config_file);
-    ProtocolAPI makeProtocolAPI(const std::string& path_to_API_config);
+    handlers::ProtocolAPI parseAPIConfigFhomFile(const std::string& path_to_API_config);
 };  

@@ -1,24 +1,29 @@
-#pragma once
+#pragma once //NO_LINT
 #include <map>
 #include <boost/beast/http.hpp>
+
+#include "ihandler.h"
+#include "icontrollers.h"
+#include "handlers.h"
+#include "controllers.h"
+#include "config_handler.h"
 
 using httpRequest = boost::beast::http::request<http::string_body>;
 using httpResponse = boost::beast::http::response<http::string_body>;
 
-class IRouter {
+class IRouterAdapter {
  public:
-    virtual httpResponse handle(httpRequest) = 0; 
-    virtual void setHandlers(std::map<string, *IHandler>) = 0;
+    virtual void handle(httpRequest& req, httpResponse& resp) = 0; 
 };
 
-class Router : public IRouter {
+class RouterAdapter : public IRouterAdapter {
  public: 
-    Router();
-    httpResponse handle(httpRequest) override;
-    void setHandlers(std::map<string, *IHandler>) override;
+    RouterAdapter();
+    void handle(httpRequest& req, httpResponse& resp) override;
 
  private:
-    std::map<string, *IHandler> handlers;
 
-    IHendler* getHandler(httpRequest);
+   IHendler* router;
 }
+
+  std::map<string, *IHandler> handlers;

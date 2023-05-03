@@ -1,14 +1,16 @@
 FIND_PACKAGE(GTest REQUIRED)
 FIND_PACKAGE(Threads REQUIRED)
 
-INCLUDE_DIRECTORIES(include ${CALC_INCLUDE_DIRS})
+
+INCLUDE_DIRECTORIES(include ${HANDLER_INCLUDE_DIRS} ${GTEST_INCLUDE_DIRS})
 
 ADD_EXECUTABLE(
-        tests
+        tests_handler 
         src/main.cpp
-        src/handler_base_test.cpp
+        src/handlers_btest.cpp
+        src/predict_controller_btest.cpp
 )
-TARGET_LINK_LIBRARIES(tests ${GTEST_BOTH_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT} ${CALC_LIBRARIES} -lstdc++fs)
+TARGET_LINK_LIBRARIES(tests_handler ${GTEST_BOTH_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT}  ${HANDLER_LIBRARIES} -lgmock -lstdc++fs)
 
 SET(memcheck_command)
 
@@ -19,7 +21,7 @@ ELSE()
         MESSAGE("Memcheck disabled")
 ENDIF()
 
-SET(TEST_COMMAND ${memcheck_command} ${CMAKE_BINARY_DIR}/project/handlerlib/tests/tests)
+SET(TEST_COMMAND ${memcheck_command} ${CMAKE_BINARY_DIR}/project/handlerlib/tests/tests_handler)
 
 ADD_TEST(
         NAME HandlerTest

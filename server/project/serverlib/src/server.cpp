@@ -1,7 +1,7 @@
-#include <iostream>
-#include "server.h"
-#include "listener.h"
-// #include <boost/config.hpp>
+// #include <iostream>
+// #include "server.h"
+// #include "listener.h"
+// // #include <boost/config.hpp>
 
 using prtToHendler = std::unique_ptr<handlers::IHandler>
 
@@ -13,7 +13,8 @@ Server::Config parseConfigFromFile(const std::string& path_to_config_file) {
     return config;
 }
 
-Server::Server(const std::string& path_to_config_file) {
+
+// Server::Server(const std::string& path_to_config_file) {
     
     // std::usique_ptr<controllers::IDatabaseController> database_controller 
     //                = std::make_unique<controllers::DBController>;
@@ -33,9 +34,9 @@ Server::Server(const std::string& path_to_config_file) {
     
     // config_ = parseConfigFhomFile(path_to_config_file);
 
-    // router_();
-    // listner(&router_);
 
-    // boost::asio::io_context ioc_{config_.threads};
-
-};
+     // router_();
+     // listner(&router_);
+     
+     // boost::asio::io_context ioc_{config_.threads};
+ // };

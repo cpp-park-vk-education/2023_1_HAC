@@ -57,4 +57,4 @@ class Server {
     void setHandlers();
     Config parseConfigFhomFile(const std::string& path_to_config_file);
     handlers::ProtocolAPI parseAPIConfigFhomFile(const std::string& path_to_API_config);
-};  
+}; 

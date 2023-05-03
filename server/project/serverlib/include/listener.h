@@ -18,22 +18,22 @@ namespace http = beast::http;           // from <boost/beast/http.hpp>
 namespace net = boost::asio;            // from <boost/asio.hpp>
 using tcp = boost::asio::ip::tcp;       // from <boost/asio/ip/tcp.hpp>
 
-class IListener {
- public:
-    virtual void Run() = 0;
-};
+// class IListener {
+//  public:
+//     virtual void Run() = 0;
+// };
 
-class Listener : public IListener{
- public:
-    Listener() = delete;
-    Listener(net::io_context& ioc, tcp::endpoint endpoints, Router* router);
-    void Run() override;
+// class Listener : public IListener{
+//  public:
+//     Listener() = delete;
+//     Listener(net::io_context& ioc, tcp::endpoint endpoints, Router* router);
+//     void Run() override;
     
  private:
     net::io_context& ioc_;
     tcp::acceptor acceptor_;
-    routers::RouterAdapter* router_adapter;  
+    routers::RouterAdapter* router_adapter;
 
-    void doAccept();
-    void onAccept();
-};
+//     void doAccept();
+//     void onAccept();
+// };

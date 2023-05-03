@@ -16,4 +16,4 @@ RUN cd /root && \
     cd /usr/local/boost_1_81_0 && \
     ./bootstrap.sh && \
     ./b2 --with-system --with-thread --with-date_time --with-regex --with-serialization stage
-
+RUN apt install -y libgmock-dev

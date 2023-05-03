@@ -1,10 +1,17 @@
-#pragma once
+#pragma once // NO_LINT
 #include <boost/beast/core.hpp>
 #include <boost/beast/http.hpp>
 #include <boost/beast/version.hpp>
 #include <boost/asio/dispatch.hpp>
 #include <boost/asio/strand.hpp>
 #include <boost/config.hpp>
+#include "routers.h"
+
+#include "ihandler.h"
+#include "icontrollers.h"
+#include "handlers.h"
+#include "controllers.h"
+#include "config_handler.h"
 
 namespace beast = boost::beast;         // from <boost/beast.hpp>
 namespace http = beast::http;           // from <boost/beast/http.hpp>
@@ -22,9 +29,10 @@ using tcp = boost::asio::ip::tcp;       // from <boost/asio/ip/tcp.hpp>
 //     Listener(net::io_context& ioc, tcp::endpoint endpoints, Router* router);
 //     void Run() override;
     
-//  private:
-//     net::io_context& ioc_;
-//     tcp::acceptor acceptor_;
+ private:
+    net::io_context& ioc_;
+    tcp::acceptor acceptor_;
+    routers::RouterAdapter* router_adapter;
 
 //     void doAccept();
 //     void onAccept();

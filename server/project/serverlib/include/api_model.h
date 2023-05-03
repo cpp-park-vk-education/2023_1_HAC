@@ -1,20 +1,22 @@
-#pragma once
+#pragma once //NO_LINT
+#include "http_protocol.h"
 
-#include <boost/beast/http.hpp>
-
-using httpRequest = boost::beast::http::request<http::string_body>;
-using httpResponse = boost::beast::http::response<http::string_body>;
+#include "ihandler.h"
+#include "icontrollers.h"
+#include "handlers.h"
+#include "controllers.h"
+#include "config_handler.h"
 
 class IAPIModelRequest{
  public:
-    virtual httpResponce getData(httpRequest req) = 0;
+    virtual IHTTPResponse getData(IHTTPRequest req) = 0;
 }
 
 class APIModelelRequest{
  public:
     APIModelelRequest();
-    httpResponce getData(httpRequest req) override;
+    IHTTPResponse getData(IHTTPRequest req) override;
  private:
     void doConnect(std::string path);
-    httpResponce onConnect(ssl::stream<tcp::socket> stream);   
+    IHTTPResponse onConnect(ssl::stream<tcp::socket> stream);   
 }

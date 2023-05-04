@@ -3,6 +3,7 @@ FIND_PACKAGE(Threads REQUIRED)
 
 #add_compile_options(-lssl -lcrypto)
 
+FILE(GLOB SOURCES_TEST ../src/*)
 INCLUDE_DIRECTORIES(include ${SERVERLIB_INCLUDE_DIRS} ${HANDLER_INCLUDE_DIRS} ${GTEST_INCLUDE_DIRS})
 
 ADD_EXECUTABLE(
@@ -15,6 +16,8 @@ ADD_EXECUTABLE(
         src/listener_btest.cpp
         src/routers_btest.cpp
         src/session_btest.cpp
+        ${SOURCES_TEST}
+        #../src/http_protocol.cpp
 )
 TARGET_LINK_LIBRARIES(tests_server ${GTEST_BOTH_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT} ${HANDLER_INCLUDE_DIRS} ${SERVERLIB_INCLUDE_DIRS})
 

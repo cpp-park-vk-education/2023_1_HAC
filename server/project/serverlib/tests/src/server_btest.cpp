@@ -1,8 +1,7 @@
 #include "utils_gtest.h"
 #include "gmock/gmock.h"
-#include "handlers.h"
-#include "handler_exception.h"
 #include "dbcontroller.hpp"
+#include "server.h"
 
 TEST(HandlersTests, NullHTTPReqInHandlePredict) {
     

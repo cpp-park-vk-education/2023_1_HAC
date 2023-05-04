@@ -3,10 +3,10 @@
 
 namespace market_mentor {
 
-class Error : public MarketMentorException {
+class NullInHTTPError : public MarketMentorException {
  public:
-    Error() :
-    MarketMentorException("Error") {}
+    NullInHTTPError() :
+        MarketMentorException("Passed nullptr in HTTPHandle") {}
 };
 
 } // namespace market_mentor

@@ -2,13 +2,15 @@ FIND_PACKAGE(GTest REQUIRED)
 FIND_PACKAGE(Threads REQUIRED)
 
 
-INCLUDE_DIRECTORIES(include ${HANDLER_INCLUDE_DIRS} ${GTEST_INCLUDE_DIRS})
+INCLUDE_DIRECTORIES(include ${HANDLER_INCLUDE_DIRS} ${GTEST_INCLUDE_DIRS} ${DB_INCLUDE_DIRS} ${SERVER_INCLUDE_GENERAL})
+
+
+FILE(GLOB SOURCES_TEST src/*)
+
 
 ADD_EXECUTABLE(
         tests_handler 
-        src/main.cpp
-        src/handlers_btest.cpp
-        src/predict_controller_btest.cpp
+        ${SOURCES_TEST}
 )
 TARGET_LINK_LIBRARIES(tests_handler ${GTEST_BOTH_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT}  ${HANDLER_LIBRARIES} -lgmock -lstdc++fs)
 

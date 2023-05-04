@@ -22,7 +22,7 @@ enum TypeData {
 };
 
 namespace dbcontroller {
-    class IDataBaseController {
+    class  IDataBaseController {
     public:
         virtual Json::Value DataRequest(const Json::Value& request) = 0;
         

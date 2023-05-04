@@ -25,14 +25,15 @@ public:
     virtual void setAuthorizationWindow(
             ptr_to_iauthorization_window auth_window_ptr) = 0;
     virtual ptr_to_iauthorization_window getAuthorizationWindow() = 0;
-    virtual void setAuthorizationNetwork(ptr_to_iauthorization_network auth_network_ptr) = 0;
+    virtual void setAuthorizationNetwork(
+            ptr_to_iauthorization_network auth_network_ptr) = 0;
     virtual void authHandler(const std::string& login,
                              const std::string& password) = 0;
     virtual void passToMain() = 0;
     virtual void sendError(const Error& error_message) = 0;
-    virtual void setUser(const std::string user) = 0;
+    virtual void setUser(const std::string& user) = 0;
     virtual std::string getUrl() = 0;
-    virtual void setUrl(const std::string url) = 0;
+    virtual void setUrl(const std::string& url) = 0;
 };
 
 #endif // USECASE_AUTHORIZATIONWINDOW_INTERFACE_H

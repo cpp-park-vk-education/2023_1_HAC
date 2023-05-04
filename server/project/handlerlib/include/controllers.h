@@ -1,5 +1,5 @@
 #pragma once // NO_LINT
-
+#include "handlers.h"
 #include "icontrollers.h"
 #include "api_model.h"
 #include "api_stock.h"
@@ -13,7 +13,6 @@ using namespace api;
 
 using ptrToDBController = dbcontroller::IDataBaseController*;
 using ptrToModelController = controllers::IModelController*;
-
 
 class PredictController : public IPredictController {
  public:

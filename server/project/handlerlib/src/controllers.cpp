@@ -3,7 +3,7 @@
 namespace controllers {
 
 PredictController::PredictController
-    (const ptrToDBController db_controller,const ptrToModelController model_controller) :
+    (const ptrToDBController db_controller, const ptrToModelController model_controller) :
             db_controller_(db_controller), model_controller_(model_controller) {}
 
 void PredictController::makePredict(IHTTPRequest_ request, IHTTPResponse_ response) {

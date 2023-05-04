@@ -10,17 +10,13 @@
 
 
 TEST(HandlersTests, NullHTTPReqInHandlePredict) {
-
     dbcontroller::DataBaseController TestDBController;
-
     api::APIModelelRequest TestAPIModelRequest;
     controllers::ModelController TestModelController(&TestAPIModelRequest);
-    //controllers::PredictController TestPredictController(&TestModelController, &TestDBController);
-    //handlers::PredictHandler TestPredictHandler(&TestPredictController);
-
-    //EXPECT_THROW(TestPredictHandler.handle(nullptr, nullptr), market_mentor::NullInHTTPError);
-    ASSERT_EQ(1,1);
-
+    controllers::PredictController TestPredictController(&TestDBController, &TestModelController);
+    handlers::PredictHandler TestPredictHandler(&TestPredictController);
+    EXPECT_THROW(TestPredictHandler.handle(nullptr, nullptr), market_mentor::NullInHTTPError);
+    
 }
 
 TEST(HandlersTests, NullHTTPReqInHandleShowPlot) {

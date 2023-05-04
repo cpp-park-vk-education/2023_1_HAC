@@ -33,6 +33,6 @@ ENDIF()
 SET(TEST_COMMAND ${memcheck_command} ${CMAKE_BINARY_DIR}/project/serverlib/tests/tests_server)
 
 ADD_TEST(
-        NAME HandlerTest
+        NAME NetTest
         COMMAND ${TEST_COMMAND}
 )

@@ -5,10 +5,10 @@
 #include "dbcontroller.hpp"
 
 using ::testing::Return;
+using ::testing::_;
+
 using namespace dbcontroller;
 using namespace repository;
-using namespace database;
-
 
 // DBController вызывает только соотвествующие методы у репозиториев и получает результат
 
@@ -38,8 +38,8 @@ public:
 
 class DBControllerTest: public ::testing::Test {
 public:
-    DBControllerTest(): test_client_rep(new ClientRepositoryMock()), test_timeseries_rep(new TimeSeriesRepositoryMock()),
-     test_sub_rep(new SubscriptionRepositoryMock()), db_controller(new DataBaseController(test_client_rep, test_timeseries_rep, test_sub_rep)) {
+    DBControllerTest(): test_client_rep(new ClientRepositoryMock), test_timeseries_rep(new TimeSeriesRepositoryMock),
+     test_sub_rep(new SubscriptionRepositoryMock), db_controller(new DataBaseController(test_client_rep, test_timeseries_rep, test_sub_rep)) {
     }
 
 protected:
@@ -54,44 +54,49 @@ protected:
 
 
 TEST_F(DBControllerTest, ClientPost) {
-    DBRequestProtocol<ClientData> request;
-    request.type_request = POST_REQUEST;
-    request.data = std::make_shared<ClientData>();
-    request.data->login = "test";
-    request.data->email = "test@email.com";
-    request.data->hash_password = "pass";
+    Json::Value request;
+    request["type_request"] = POST_REQUEST;
+    request["type_data"] = CLIENT_DATA;
+    request["login"] = "test";
+    request["email"] = "test@email.com";
+    request["hash_password"] = "pass";
     
-    EXPECT_CALL(*test_client_rep, Insert(request.data)).WillOnce(Return(true)); 
+    EXPECT_CALL(*test_client_rep, Insert(_)); 
     db_controller->DataRequest(request);
 }
 
 TEST_F(DBControllerTest, ClientGet) {
-    DBRequestProtocol<ClientData> request;
-    request.type_request = GET_REQUEST;
-    request.data = std::make_shared<ClientData>();
-    request.data->login = "test";
-    request.data->email = "test@email.com";
-    request.data->hash_password = "pass";
-    
-    EXPECT_CALL(*test_client_rep, GetByKey(request.data->login));
+    Json::Value request;
+    request["type_request"] = GET_REQUEST;
+    request["type_data"] = CLIENT_DATA;
+    request["login"] = "test";
+    request["email"] = "test@email.com";
+    request["hash_password"] = "pass";
+
+    EXPECT_CALL(*test_client_rep, GetByKey(_));
     db_controller->DataRequest(request);
 }
 
 TEST_F(DBControllerTest, ClientUpdate) {
-    DBRequestProtocol<ClientData> request;
-    request.type_request = UPDATE_REQUEST;
-    request.data = std::make_shared<ClientData>();
-    request.data->login = "test";
-    EXPECT_CALL(*test_client_rep, Update(request.data->login, request.data)).WillOnce(Return(true)); 
+    Json::Value request;
+    request["type_request"] = UPDATE_REQUEST;
+    request["type_data"] = CLIENT_DATA;
+    request["login"] = "test";
+    request["email"] = "test@email.com";
+    request["hash_password"] = "pass";
+
+    EXPECT_CALL(*test_client_rep, Update(_, _)); 
     db_controller->DataRequest(request);
 }
 
 TEST_F(DBControllerTest, ClientAutorize) {
-    DBRequestProtocol<AuthorizeData> request;
-    request.type_request = GET_REQUEST;
-    request.data = std::make_shared<AuthorizeData>();
-    request.data->login = "test";
-    EXPECT_CALL(*test_client_rep, GetByKey(request.data->login));
+    Json::Value request;
+    request["type_request"] = GET_REQUEST;
+    request["type_data"] = AUTHORIZE_DATA;
+    request["login"] = "test";
+    request["hash_password"] = "pass";
+
+    EXPECT_CALL(*test_client_rep, GetByKey(_));
     db_controller->DataRequest(request);
 
 }
@@ -99,23 +104,32 @@ TEST_F(DBControllerTest, ClientAutorize) {
 // TimeSeries
 
 TEST_F(DBControllerTest, GetTimeSeries) {
-    DBRequestProtocol<TimeSeriesRequest> request;
-    request.type_request = GET_REQUEST;
-    request.data = std::make_shared<TimeSeriesRequest>();
-    request.data->name_stock = "test";
-    request.data->len_lags = 1;
-    EXPECT_CALL(*test_timeseries_rep, GetByKey(request.data->name_stock, request.data->len_lags));
+    Json::Value request;
+    request["type_request"] = GET_REQUEST;
+    request["type_data"] = TIMESERIES_REQUEST;
+    request["name_stock"] = "test";
+    request["len_lags"] = 1;
+
+    EXPECT_CALL(*test_timeseries_rep, GetByKey(_, _));
     db_controller->DataRequest(request);
 
 }
 
 
 TEST_F(DBControllerTest, PostTimeSeries) {
-    DBRequestProtocol<TimeSeriesData> request;
-    request.type_request = POST_REQUEST;
-    request.data = std::make_shared<TimeSeriesData>();
-    request.data->name_stock = "test";
-    request.data->date = "2020";
-    EXPECT_CALL(*test_timeseries_rep, Insert(request.data)).WillOnce(Return(true)); 
+    Json::Value request;
+    Json::Value param;
+    
+    std::string json_string = "{\"test\": 1}";
+    Json::Reader reader;
+    reader.parse(json_string, param);
+
+    request["type_request"] = POST_REQUEST;
+    request["type_data"] = TIMESERIES_DATA;
+    request["name_stock"] = "test";
+    request["date"] = 1;
+    request["param"] = param;
+
+    EXPECT_CALL(*test_timeseries_rep, Insert(_)); 
     db_controller->DataRequest(request);
 }

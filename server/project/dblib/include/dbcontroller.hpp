@@ -16,30 +16,15 @@ enum TypeRequest {
 
 enum TypeData {
     CLIENT_DATA,
-    TIMESERIES_DATA
-};
-
-// Запрос от сервера
-template <typename Data>
-struct DBRequestProtocol {
-    TypeRequest type_request;
-    std::shared_ptr<Data> data;
-};
-
-// Ответ от БД
-template <typename Data>
-struct DBResponseProtocol {
-    bool status;
-    std::shared_ptr<Data> data;
+    AUTHORIZE_DATA,
+    TIMESERIES_DATA,
+    TIMESERIES_REQUEST
 };
 
 namespace dbcontroller {
     class IDataBaseController {
     public:
-        virtual DBResponseProtocol<ClientData> DataRequest(const DBRequestProtocol<ClientData>& request) = 0;
-        virtual DBResponseProtocol<TimeSeriesData> DataRequest(const DBRequestProtocol<TimeSeriesData>& request) = 0;
-        virtual DBResponseProtocol<AuthorizeData> DataRequest(const DBRequestProtocol<AuthorizeData>& request) = 0;
-        virtual DBResponseProtocol<TimeSeriesData> DataRequest(const DBRequestProtocol<TimeSeriesRequest>& request) = 0;
+        virtual Json::Value DataRequest(const Json::Value& request) = 0;
         
     protected:
         // TimeSeries
@@ -58,11 +43,8 @@ namespace dbcontroller {
         DataBaseController(const std::shared_ptr<IClientRepository>& client_rep, 
             const std::shared_ptr<ITimeSeriesRepository>& timeseries_rep, const std::shared_ptr<ISubscriptionRepository>& subscription_rep);
 
-        DBResponseProtocol<ClientData> DataRequest(const DBRequestProtocol<ClientData>& request) override;
-        DBResponseProtocol<TimeSeriesData> DataRequest(const DBRequestProtocol<TimeSeriesData>& request) override;
-        DBResponseProtocol<TimeSeriesData> DataRequest(const DBRequestProtocol<TimeSeriesRequest>& request) override;
-        DBResponseProtocol<AuthorizeData> DataRequest(const DBRequestProtocol<AuthorizeData>& request) override;
-
+        Json::Value DataRequest(const Json::Value& request) override;
+  
     private:
         // TimeSeries
         bool TimeSeriesPost(const std::shared_ptr<TimeSeriesData>& data) override;

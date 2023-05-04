@@ -15,36 +15,12 @@ DataBaseController::DataBaseController(const std::shared_ptr<IClientRepository>&
 {
 }
 
-DBResponseProtocol<ClientData> DataBaseController::DataRequest(const DBRequestProtocol<ClientData>& request) {
-    DBResponseProtocol<ClientData> responce;
-    responce.status = true;
-    std::shared_ptr<ClientData> data;
-    responce.data = data;
-    return responce;
-}
-
-DBResponseProtocol<TimeSeriesData> DataBaseController::DataRequest(const DBRequestProtocol<TimeSeriesData>& request) {
-    DBResponseProtocol<TimeSeriesData> responce;
-    responce.status = true;
-    std::shared_ptr<TimeSeriesData> data;
-    responce.data = data;
-    return responce;    
-}
-
-DBResponseProtocol<TimeSeriesData> DataBaseController::DataRequest(const DBRequestProtocol<TimeSeriesRequest>& request) {
-    DBResponseProtocol<TimeSeriesData> responce;
-    responce.status = true;
-    std::shared_ptr<TimeSeriesData> data;
-    responce.data = data;
-    return responce;   
-}
-
-DBResponseProtocol<AuthorizeData> DataBaseController::DataRequest(const DBRequestProtocol<AuthorizeData>& request) {
-    DBResponseProtocol<AuthorizeData> responce;
-    responce.status = true;
-    std::shared_ptr<AuthorizeData> data;
-    responce.data = data;
-    return responce;      
+Json::Value DataRequest(const Json::Value& request) {
+    std::string json_string = "{\"test\": 1}";
+    Json::Value json;
+    Json::Reader reader;
+    reader.parse(json_string, json);
+    return json;
 }
 
 

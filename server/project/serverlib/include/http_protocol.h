@@ -13,13 +13,17 @@ class IHTTPResponse{
     virtual void setStatus(int status_code) = 0;
     virtual void setHeader(std::string header, std::string value) = 0;
     virtual void setBody(std::vector<char> bytes) = 0;
+
+    virtual std::string getURL() = 0;  
+    virtual std::map<std::string, std::string> getHeaders() = 0;
+    virtual std::vector<char> getBoby() = 0;
 };
 
 class IHTTPRequest{
  public:
-    virtual void getURL() = 0;  
+    virtual std::string getURL() = 0;  
     virtual std::map<std::string, std::string> getHeaders() = 0;
-    virtual std::vector<char> getBoby();
+    virtual std::vector<char> getBoby() = 0;
 };
 
 class HTTPResponseToBoostAdapter : public IHTTPResponse{
@@ -31,6 +35,10 @@ class HTTPResponseToBoostAdapter : public IHTTPResponse{
     void setHeader(std::string header, std::string value) override;
     void setBody(std::vector<char> bytes) override;
 
+    std::string getURL() override;
+    std::map<std::string, std::string> getHeaders() override;
+    std::vector<char> getBoby() override;
+
  private:
     httpResponse response;
 };
@@ -39,8 +47,9 @@ class HTTPRequestToBoostAdapter : public IHTTPRequest{
  public:
     HTTPRequestToBoostAdapter();
     HTTPRequestToBoostAdapter(std::string url, std::string headers, std::string body);
-    
-    void getURL() override;
+    HTTPRequestToBoostAdapter(std::string url, std::string headers, std::vector<char> body);
+     
+    std::string getURL() override;
     std::map<std::string, std::string> getHeaders() override;
     std::vector<char> getBoby() override;
 

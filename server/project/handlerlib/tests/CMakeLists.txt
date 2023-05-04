@@ -2,15 +2,25 @@ FIND_PACKAGE(GTest REQUIRED)
 FIND_PACKAGE(Threads REQUIRED)
 
 
-INCLUDE_DIRECTORIES(include ${HANDLER_INCLUDE_DIRS} ${GTEST_INCLUDE_DIRS})
+INCLUDE_DIRECTORIES(include ${HANDLER_INCLUDE_DIRS} ${GTEST_INCLUDE_DIRS} ${DB_INCLUDE_DIRS} ${SERVER_INCLUDE_GENERAL})
+
+pkg_search_module(JSONCPP jsoncpp)
+
+FILE(GLOB SOURCES_TEST src/*)
+FILE(GLOB SOURCES_HANDELRS_LIB ../src/*)
+FILE(GLOB SOURCES_SERVER_LIB ../../serverlib/src/*)
+FILE(GLOB SOURCES_DB_LIB ../../dblib/src/*)
+
 
 ADD_EXECUTABLE(
         tests_handler 
-        src/main.cpp
-        src/handlers_btest.cpp
-        src/predict_controller_btest.cpp
+        ${SOURCES_TEST}
+        ${SOURCES_HANDELRS_LIB}
+        ${SOURCES_SERVER_LIB}
+        ${SOURCES_DB_LIB}
+
 )
-TARGET_LINK_LIBRARIES(tests_handler ${GTEST_BOTH_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT}  ${HANDLER_LIBRARIES} -lgmock -lstdc++fs)
+TARGET_LINK_LIBRARIES(tests_handler ${JSONCPP_LIBRARIES} ${GTEST_BOTH_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT} -lgmock -lstdc++fs)
 
 SET(memcheck_command)
 

@@ -8,6 +8,7 @@
 #include <boost/beast/version.hpp>
 #include <boost/asio/dispatch.hpp>
 #include <boost/asio/strand.hpp>
+#include <boost/asio/ssl.hpp>
 #include <boost/config.hpp>
 #include "listener.h"
 #include "routers.h"
@@ -47,9 +48,9 @@ class Server {
     prtToIHandler update_handler;
     prtToIHandler router;
     
-    std::unique_ptr<IRouterAdapter> router_adapter;
-    std::shared_ptr<IListener> lister;
-    net::io_context ioc;
+    //std::unique_ptr<IRouterAdapter> router_adapter;
+    //std::shared_ptr<IListener> lister;
+    //net::io_context ioc;
     std::map<std::string, handlers::IHandler*> handlers;
     std::vector<std::thread> listeners;
     Config config_;

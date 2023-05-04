@@ -1,10 +1,7 @@
 #include "utils_gtest.h"
-#include "gmock/gmock.h"
-#include "handlers.h"
-#include "handler_exception.h"
-#include "dbcontroller.hpp"
 
-TEST(HandlersTests, NullHTTPReqInHandlePredict) {
+
+TEST(PredictControllerBaseErrorTest, BadInputJsonFromDBError) {
     
     // class MockDBController : public IDataBaseController {
     //     MOCK_METHOD0();  
@@ -17,7 +14,7 @@ TEST(HandlersTests, NullHTTPReqInHandlePredict) {
     ASSERT_EQ(1, 2);
 }
 
-TEST(HandlersTests, NullHTTPReqInHandleShowPlot) {
+TEST(PredictControllerBaseErrorTest, BadHTTPFromHandlerError) {
     
     // class MockDBController : public IDataBaseController {
     //     MOCK_METHOD0();  
@@ -30,7 +27,7 @@ TEST(HandlersTests, NullHTTPReqInHandleShowPlot) {
     ASSERT_EQ(1, 2);
 }
 
-TEST(HandlersTests, NullHTTPReqInHandleRegister) {
+TEST(PredictControllerBaseErrorTest, DimErrorTimeSeries) {
     
     // class MockDBController : public IDataBaseController {
     //     MOCK_METHOD0();  
@@ -42,18 +39,3 @@ TEST(HandlersTests, NullHTTPReqInHandleRegister) {
     // EXPECT_THROW();
     ASSERT_EQ(1, 2);
 }
-
-
-TEST(HandlersTests, NullHTTPReqInHandleAuthorize) {
-    
-    // class MockDBController : public IDataBaseController {
-    //     MOCK_METHOD0();  
-    // };
-    
-    
-    // handlers::PredictHandler()
-
-    // EXPECT_THROW();
-    ASSERT_EQ(1, 2);
-}
-

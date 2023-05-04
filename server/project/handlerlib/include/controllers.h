@@ -6,12 +6,14 @@
 #include "config_handler.h"
 #include "dbcontroller.hpp"
 
-using ptrToDBController = dbcontroller::IDataBaseController*;
-using ptrToModelController = controllers::IModelController*;
-using ptrToApiStock = IAPIStockRequest*;
-using ptrToAPIModel = IAPIModelRequest*;
 
 namespace controllers {
+
+using namespace api;
+
+using ptrToDBController = dbcontroller::IDataBaseController*;
+using ptrToModelController = controllers::IModelController*;
+
 
 class PredictController : public IPredictController {
  public:
@@ -90,7 +92,7 @@ class AuthorizeController : public IAuthorizeController {
 
 class UpdateDataController : public IUpdateDataController {
  public:
-    UpdateDataController(const ptrToDBController db_controller, const ptrToApiStock api_stock);
+    UpdateDataController(const ptrToDBController db_controller, const ptrToAPIStock api_stock);
 
     bool udateData(const handlers::ProtocolAPI& protocol) = 0;
 
@@ -98,7 +100,7 @@ class UpdateDataController : public IUpdateDataController {
     std::string parseToApiRequest(const handlers::ProtocolAPI& protocol) = 0;
 
     ptrToDBController db_controller_;
-    ptrToApiStock api_stock_;
+    ptrToAPIStock api_stock_;
 };
 
 

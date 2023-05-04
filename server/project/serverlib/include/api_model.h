@@ -8,17 +8,17 @@
 #include <boost/asio/ssl/stream.hpp>
 #include "http_protocol.h"
 
-#include "ihandler.h"
-#include "icontrollers.h"
-#include "handlers.h"
-#include "controllers.h"
-#include "config_handler.h"
-
 using tcp = boost::asio::ip::tcp;       // from <boost/asio/ip/tcp.hpp>
 namespace ssl = boost::asio::ssl;       // from <boost/asio/ssl.hpp>
 namespace http = boost::beast::http;    // from <boost/beast/http.hpp>
 
-class IAPIModelRequest{
+
+namespace api {
+
+class IAPIModelRequest;
+using ptrToAPIModel = IAPIModelRequest*;
+
+class IAPIModelRequest {
  public:
     virtual IHTTPResponse getData(IHTTPRequest req) = 0;
 };
@@ -31,3 +31,5 @@ class APIModelelRequest : public IAPIModelRequest{
     void doConnect(std::string path);
     IHTTPResponse onConnect(ssl::stream<tcp::socket> stream);   
 };
+
+} // namespace api_model

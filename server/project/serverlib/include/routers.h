@@ -8,8 +8,8 @@
 #include "controllers.h"
 #include "config_handler.h"
 
-using httpRequest = boost::beast::http::request<http::string_body>;
-using httpResponse = boost::beast::http::response<http::string_body>;
+// using httpRequest = boost::beast::http::request<http::string_body>;
+// using httpResponse = boost::beast::http::response<http::string_body>;
 
 class IRouterAdapter {
  public:
@@ -23,7 +23,5 @@ class RouterAdapter : public IRouterAdapter {
 
  private:
 
-   IHendler* router;
-}
-
-  std::map<string, *IHandler> handlers;
+   handlers::IHandler* router;
+};

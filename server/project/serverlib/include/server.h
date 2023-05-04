@@ -18,7 +18,8 @@
 #include "controllers.h"
 #include "config_handler.h"
 
-using prtToIHandler = std::unique_ptr<handlers::IHandler>
+using prtToIHandler = std::unique_ptr<handlers::IHandler>;
+using IDatabaseController = std::string;
 
 namespace net = boost::asio; // from <boost/asio.hpp>
 
@@ -34,11 +35,11 @@ class Server {
     };
 
  private:  
-    std::usique_ptr<controllers::IDatabaseController> database_controller 
-    std::usique_ptr<controllers::IModelController> model_controller 
-    std::usique_ptr<controllers::IShowPlotController> show_plot_controller 
-    std::usique_ptr<controllers::IRegisterController> register_contoller
-    std::usique_ptr<controllers::IAuthorizeController> aurhorize_controller
+    std::unique_ptr<IDatabaseController> database_controller;
+    std::unique_ptr<controllers::IModelController> model_controller;
+    std::unique_ptr<controllers::IShowPlotController> show_plot_controller;
+    std::unique_ptr<controllers::IRegisterController> register_contoller;
+    std::unique_ptr<controllers::IAuthorizeController> aurhorize_controller;
 
     prtToIHandler predict_handler;
     prtToIHandler register_handler;
@@ -46,10 +47,10 @@ class Server {
     prtToIHandler update_handler;
     prtToIHandler router;
     
-    std::usique_ptr<routers::IRouterAdapter> router_adapter;
+    std::unique_ptr<IRouterAdapter> router_adapter;
     std::shared_ptr<IListener> lister;
-    net::io_context ioc
-    std::map<string, *IHandler> handlers;
+    net::io_context ioc;
+    std::map<std::string, handlers::IHandler*> handlers;
     std::vector<std::thread> listeners;
     Config config_;
     handlers::ProtocolAPI protocol_API;

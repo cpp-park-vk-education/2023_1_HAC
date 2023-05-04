@@ -11,12 +11,6 @@
 #include <iostream>
 #include <string>
 
-#include "ihandler.h"
-#include "icontrollers.h"
-#include "handlers.h"
-#include "controllers.h"
-#include "config_handler.h"
-
 
 using tcp = boost::asio::ip::tcp;       // from <boost/asio/ip/tcp.hpp>
 namespace ssl = boost::asio::ssl;       // from <boost/asio/ssl.hpp>
@@ -25,7 +19,7 @@ namespace http = boost::beast::http;    // from <boost/beast/http.hpp>
 class IAPIStockRequest{
  public:
     virtual IHTTPResponse getData(std::string path) = 0; 
-}
+};
 
 class APIStockRequest : public IAPIStockRequest{
  public:
@@ -34,4 +28,4 @@ class APIStockRequest : public IAPIStockRequest{
  private:
     void doConnect(std::string path);
     IHTTPResponse onConnect(ssl::stream<tcp::socket> stream);
-}
+};

@@ -1,7 +1,15 @@
 #pragma once // NO_LINT
 
-#include "icontroller.h"
-#include "ihandler.h"
+#include "icontrollers.h"
+#include "api_model.h"
+#include "api_stock.h"
+#include "config_handler.h"
+#include "dbcontroller.hpp"
+
+using ptrToDBController = dbcontroller::IDataBaseController*;
+using ptrToModelController = controllers::IModelController*;
+using ptrToApiStock = IAPIStockRequest*;
+using ptrToAPIModel = IAPIModelRequest*;
 
 namespace controllers {
 
@@ -9,26 +17,26 @@ class PredictController : public IPredictController {
  public:
     PredictController(const ptrToDBController db_controller, const ptrToModelController model_controller);
 
-    httpResponse makePredict(const httpRequest& request) override;
+    void makePredict(IHTTPRequest_ request, IHTTPResponse_ response) override;
 
  private:
-    DataDBProtocol& parseInputHttpRequest(const httpRequest& request) override;
-    Json::Value& getPlotDataFromDB(const DataDBProtocol& data_protocol) override;
+    Json::Value parseInputHttpRequest(const IHTTPRequest_ request) override;
+    Json::Value getPlotDataFromDB(const Json::Value& data_protocol) override;
     TimeSeriesPredicts& makeTimeSeries(const Json::Value& samples_data, size_t window_size) override;
-    httpResponse& parseModelResponse(const httpResponse& request) override;   
+    IHTTPResponse_ parseModelResponse(const IHTTPResponse_ request) override;   
 
     ptrToDBController db_controller_;
-    ptrToModelController model_controller_
+    ptrToModelController model_controller_;
 };
 
 class ModelController : public IModelController {
  public:
     explicit ModelController(const ptrToAPIModel api_model);
 
-    httpResponse& callModelApi(const TimeSeriesPredicts& samples_data) override;
+    IHTTPResponse_ callModelApi(const TimeSeriesPredicts& samples_data) override;
 
  private:
-    httpRequest& makeHttpForModel(const TimeSeriesPredicts& samples_data) override;
+    IHTTPRequest_ makeHttpForModel(const TimeSeriesPredicts& samples_data) override;
 
     ptrToAPIModel api_model_;
 };
@@ -38,11 +46,11 @@ class ShowPlotController : public IShowPlotController {
  public:
     explicit ShowPlotController(const ptrToDBController db_controller);
 
-    httpResponse createPlotData(httpRequest request) override;
+    IHTTPResponse_ createPlotData(IHTTPRequest_ request) override;
 
  private:
-    DBRequestProtocol& parseInputHttpRequest(const httpRequest& request) override;
-    Json::Value& getPlotDataFromDB(const DataDBProtocol& data_protocol) override;
+    Json::Value parseInputHttpRequest(const IHTTPRequest_ request) override;
+    Json::Value getPlotDataFromDB(const Json::Value& data_protocol) override;
 
     ptrToDBController db_controller_;
 };
@@ -52,12 +60,12 @@ class RegisterController : public IRegisterController {
  public:
     explicit RegisterController(const ptrToDBController db_controller);
 
-    httpResponse registration(const httpRequest& request) override;
+    IHTTPResponse_ registration(const IHTTPRequest_ request) override;
  
  private:
-    DBRequestProtocol& parseInputHttpRequest(const httpRequest& request) override;
+    Json::Value parseInputHttpRequest(const IHTTPRequest_ request) override;
     hash_ hashPassword(const std::string& password) override;
-    bool postDataRegistrDB(const DBRequestProtocol& data_protocol) override;
+    bool postDataRegistrDB(const Json::Value& data_protocol) override;
 
     ptrToDBController db_controller_;
 
@@ -68,12 +76,12 @@ class AuthorizeController : public IAuthorizeController {
  public:
     explicit AuthorizeController(const ptrToDBController db_controller);
 
-    httpResponse registration(const httpRequest& request) override;
+    IHTTPResponse_ authorization(const IHTTPRequest_ request) override;
     
  private:
-    DBRequestProtocol& parseInputHttpRequest(const httpRequest& request) override;
+    Json::Value parseInputHttpRequest(const IHTTPRequest_ request) override;
     hash_ hashPassword(const std::string& password) override;
-    bool getCheckAuthorData(const DBRequestProtocol& data_protocol) override; 
+    bool getCheckAuthorData(const Json::Value& data_protocol) override; 
 
     ptrToDBController db_controller_;
 
@@ -84,10 +92,10 @@ class UpdateDataController : public IUpdateDataController {
  public:
     UpdateDataController(const ptrToDBController db_controller, const ptrToApiStock api_stock);
 
-    bool udateData(const ProtocolAPI& protocol) = 0;
+    bool udateData(const handlers::ProtocolAPI& protocol) = 0;
 
  private:
-    std::string parseToApiRequest(const ProtocolAPI& protocol) = 0;
+    std::string parseToApiRequest(const handlers::ProtocolAPI& protocol) = 0;
 
     ptrToDBController db_controller_;
     ptrToApiStock api_stock_;

@@ -4,7 +4,7 @@
 #include "handler_exception.h"
 #include "dbcontroller.hpp"
 
-TEST(HandlersTests, NullInHandler) {
+TEST(HandlersTests, NullHTTPReqInHandlePredict) {
     
     // class MockDBController : public IDataBaseController {
     //     MOCK_METHOD0();  
@@ -16,3 +16,44 @@ TEST(HandlersTests, NullInHandler) {
     // EXPECT_THROW();
     ASSERT_EQ(1, 2);
 }
+
+TEST(HandlersTests, NullHTTPReqInHandleShowPlot) {
+    
+    // class MockDBController : public IDataBaseController {
+    //     MOCK_METHOD0();  
+    // };
+    
+    
+    // handlers::PredictHandler()
+
+    // EXPECT_THROW();
+    ASSERT_EQ(1, 2);
+}
+
+TEST(HandlersTests, NullHTTPReqInHandleRegister) {
+    
+    // class MockDBController : public IDataBaseController {
+    //     MOCK_METHOD0();  
+    // };
+    
+    
+    // handlers::PredictHandler()
+
+    // EXPECT_THROW();
+    ASSERT_EQ(1, 2);
+}
+
+
+TEST(HandlersTests, NullHTTPReqInHandleAuthorize) {
+    
+    // class MockDBController : public IDataBaseController {
+    //     MOCK_METHOD0();  
+    // };
+    
+    
+    // handlers::PredictHandler()
+
+    // EXPECT_THROW();
+    ASSERT_EQ(1, 2);
+}
+

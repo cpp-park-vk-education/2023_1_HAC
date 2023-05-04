@@ -5,6 +5,7 @@
 #include <boost/beast/version.hpp>
 #include <boost/asio/dispatch.hpp>
 #include <boost/asio/strand.hpp>
+#include <boost/asio/ssl/error.hpp>
 #include <boost/config.hpp>
 
 #include "ihandler.h"

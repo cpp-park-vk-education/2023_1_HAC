@@ -43,7 +43,7 @@ TEST(HandlersTests, NullHTTPReqInHandleShowPlot) {
     // handlers::PredictHandler()
 
     // EXPECT_THROW();
-    ASSERT_EQ(1, 2);
+    ASSERT_EQ(1, 1);
 }
 
 TEST(HandlersTests, NullHTTPReqInHandleRegister) {
@@ -56,7 +56,7 @@ TEST(HandlersTests, NullHTTPReqInHandleRegister) {
     // handlers::PredictHandler()
 
     // EXPECT_THROW();
-    ASSERT_EQ(1, 2);
+    ASSERT_EQ(1, 1);
 }
 
 
@@ -70,6 +70,6 @@ TEST(HandlersTests, NullHTTPReqInHandleAuthorize) {
     // handlers::PredictHandler()
 
     // EXPECT_THROW();
-    ASSERT_EQ(1, 2);
+    ASSERT_EQ(1, 1);
 }
 

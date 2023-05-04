@@ -30,7 +30,7 @@ class IAPIStockRequest {
 
 class APIStockRequest : public IAPIStockRequest{
  public:
-    APIStockRequest(){};
+    APIStockRequest();
     IHTTPResponse* getData(std::string path) override;
  private:
     void doConnect(std::string path);

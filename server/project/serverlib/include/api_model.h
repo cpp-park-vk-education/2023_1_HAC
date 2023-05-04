@@ -21,7 +21,6 @@ using ptrToAPIModel = IAPIModelRequest*;
 class IAPIModelRequest {
  public:
     virtual IHTTPResponse* getData(IHTTPRequest* req) = 0;
-    //virtual ~IAPIModelRequest(){};
 };
 
 class APIModelelRequest : public IAPIModelRequest{

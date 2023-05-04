@@ -1,9 +1,8 @@
 // #include <iostream>
- #include "server.h"
+#include "server.h"
 // #include "listener.h"
 // // #include <boost/config.hpp>
 
-using prtToHendler = std::unique_ptr<handlers::IHandler>
 
 Server::Config parseConfigFromFile(const std::string& path_to_config_file) {
     Server::Config config;

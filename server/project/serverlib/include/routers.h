@@ -23,7 +23,5 @@ class RouterAdapter : public IRouterAdapter {
 
  private:
 
-   IHendler* router;
-}
-
-  std::map<string, *IHandler> handlers;
+   handlers::IHandler* router;
+};

@@ -6,12 +6,12 @@
 
 namespace handlers {
 
-using ptrToPredictController = *controllers::IPredictController;
-using ptrToShowPlotController = *controllers::IShowPlotController;
-using ptrToRegisterController = *controllers::RegisterController;
-using ptrToAuthorizeController = *controllers::AuthorizeController;
-using ptrToModelController = *controllers::IModelController;
-using ptrToUpdateDataController = *controllers::IUpdateDataController;
+using ptrToPredictController = controllers::IPredictController*;
+using ptrToShowPlotController = controllers::IShowPlotController*;
+using ptrToRegisterController = controllers::IRegisterController*;
+using ptrToAuthorizeController = controllers::IAuthorizeController*;
+using ptrToModelController = controllers::IModelController*;
+using ptrToUpdateDataController = controllers::IUpdateDataController*;
 
 class PredictHandler : public IHandler {
  public:

@@ -19,7 +19,7 @@ class IHTTPRequest{
  public:
     virtual void getURL() = 0;  
     virtual std::map<std::string, std::string> getHeaders() = 0;
-    virtual std::vector<char> getBoby();
+    virtual std::vector<char> getBoby() = 0;
 };
 
 class HTTPResponseToBoostAdapter : public IHTTPResponse{

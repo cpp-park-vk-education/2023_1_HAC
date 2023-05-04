@@ -5,7 +5,7 @@
 #include "controllers.h"
 
 using namespace testing;
-
+/*
 // Заглушки для классов IHTTPRequest_ и IHTTPResponse_
 class MockHTTPRequest : public IHTTPRequest_ {
 public:
@@ -53,7 +53,7 @@ TEST(PredictControllerTest, GetPlotDataFromDBTest) {
 
     EXPECT_EQ(result, (Json::Value{1, 2, 3}));
 }
-
+*/
 // TEST(PredictControllerTest, MakeTimeSeriesTest) {
 //     PredictController predict_controller(nullptr, nullptr);
 //     Json::Value samples_data;

@@ -13,6 +13,10 @@ class IHTTPResponse{
     virtual void setStatus(int status_code) = 0;
     virtual void setHeader(std::string header, std::string value) = 0;
     virtual void setBody(std::vector<char> bytes) = 0;
+
+    virtual std::string getURL() = 0;  
+    virtual std::map<std::string, std::string> getHeaders() = 0;
+    virtual std::vector<char> getBoby() = 0;
 };
 
 class IHTTPRequest{
@@ -30,6 +34,10 @@ class HTTPResponseToBoostAdapter : public IHTTPResponse{
     void setStatus(int status_code) override;
     void setHeader(std::string header, std::string value) override;
     void setBody(std::vector<char> bytes) override;
+
+    std::string getURL() override;
+    std::map<std::string, std::string> getHeaders() override;
+    std::vector<char> getBoby() override;
 
  private:
     httpResponse response;

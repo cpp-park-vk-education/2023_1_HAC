@@ -3,10 +3,6 @@
 #include <string>
 #include <chrono>
 
-
-struct DBRequestProtocol;
-struct DBResponseProtocol;
-
 namespace handlers {
 
 using time_ = std::chrono::time_point<std::chrono::system_clock>;

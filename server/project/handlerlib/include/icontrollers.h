@@ -7,9 +7,6 @@
 #include <string>
 #include <memory>
 
-
-#include <string>
-using DataDBProtocol = std::string;
 using hash_ = std::string;
 
 namespace controllers {
@@ -25,8 +22,8 @@ class IPredictController {
  public:
     virtual void makePredict(IHTTPRequest_ request, IHTTPResponse_ response) = 0;
  protected:
-    virtual DBRequestProtocol& parseInputHttpRequest(const IHTTPRequest_ request) = 0;
-    virtual Json::Value& getPlotDataFromDB(const DBRequestProtocol& data_protocol) = 0;
+    virtual Json::Value parseInputHttpRequest(const IHTTPRequest_ request) = 0;
+    virtual Json::Value getPlotDataFromDB(const Json::Value& data_protocol) = 0;
     virtual TimeSeriesPredicts& makeTimeSeries(const Json::Value& samples_data, size_t window_size) = 0;
     virtual IHTTPResponse_ parseModelResponse(const IHTTPResponse_ request) = 0;
 };
@@ -44,8 +41,8 @@ class IShowPlotController {
     virtual IHTTPResponse_ createPlotData(const IHTTPRequest_ request) = 0;
 
  protected:
-    virtual DBRequestProtocol& parseInputHttpRequest(const IHTTPRequest_ request) = 0;
-    virtual Json::Value& getPlotDataFromDB(const DBRequestProtocol& data_protocol) = 0;
+    virtual Json::Value parseInputHttpRequest(const IHTTPRequest_ request) = 0;
+    virtual Json::Value getPlotDataFromDB(const Json::Value& data_protocol) = 0;
 };
 
 
@@ -53,9 +50,9 @@ class IRegisterController {
  public:
     virtual IHTTPResponse_ registration(const IHTTPRequest_ request) = 0;
  protected:
-    virtual DBRequestProtocol& parseInputHttpRequest(const IHTTPRequest_ request) = 0;
+    virtual Json::Value parseInputHttpRequest(const IHTTPRequest_ request) = 0;
     virtual hash_ hashPassword(const std::string& password) = 0;
-    virtual bool postDataRegistrDB(const DBRequestProtocol& data_protocol) = 0; 
+    virtual bool postDataRegistrDB(const Json::Value& data_protocol) = 0; 
 
 };
 
@@ -64,9 +61,9 @@ class IAuthorizeController {
  public:
     virtual IHTTPResponse_ authorization(const IHTTPRequest_ request) = 0;
  protected:
-    virtual DBRequestProtocol& parseInputHttpRequest(const IHTTPRequest_ request) = 0;
+    virtual Json::Value parseInputHttpRequest(const IHTTPRequest_ request) = 0;
     virtual hash_ hashPassword(const std::string& password) = 0;
-    virtual bool getCheckAuthorData(const DBRequestProtocol& data_protocol) = 0; 
+    virtual bool getCheckAuthorData(const Json::Value& data_protocol) = 0; 
 };
 
 

@@ -4,8 +4,9 @@
 #include "api_model.h"
 #include "api_stock.h"
 #include "config_handler.h"
+#include "dbcontroller.hpp"
 
-using ptrToDBController = DataDBProtocol*;
+using ptrToDBController = dbcontroller::IDataBaseController*;
 using ptrToModelController = controllers::IModelController*;
 using ptrToApiStock = IAPIStockRequest*;
 using ptrToAPIModel = IAPIModelRequest*;
@@ -19,8 +20,8 @@ class PredictController : public IPredictController {
     void makePredict(IHTTPRequest_ request, IHTTPResponse_ response) override;
 
  private:
-    DBRequestProtocol& parseInputHttpRequest(const IHTTPRequest_ request) override;
-    Json::Value& getPlotDataFromDB(const DBRequestProtocol& data_protocol) override;
+    Json::Value parseInputHttpRequest(const IHTTPRequest_ request) override;
+    Json::Value getPlotDataFromDB(const Json::Value& data_protocol) override;
     TimeSeriesPredicts& makeTimeSeries(const Json::Value& samples_data, size_t window_size) override;
     IHTTPResponse_ parseModelResponse(const IHTTPResponse_ request) override;   
 
@@ -48,8 +49,8 @@ class ShowPlotController : public IShowPlotController {
     IHTTPResponse_ createPlotData(IHTTPRequest_ request) override;
 
  private:
-    DBRequestProtocol& parseInputHttpRequest(const IHTTPRequest_ request) override;
-    Json::Value& getPlotDataFromDB(const DBRequestProtocol& data_protocol) override;
+    Json::Value parseInputHttpRequest(const IHTTPRequest_ request) override;
+    Json::Value getPlotDataFromDB(const Json::Value& data_protocol) override;
 
     ptrToDBController db_controller_;
 };
@@ -62,9 +63,9 @@ class RegisterController : public IRegisterController {
     IHTTPResponse_ registration(const IHTTPRequest_ request) override;
  
  private:
-    DBRequestProtocol& parseInputHttpRequest(const IHTTPRequest_ request) override;
+    Json::Value parseInputHttpRequest(const IHTTPRequest_ request) override;
     hash_ hashPassword(const std::string& password) override;
-    bool postDataRegistrDB(const DBRequestProtocol& data_protocol) override;
+    bool postDataRegistrDB(const Json::Value& data_protocol) override;
 
     ptrToDBController db_controller_;
 
@@ -78,9 +79,9 @@ class AuthorizeController : public IAuthorizeController {
     IHTTPResponse_ authorization(const IHTTPRequest_ request) override;
     
  private:
-    DBRequestProtocol& parseInputHttpRequest(const IHTTPRequest_ request) override;
+    Json::Value parseInputHttpRequest(const IHTTPRequest_ request) override;
     hash_ hashPassword(const std::string& password) override;
-    bool getCheckAuthorData(const DBRequestProtocol& data_protocol) override; 
+    bool getCheckAuthorData(const Json::Value& data_protocol) override; 
 
     ptrToDBController db_controller_;
 

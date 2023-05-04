@@ -21,6 +21,8 @@ ADD_EXECUTABLE(
 )
 TARGET_LINK_LIBRARIES(tests_server ${GTEST_BOTH_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT} ${HANDLER_INCLUDE_DIRS} ${SERVERLIB_INCLUDE_DIRS})
 
+TARGET_LINK_LIBRARIES(tests_server ${DB_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT} ${GTEST_BOTH_LIBRARIES} GTest::gtest_main GTest::gmock_main  )
+
 SET(memcheck_command)
 
 IF (WITH_MEMCHECK)
@@ -33,6 +35,6 @@ ENDIF()
 SET(TEST_COMMAND ${memcheck_command} ${CMAKE_BINARY_DIR}/project/serverlib/tests/tests_server)
 
 ADD_TEST(
-        NAME HandlerTest
+        NAME NetTest
         COMMAND ${TEST_COMMAND}
 )

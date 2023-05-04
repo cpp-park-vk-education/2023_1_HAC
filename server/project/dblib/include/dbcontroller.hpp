@@ -1,6 +1,7 @@
 #pragma once // NO_LINT
 #include <iostream>
 #include <memory>
+#include <jsoncpp/json/json.h>
 #include "postgresserver.hpp"
 #include "repositories.hpp"
 #include "data.hpp"
@@ -22,7 +23,7 @@ enum TypeData {
 };
 
 namespace dbcontroller {
-    class IDataBaseController {
+    class  IDataBaseController {
     public:
         virtual Json::Value DataRequest(const Json::Value& request) = 0;
         

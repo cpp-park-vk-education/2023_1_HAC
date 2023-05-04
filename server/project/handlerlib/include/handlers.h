@@ -15,7 +15,7 @@ using ptrToUpdateDataController = controllers::IUpdateDataController*;
 
 class PredictHandler : public IHandler {
  public:
-    explicit PredictHandler(ptrToUpdateDataController controller);
+    explicit PredictHandler(ptrToPredictController controller);
     void handle(IHTTPRequest_ request, IHTTPResponse_ response) override;
  private:
     ptrToPredictController controller_;

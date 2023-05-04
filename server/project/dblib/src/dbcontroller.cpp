@@ -15,7 +15,7 @@ DataBaseController::DataBaseController(const std::shared_ptr<IClientRepository>&
 {
 }
 
-Json::Value DataRequest(const Json::Value& request) {
+Json::Value DataBaseController::DataRequest(const Json::Value& request) {
     std::string json_string = "{\"test\": 1}";
     Json::Value json;
     Json::Reader reader;

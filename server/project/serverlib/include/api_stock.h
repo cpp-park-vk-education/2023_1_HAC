@@ -16,7 +16,14 @@ using tcp = boost::asio::ip::tcp;       // from <boost/asio/ip/tcp.hpp>
 namespace ssl = boost::asio::ssl;       // from <boost/asio/ssl.hpp>
 namespace http = boost::beast::http;    // from <boost/beast/http.hpp>
 
-class IAPIStockRequest{
+
+namespace api {
+
+class IAPIStockRequest;
+using ptrToAPIStock = IAPIStockRequest*;
+
+
+class IAPIStockRequest {
  public:
     virtual IHTTPResponse getData(std::string path) = 0; 
 };
@@ -29,3 +36,6 @@ class APIStockRequest : public IAPIStockRequest{
     void doConnect(std::string path);
     IHTTPResponse onConnect(ssl::stream<tcp::socket> stream);
 };
+
+} // namespace api_stock 
+

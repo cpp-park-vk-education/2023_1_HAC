@@ -2,9 +2,8 @@
 
 #include "http_protocol.h"
 
-
-using IHTTPRequest_ = *IHTTPRequest;
-using IHTTPResponse_ = *IHTTPResponse;
+using IHTTPRequest_ = IHTTPRequest*;
+using IHTTPResponse_ = IHTTPResponse*;
 
 
 namespace handlers {

@@ -14,6 +14,8 @@ public:
             ptr_to_settings_handler handler_user_set_ptr) = 0;
     virtual void showErrorMessage() = 0;
     virtual void createErrorMessage(const Error& error_message) = 0;
+    virtual std::string getOldPassword() = 0;
+    virtual std::string getNewPassword() = 0;
 };
 
 #endif // USERSETTINGSWINDOW_INTERFACE_H

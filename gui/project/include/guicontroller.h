@@ -56,8 +56,9 @@ public:
     void openAuthorizationWindow() override {};
     void openRegistrationWindow() override {};
     void openUserSettingsWindow() override {};
-    //void initialize() override {};
-    void initialize() {};
+    virtual std::string getUser() override {};
+    virtual std::string getUrl() override {};
+    virtual void setUser(const std::string user) override {};
 
 private:
     Ui::GUIController *ui;

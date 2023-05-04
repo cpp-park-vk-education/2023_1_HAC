@@ -4,14 +4,15 @@
 #include "../include/mainwindow_network_interface.h"
 
 class NetworkMainWindow : public INetworkMainWindow {
-    void setMainHandler(ptr_to_main_handler handler_main_ptr) override {};
-    void setMainNetwork(ptr_to_inetwork net_ptr) override {};
-    void getPlotData(const MainData& plot_data) override {};
-    void getPredictData(const MainData& plot_data) override {};
+public:
+    void setMainHandler(ptr_to_main_handler handler_main_ptr) override {}
+    void setMainNetwork(ptr_to_inetwork net_ptr) override {}
+    void getPlotData(const MainData& plot_data) override {}
+    void getPredictData(const MainData& plot_data) override {}
     void onGetPredictData(const std::istream& network_output,
-                          const Error& error_state) override {};
+                          const Error& error_state) override {}
     void onGetPlotData(const std::istream& network_output,
-                       const Error& error_state) override {};
+                       const Error& error_state) override {}
 private:
     ptr_to_inetwork network_ptr;
     ptr_to_main_handler main_handler_ptr;

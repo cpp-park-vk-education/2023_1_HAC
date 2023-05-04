@@ -29,6 +29,9 @@ public:
     virtual void passToMain() = 0;
     virtual void onbtnConfirmEditClicked(const std::string& old_password,
                                          const std::string& new_password) = 0;
+    virtual std::string getUser() = 0;
+    virtual std::string getUrl() = 0;
+    virtual void setUrl(const std::string url) = 0;
 };
 
 

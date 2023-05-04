@@ -6,6 +6,7 @@
 //#include "../include/registrationwindow_network_interface.h"
 
 class UseCaseRegistrationWindow : public IHandlerRegistrationWindow {
+public:
     ~UseCaseRegistrationWindow() {};
     void setWindowManager(ptr_to_iwindow_manager wind_manager_ptr) override {};
     void setRegistrationWindow(ptr_to_iregistration_window reg_window_ptr) override {};

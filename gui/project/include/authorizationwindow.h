@@ -17,11 +17,11 @@ public:
     explicit AuthorizationWindow(QWidget *parent = nullptr);
     ~AuthorizationWindow();
     void setAuthorizationWindowHandler(
-            ptr_to_authorization_handler auth_handler_ptr) override {};
-    void showErrorMessage() override {};
-    void createErrorMessage(const Error& error_message) override {};
-    std::string getLogin() override {return {};};
-    std::string getPassword() override {return {};};
+            ptr_to_authorization_handler auth_handler_ptr) override {}
+    void showErrorMessage() override {}
+    void createErrorMessage(const Error& error_message) override {}
+    std::string getLogin() override {return {};}
+    std::string getPassword() override {return {};}
 
 private:
     Ui::AuthorizationWindow *ui;

@@ -16,11 +16,11 @@ class MainWindow : public QWidget, public IMainWindow {
 public:
     explicit MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
-    void setMainWindowHandler(ptr_to_main_handler handler_main_ptr) override {};
-    void drawPlot() override {};
-    void createPlot(const std::istream& network_output) override {};
-    void showErrorMessage() override {};
-    void createErrorMessage(const Error& error_message) override {};
+    void setMainWindowHandler(ptr_to_main_handler handler_main_ptr) override {}
+    void drawPlot() override {}
+    void createPlot(const std::istream& network_output) override {}
+    void showErrorMessage() override {}
+    void createErrorMessage(const Error& error_message) override {}
 
 private:
     Ui::MainWindow *ui;

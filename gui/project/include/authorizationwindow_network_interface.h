@@ -23,8 +23,8 @@ public:
             ptr_to_authorization_handler auth_handler_ptr) = 0;
     virtual void setAuthorizationNetwork(ptr_to_inetwork net_ptr) = 0;
     virtual void getAuthorization(const AuthInput& auth_params) = 0;
-    virtual  void onGetAuthorizationResponse(const Error& error_state)
-    = 0;
+    virtual  void onGetAuthorizationResponse(const Error& error_state)= 0;
+    virtual void setUrl(const std::string& url) = 0;
 };
 
 #endif // AUTHORIZATIONWINDOW_iNTERFACE_NETWORK_H

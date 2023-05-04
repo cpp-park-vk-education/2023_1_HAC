@@ -24,14 +24,15 @@ public:
             ptr_to_isettings_window settings_wind_ptr) = 0;
     virtual void setUserSettingsNetwork(
             ptr_to_isettings_network settings_net_ptr) = 0;
-    virtual void btnConfirmHandler(std::string confirm_line) = 0;
+    virtual ptr_to_isettings_window getUserSettingsWindow() = 0;
     virtual void sendError(const Error& error_message) = 0;
     virtual void passToMain() = 0;
-    virtual void onbtnConfirmEditClicked(const std::string& old_password,
+    virtual void ConfirmHandler(const std::string& old_password,
                                          const std::string& new_password) = 0;
     virtual std::string getUser() = 0;
     virtual std::string getUrl() = 0;
-    virtual void setUrl(const std::string url) = 0;
+    virtual void setUrl(const std::string& url) = 0;
+    virtual void setUser(const std::string& user) = 0;
 };
 
 

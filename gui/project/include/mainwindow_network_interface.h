@@ -18,10 +18,11 @@ public:
     virtual void setMainNetwork(ptr_to_inetwork net_ptr) = 0;
     virtual void getPlotData(const MainData& plot_data) = 0;
     virtual void getPredictData(const MainData& plot_data) = 0;
-    virtual void onGetPredictData(const std::istream& network_output,
+    virtual void onGetPredictData(std::istream& network_output,
                                   const Error& error_state) = 0;
-    virtual void onGetPlotData(const std::istream& network_output,
+    virtual void onGetPlotData(std::istream& network_output,
                                const Error& error_state) = 0;
+    virtual void setUrl(const std::string& url) = 0;
 };
 
 #endif // MAINWINDOW_NETWORK_INTERFACE_H

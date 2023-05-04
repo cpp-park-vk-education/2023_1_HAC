@@ -9,10 +9,11 @@ public:
     void setMainNetwork(ptr_to_inetwork net_ptr) override {}
     void getPlotData(const MainData& plot_data) override {}
     void getPredictData(const MainData& plot_data) override {}
-    void onGetPredictData(const std::istream& network_output,
+    void onGetPredictData(std::istream& network_output,
                           const Error& error_state) override {}
-    void onGetPlotData(const std::istream& network_output,
+    void onGetPlotData(std::istream& network_output,
                        const Error& error_state) override {}
+    void setUrl(const std::string& url) override {}
 private:
     ptr_to_inetwork network_ptr;
     ptr_to_main_handler main_handler_ptr;

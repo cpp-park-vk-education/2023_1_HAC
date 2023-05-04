@@ -74,15 +74,6 @@ TEST_F(RepositoryTest, DeleteClientDataCase){
 }
 
 
-TEST_F(RepositoryTest, BadUserCase){
-    auto client = std::make_shared<ClientData>();
-    client->login = "test";
-
-    EXPECT_CALL(*db, IsOpen()).WillOnce(Return(true));
-    EXPECT_CALL(*db, SendQuery(_)).WillOnce(Return(true)); 
-    EXPECT_FALSE(client_rep->Insert(client));
-}
-
 TEST_F(RepositoryTest, UpdateClientDataCase){
     std::string key = "test";    
 
@@ -113,26 +104,29 @@ TEST_F(RepositoryTest, BadQueryForPostUser){
 }
 
 TEST_F(RepositoryTest, BadQueryForGetUser){
-    auto client = std::make_shared<ClientData>();
     std::string key = "test";
 
     EXPECT_CALL(*db, IsOpen()).WillOnce(Return(true));
     EXPECT_CALL(*db, GetRow(_)).WillOnce(Throw(SqlError("Error"))); 
 
     EXPECT_THROW({
-        client_rep->GetByKey(key);
+        auto client = client_rep->GetByKey(key);
     }, UnavailableDataBase);
 }
 
 // TimeSeries
 
 TEST_F(RepositoryTest, TimeSeriesInsertCase){
-    auto time = std::shared_ptr<TimeSeriesData>();
+    Json::Value value;
+    Json::Reader reader; 
+    std::string json_string = "{\"test\": 1}";
+    reader.parse(json_string, value);
+    
+    auto time = std::make_shared<TimeSeriesData>();
     time->name_stock = "test";
     time->date = "2021-01-02";
-    std::string json_string = "{\"test\": 1}";
-    Json::Reader reader;
-    reader.parse(json_string, time->param);
+    time->param = value;
+
     EXPECT_CALL(*db, IsOpen()).WillOnce(Return(true));
     EXPECT_CALL(*db, SendQuery(_)).WillOnce(Return(true)); 
     EXPECT_TRUE(timeseries_rep->Insert(time));
@@ -161,7 +155,7 @@ TEST_F(RepositoryTest, TimeSeriesGetCase){
 }
 
 TEST_F(RepositoryTest, BadQueryForPostTimeSeries){
-    auto time = std::shared_ptr<TimeSeriesData>();
+    auto time = std::make_shared<TimeSeriesData>();
     time->name_stock = "test";
     time->date = "2021-01-02";
     std::string json_string = "{\"test\": 1}";

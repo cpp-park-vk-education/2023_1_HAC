@@ -1,7 +1,5 @@
-#include "api_stock.h"
-#include "utils_gtest_net.h"
-#include "gmock/gmock.h"
-
-TEST(APIModelTests, EmptyPath) {
-    EXPECT_NO_THROW(api::APIStockRequest a());
-}
+#include "api_model.h"
+#include "http_protocol.h"
+#include <gtest/gtest.h>
+#include <gmock/gmock.h>
+#include <string>

@@ -1,6 +1,7 @@
 #pragma once // NO_LINT
 #include <iostream>
 #include <memory>
+#include <jsoncpp/json/json.h>
 #include "postgresserver.hpp"
 #include "repositories.hpp"
 #include "data.hpp"

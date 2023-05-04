@@ -19,10 +19,11 @@ public:
     explicit UserSettingsWindow(QWidget *parent = nullptr);
     ~UserSettingsWindow();
     void setUserSettingsWindowHandler(
-            ptr_to_settings_handler set_handler_ptr) override
-    {};
-    void showErrorMessage() override {};
-    void createErrorMessage(const Error& error_message) override {};
+            ptr_to_settings_handler set_handler_ptr) override {}
+    void showErrorMessage() override {}
+    void createErrorMessage(const Error& error_message) override {}
+    std::string getOldPassword() override {return {};}
+    std::string getNewPassword() override {return {};}
 
 private:
     Ui::UserSettingsWindow *ui;

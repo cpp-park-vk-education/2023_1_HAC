@@ -7,6 +7,7 @@
 #include "../include/usersettingswindow_network_interface.h"
 
 class NetworkUserSettingsWindow : public INetworkUserSettingsWindow {
+public:
     void setUserSettingsHandler(ptr_to_settings_handler set_handler_ptr) override {};
     void setUserSettingsNetwork(ptr_to_inetwork net_ptr) override {};
     void getUserSettings(const ConfirmEdit& confirm_passwords) override {};

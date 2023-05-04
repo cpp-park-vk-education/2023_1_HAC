@@ -8,8 +8,9 @@ public:
     virtual void openAuthorizationWindow() = 0;
     virtual void openRegistrationWindow() = 0;
     virtual void openUserSettingsWindow() = 0;
-    //virtual void setUser(const std::string& user_name) = 0;
-    //virtual void initialize() = 0;
+    virtual std::string getUser() = 0;
+    virtual std::string getUrl() = 0;
+    virtual void setUser(const std::string user) = 0;
 };
 
 #endif // GUICONTROLLER_INTERFACE_H

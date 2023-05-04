@@ -13,6 +13,7 @@ class IONetworkInterface;
 using ptr_to_inetwork = std::shared_ptr<IONetworkInterface>;
 
 class INetworkMainWindow {
+public:
     virtual void setMainHandler(ptr_to_main_handler handler_main_ptr) = 0;
     virtual void setMainNetwork(ptr_to_inetwork net_ptr) = 0;
     virtual void getPlotData(const MainData& plot_data) = 0;

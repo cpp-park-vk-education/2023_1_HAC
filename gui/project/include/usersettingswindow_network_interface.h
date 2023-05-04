@@ -18,6 +18,7 @@ class IONetworkInterface;
 using ptr_to_inetwork = std::shared_ptr<IONetworkInterface>;
 
 class INetworkUserSettingsWindow {
+public:
     virtual void setUserSettingsHandler(ptr_to_settings_handler set_handler_ptr) = 0;
     virtual void setUserSettingsNetwork(ptr_to_inetwork net_ptr) = 0;
     virtual void getUserSettings(const ConfirmEdit& confirm_passwords) = 0;

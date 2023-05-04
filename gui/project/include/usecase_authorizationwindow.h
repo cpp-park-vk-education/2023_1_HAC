@@ -18,6 +18,9 @@ public:
     override {}
     void passToMain() override {}
     void sendError(const Error& error_message) override {}
+    void setUser(const std::string user) override {};
+    std::string getUrl() override {};
+    void setUrl(const std::string url) override {};
 private:
     ptr_to_iauthorization_network authorization_network_ptr;
     ptr_to_iauthorization_window authorization_window_ptr;

@@ -8,10 +8,11 @@
 
 class NetworkAuthorizationWindow : public INetworkAuthorizationWindow {
 public:
-    void setAuthorizationHandler(ptr_to_authorization_handler auth_handler_ptr) override {};
-    void setAuthorizationNetwork(ptr_to_inetwork net_ptr) override {};
-    void getAuthorization(const AuthInput& auth_params) override {};
-    void onGetAuthorizationResponse(const Error& error_state) override {};
+    void setAuthorizationHandler(ptr_to_authorization_handler auth_handler_ptr)
+    override {}
+    void setAuthorizationNetwork(ptr_to_inetwork net_ptr) override {}
+    void getAuthorization(const AuthInput& auth_params) override {}
+    void onGetAuthorizationResponse(const Error& error_state) override {}
 private:
     ptr_to_inetwork network_ptr;
     ptr_to_authorization_handler authorization_handler_ptr;

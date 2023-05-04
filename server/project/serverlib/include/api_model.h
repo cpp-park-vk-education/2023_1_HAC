@@ -20,16 +20,16 @@ using ptrToAPIModel = IAPIModelRequest*;
 
 class IAPIModelRequest {
  public:
-    virtual IHTTPResponse getData(IHTTPRequest req) = 0;
+    virtual IHTTPResponse* getData(IHTTPRequest* req) = 0;
 };
 
 class APIModelelRequest : public IAPIModelRequest{
  public:
     APIModelelRequest();
-    IHTTPResponse getData(IHTTPRequest req) override;
+    IHTTPResponse* getData(IHTTPRequest* req) override;
  private:
     void doConnect(std::string path);
-    IHTTPResponse onConnect(ssl::stream<tcp::socket> stream);   
+    IHTTPResponse* onConnect(ssl::stream<tcp::socket> stream);   
 };
 
 } // namespace api_model

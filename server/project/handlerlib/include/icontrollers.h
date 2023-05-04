@@ -1,5 +1,5 @@
 #pragma once // NO_LINT
-
+#include "ihandler.h"
 #include <jsoncpp/json/value.h>
 #include "config_handler.h"
 #include "http_protocol.h"

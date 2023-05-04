@@ -25,16 +25,16 @@ using ptrToAPIStock = IAPIStockRequest*;
 
 class IAPIStockRequest {
  public:
-    virtual IHTTPResponse getData(std::string path) = 0; 
+    virtual IHTTPResponse* getData(std::string path) = 0; 
 };
 
 class APIStockRequest : public IAPIStockRequest{
  public:
     APIStockRequest();
-    IHTTPResponse getData(std::string path) override;
+    IHTTPResponse* getData(std::string path) override;
  private:
     void doConnect(std::string path);
-    IHTTPResponse onConnect(ssl::stream<tcp::socket> stream);
+    IHTTPResponse* onConnect(ssl::stream<tcp::socket> stream);
 };
 
 } // namespace api_stock 

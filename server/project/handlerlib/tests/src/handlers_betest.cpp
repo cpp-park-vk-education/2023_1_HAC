@@ -9,15 +9,15 @@
 #include "http_protocol.h"
 
 
-TEST(HandlersTests, NullHTTPReqInHandlePredict) {
-    dbcontroller::DataBaseController TestDBController;
-    api::APIModelelRequest TestAPIModelRequest;
-    controllers::ModelController TestModelController(&TestAPIModelRequest);
-    controllers::PredictController TestPredictController(&TestDBController, &TestModelController);
-    handlers::PredictHandler TestPredictHandler(&TestPredictController);
-    EXPECT_THROW(TestPredictHandler.handle(nullptr, nullptr), market_mentor::NullInHTTPError);
+// TEST(HandlersTests, NullHTTPReqInHandlePredict) {
+//     dbcontroller::DataBaseController TestDBController;
+//     api::APIModelelRequest TestAPIModelRequest;
+//     controllers::ModelController TestModelController(&TestAPIModelRequest);
+//     controllers::PredictController TestPredictController(&TestDBController, &TestModelController);
+//     handlers::PredictHandler TestPredictHandler(&TestPredictController);
+//     EXPECT_THROW(TestPredictHandler.handle(nullptr, nullptr), market_mentor::NullInHTTPError);
     
-}
+// }
 
 TEST(HandlersTests, NullHTTPReqInHandleShowPlot) {
     

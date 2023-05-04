@@ -2,6 +2,7 @@
 #include <iostream>
 #include <memory>
 #include <pqxx/pqxx>
+#include <jsoncpp/json/json.h>
 #include "exception.hpp"
 
 namespace database {
@@ -11,8 +12,8 @@ namespace database {
         virtual ~IDataBase() {}; 
         virtual bool IsOpen() = 0;
         virtual bool SendQuery(const std::string& query) = 0;
-        virtual std::vector<std::vector<std::string>> GetData(const std::string& query) = 0;
-        virtual std::vector<std::string> GetRow(const std::string& query) = 0;
+        virtual Json::Value GetData(const std::string& query) = 0;
+        virtual Json::Value GetRow(const std::string& query) = 0;
     };
 
 
@@ -23,8 +24,8 @@ namespace database {
             const std::string&  db_name, const std::string&  user, const std::string&  pass);
 
         bool IsOpen() override;
-        std::vector<std::vector<std::string>> GetData(const std::string& query) override;
-        std::vector<std::string> GetRow(const std::string& query) override;
+        Json::Value GetData(const std::string& query) override;
+        Json::Value GetRow(const std::string& query) override;
         bool SendQuery(const std::string& query) override;
 
     private:

@@ -17,14 +17,20 @@ bool PostgresServer::IsOpen() {
     return true;
 }
 
-std::vector<std::vector<std::string>> PostgresServer::GetData(const std::string& query) {
-    std::vector<std::vector<std::string>> result;
-    return result;
+Json::Value PostgresServer::GetData(const std::string& query) {
+    std::string json_string = "{\"test\": 1}";
+    Json::Value json;
+    Json::Reader reader;
+    reader.parse(json_string, json);
+    return json;
 }
 
-std::vector<std::string> PostgresServer::GetRow(const std::string& query) {
-    std::vector<std::string> buffer;    
-    return buffer;
+Json::Value PostgresServer::GetRow(const std::string& query) {
+    std::string json_string = "{\"test\": 1}";
+    Json::Value json;
+    Json::Reader reader;
+    reader.parse(json_string, json);
+    return json;
 }
 
 bool PostgresServer::SendQuery(const std::string& query) {

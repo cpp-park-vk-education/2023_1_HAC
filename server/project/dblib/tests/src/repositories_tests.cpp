@@ -14,8 +14,8 @@ public:
     ~DatabaseMock() = default;
     MOCK_METHOD(bool, IsOpen, (),(override));
     MOCK_METHOD(bool, SendQuery, (const std::string& query),(override));
-    MOCK_METHOD(std::vector<std::vector<std::string>>, GetData, (const std::string& query),(override));
-    MOCK_METHOD(std::vector<std::string>, GetRow, (const std::string& query),(override));
+    MOCK_METHOD(Json::Value, GetData, (const std::string& query),(override));
+    MOCK_METHOD(Json::Value, GetRow, (const std::string& query),(override));
 };
 
 class RepositoryTest: public ::testing::Test {
@@ -53,10 +53,11 @@ TEST_F(RepositoryTest, ClientGetCase){
     client->email = "test@email.com";
     client->hash_password = "pass";
 
-    std::vector<std::string> row;
-    row.push_back(client->login);
-    row.push_back(client->email);
-    row.push_back(client->hash_password);
+    Json::Value row;
+    row["login"] = client->login;
+    row["email"] = client->email;
+    row["hash_password"] = client->hash_password;
+
 
     EXPECT_CALL(*db, IsOpen()).WillOnce(Return(true));
     EXPECT_CALL(*db, GetRow(_)).WillOnce(Return(row)); 
@@ -146,10 +147,10 @@ TEST_F(RepositoryTest, TimeSeriesGetCase){
     Json::Reader reader;
     reader.parse(json_string, time->param);
 
-    std::vector<std::string> row;
-    row.push_back(time->name_stock);
-    row.push_back(time->date);
-    row.push_back(json_string);
+    Json::Value row;
+    row["name_stock"] = time->name_stock;
+    row["date"] = time->name_stock;
+    row["param"] = time->param;
 
     size_t len_lags = 1;
 

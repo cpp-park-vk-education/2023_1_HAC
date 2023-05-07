@@ -4,7 +4,7 @@
 #include "utils_gtest_net.h"
 
 TEST(APIModelRequestTest, GetDataEmptyHTTP) {
-    api::APIModelelRequest apii;
+    api::APIModelRequest apii;
     HTTPRequestToBoostAdapter* req;
 
     auto response = apii.getData(req);

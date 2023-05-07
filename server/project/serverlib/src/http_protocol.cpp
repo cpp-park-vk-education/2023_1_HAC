@@ -15,6 +15,11 @@ HTTPRequestToBoostAdapter::HTTPRequestToBoostAdapter(std::string url,
                                         std::string headers, std::string body){};
 HTTPRequestToBoostAdapter::HTTPRequestToBoostAdapter(std::string url, 
                                         std::string headers, std::vector<char> body){};
+
+void HTTPRequestToBoostAdapter::setStatus(int status_code){};
+void HTTPRequestToBoostAdapter::setHeader(std::string header, std::string value){};
+void HTTPRequestToBoostAdapter::setBody(std::vector<char> bytes){};
 std::string HTTPRequestToBoostAdapter::getURL(){};
 std::map<std::string, std::string> HTTPRequestToBoostAdapter::getHeaders(){};
 std::vector<char> HTTPRequestToBoostAdapter::getBoby(){};
+void HTTPRequestToBoostAdapter::toIRequest(httpRequest){};

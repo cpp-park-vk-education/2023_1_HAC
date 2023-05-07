@@ -13,10 +13,12 @@ public:
     void setAuthorizationNetwork(ptr_to_inetwork net_ptr) override {}
     void getAuthorization(const AuthInput& auth_params) override {}
     void onGetAuthorizationResponse(const Error& error_state) override {}
+    void setUrl(const std::string& url) override {}
 private:
     ptr_to_inetwork network_ptr;
     ptr_to_authorization_handler authorization_handler_ptr;
     AuthInput auth_params_;
+    std::string url_;
 };
 
 #endif // AUTHORIZATIONWINDOW_NETWORK_H

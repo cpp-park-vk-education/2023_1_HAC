@@ -1,6 +1,5 @@
 #pragma once // NO_LINT
 #include <memory>
-#include "routers.h"
 #include <boost/beast/core.hpp>
 #include <boost/beast/http.hpp>
 #include <boost/beast/version.hpp>
@@ -8,6 +7,7 @@
 #include <boost/asio/strand.hpp>
 #include <boost/asio/ssl/error.hpp>
 #include <boost/config.hpp>
+#include "routers.h"
 
 namespace beast = boost::beast;         // from <boost/beast.hpp>
 namespace http = beast::http;           // from <boost/beast/http.hpp>

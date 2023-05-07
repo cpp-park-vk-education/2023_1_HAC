@@ -8,7 +8,7 @@ add_compile_options(-lssl -lcrypto)
 find_package(OpenSSL REQUIRED)
 include_directories(${OPENSSL_INCLUDE_DIR})
 
-SET(HANDLER_INCLUDE_DIRS "/home/serv/server/project/handlerlib/include")
+SET(HANDLER_INCLUDE_DIRS "/home/ml_cpp/server/project/handlerlib/include")
 SET(DB_INCLUDE_DIRS "../dblib/include")
 #SET(SERVERLIB_INCLUDE_DIRS "include")
 

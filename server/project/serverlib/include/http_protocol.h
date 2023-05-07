@@ -35,7 +35,7 @@ class HTTPResponseToBoostAdapter : public IHTTPResponse{
     httpResponse toBoost();
 
     void setStatus(int status_code) override;
-    void setHeader(std::string header, std::string value) override;
+    void setHeader(const std::string& header, const std::string& value) override;
     void setBody(std::vector<char> bytes) override;
 
     std::string getURL() override;

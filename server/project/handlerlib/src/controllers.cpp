@@ -13,7 +13,7 @@ void PredictController::makePredict(IHTTPRequest_ request, IHTTPResponse_ respon
 Json::Value PredictController::parseInputHttpRequest(const IHTTPRequest_ request) {
     // заглушка
 }
-Json::Value PredictController::getPlotDataFromDB(const Json::Value& data_protocol) {
+Json::Value PredictController::parsePlotDataFromDB(const Json::Value& data_protocol) {
     // заглушка
 }
 
@@ -47,9 +47,7 @@ IHTTPResponse_ ShowPlotController::createPlotData(IHTTPRequest_ request) {
 Json::Value ShowPlotController::parseInputHttpRequest(const IHTTPRequest_ request) {
     // заглушка
 }
-Json::Value ShowPlotController::getPlotDataFromDB(const Json::Value& data_protocol) {
-    // заглушка
-}
+
 
 RegisterController::RegisterController(const ptrToDBController db_controller)
     : db_controller_(db_controller) {}

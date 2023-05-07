@@ -3,6 +3,7 @@
 #include "ihandler.h"
 #include "icontrollers.h"
 #include <memory>
+#include <map>
 
 namespace handlers {
 
@@ -46,6 +47,17 @@ class AuthorizeHandler : public IHandler {
  private:
     ptrToAuthorizeController controller_; 
 };
+
+class Router : public IHandler {
+ public:
+   explicit Router(const std::map<std::string, IHandler*>& handlers);
+   void handle(IHTTPRequest_ request, IHTTPResponse_ response) override;
+
+ private:
+   std::map<std::string, IHandler*> handlers_;
+};
+
+
 
 
 } // namespace handlers 

@@ -11,7 +11,7 @@ using httpResponse = boost::beast::http::response<boost::beast::http::string_bod
 class IHTTPResponse{
  public:
     virtual void setStatus(int status_code) = 0;
-    virtual void setHeader(std::string header, std::string value) = 0;
+    virtual void setHeader(const std::string& header, const std::string& value) = 0;
     virtual void setBody(std::vector<char> bytes) = 0;
 };
 
@@ -28,7 +28,7 @@ class HTTPResponseToBoostAdapter : public IHTTPResponse{
     httpResponse toBoost();
 
     void setStatus(int status_code) override;
-    void setHeader(std::string header, std::string value) override;
+    void setHeader(const std::string& header, const std::string& value) override;
     void setBody(std::vector<char> bytes) override;
 
  private:

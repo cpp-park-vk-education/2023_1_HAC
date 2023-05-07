@@ -4,7 +4,7 @@ HTTPResponseToBoostAdapter::HTTPResponseToBoostAdapter(){};
 httpResponse HTTPResponseToBoostAdapter::toBoost(){};
 
 void HTTPResponseToBoostAdapter::setStatus(int status_code){};
-void HTTPResponseToBoostAdapter::setHeader(std::string header, std::string value){};
+void HTTPResponseToBoostAdapter::setHeader(const std::string& header, const std::string& value){};
 void HTTPResponseToBoostAdapter::setBody(std::vector<char> bytes){};
 
 HTTPRequestToBoostAdapter::HTTPRequestToBoostAdapter(){};

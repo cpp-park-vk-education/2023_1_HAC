@@ -22,7 +22,7 @@ class IListener {
 class Listener : public IListener{
  public:
     Listener() = delete;
-    Listener(net::io_context& ioc, tcp::endpoint endpoints, RouterAdapter* router);
+    Listener(net::io_context& ioc, tcp::endpoint endpoints, IRouterAdapter* router);
     void Run() override;
     
  private:

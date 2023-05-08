@@ -1,7 +1,7 @@
 #include "listener.h"
 
 Listener::Listener(net::io_context& ioc, 
-                   tcp::endpoint endpoints, RouterAdapter* router) 
+                   tcp::endpoint endpoints, IRouterAdapter* router) 
                    : ioc_(ioc),
                      acceptor_(net::make_strand(ioc)) {};
 

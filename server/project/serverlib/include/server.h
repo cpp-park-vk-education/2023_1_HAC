@@ -6,6 +6,8 @@
 #include <boost/asio/strand.hpp>
 #include <boost/asio/ssl.hpp>
 #include <boost/config.hpp>
+#include <stdexcept>
+#include <fstream>
 #include <memory>
 #include <vector>
 #include <thread>

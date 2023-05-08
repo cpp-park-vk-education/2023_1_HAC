@@ -3,7 +3,7 @@
 #include <boost/beast/http.hpp>
 
 #include "ihandler.h"
-#include "handlers.h"
+#include "http_protocol.h"
 
 class IRouterAdapter {
  public:
@@ -12,10 +12,10 @@ class IRouterAdapter {
 
 class RouterAdapter : public IRouterAdapter {
  public: 
-    RouterAdapter();
+    RouterAdapter(handlers::IHandler* router);
     void handle(httpRequest& req, httpResponse& resp) override;
 
  private:
 
-   handlers::IHandler* router;
+   handlers::IHandler* router_;
 };

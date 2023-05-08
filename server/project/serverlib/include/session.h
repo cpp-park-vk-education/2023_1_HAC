@@ -19,14 +19,14 @@ class Session {
     Session() = delete;
     Session(tcp::socket&& socket);
 
-    void setRouterAdapter(RouterAdapter* router_adapter);
+    void setRouterAdapter(IRouterAdapter* router_adapter);
     void run();
 
  private:
     beast::tcp_stream stream_;
     beast::flat_buffer buffer_;
     http::request<http::string_body> req_;
-    RouterAdapter* router_adapter;
+    IRouterAdapter* router_adapter;
     std::unique_ptr<IHTTPResponse> response;
     std::unique_ptr<IHTTPRequest> request;
 

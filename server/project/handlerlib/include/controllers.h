@@ -22,7 +22,7 @@ class PredictController : public IPredictController {
 
  private:
     Json::Value parseInputHttpRequest(const IHTTPRequest_ request) override;
-    Json::Value getPlotDataFromDB(const Json::Value& data_protocol) override;
+    Json::Value parsePlotDataFromDB(const Json::Value& data_protocol) override;
     TimeSeriesPredicts& makeTimeSeries(const Json::Value& samples_data, size_t window_size) override;
     IHTTPResponse_ parseModelResponse(const IHTTPResponse_ request) override;   
 
@@ -51,7 +51,7 @@ class ShowPlotController : public IShowPlotController {
 
  private:
     Json::Value parseInputHttpRequest(const IHTTPRequest_ request) override;
-    Json::Value getPlotDataFromDB(const Json::Value& data_protocol) override;
+  
 
     ptrToDBController db_controller_;
 };

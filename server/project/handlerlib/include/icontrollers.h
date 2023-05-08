@@ -23,7 +23,7 @@ class IPredictController {
     virtual void makePredict(IHTTPRequest_ request, IHTTPResponse_ response) = 0;
  protected:
     virtual Json::Value parseInputHttpRequest(const IHTTPRequest_ request) = 0;
-    virtual Json::Value getPlotDataFromDB(const Json::Value& data_protocol) = 0;
+    virtual Json::Value parsePlotDataFromDB(const Json::Value& data_protocol) = 0;
     virtual TimeSeriesPredicts& makeTimeSeries(const Json::Value& samples_data, size_t window_size) = 0;
     virtual IHTTPResponse_ parseModelResponse(const IHTTPResponse_ request) = 0;
 };
@@ -42,7 +42,6 @@ class IShowPlotController {
 
  protected:
     virtual Json::Value parseInputHttpRequest(const IHTTPRequest_ request) = 0;
-    virtual Json::Value getPlotDataFromDB(const Json::Value& data_protocol) = 0;
 };
 
 

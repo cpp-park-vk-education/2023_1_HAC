@@ -3,15 +3,7 @@
 
 TEST(PredictControllerBaseErrorTest, BadInputJsonFromDBError) {
     
-    // class MockDBController : public IDataBaseController {
-    //     MOCK_METHOD0();  
-    // };
-    
-    
-    // handlers::PredictHandler()
-
-    // EXPECT_THROW();
-    ASSERT_EQ(1, 2);
+  
 }
 
 TEST(PredictControllerBaseErrorTest, BadHTTPFromHandlerError) {

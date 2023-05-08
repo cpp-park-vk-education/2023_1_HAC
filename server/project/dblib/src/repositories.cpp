@@ -1,6 +1,7 @@
 #include "repositories.hpp"
 
 using namespace repository;
+using namespace database;
 
 ClientRepository::ClientRepository(): database_(nullptr){
 }

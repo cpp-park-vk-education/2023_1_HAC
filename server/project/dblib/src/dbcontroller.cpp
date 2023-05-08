@@ -2,7 +2,7 @@
 
 using namespace dbcontroller;
 using namespace repository;
-using namespace dbcontroller;
+using namespace database;
 
 
 DataBaseController::DataBaseController(): database_(new PostgresServer()), clien_rep_(new ClientRepository(database_)),

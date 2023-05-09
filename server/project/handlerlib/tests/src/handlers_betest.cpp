@@ -11,7 +11,7 @@
 
 TEST(HandlersTests, NullHTTPReqInHandlerPredict) {
     dbcontroller::DataBaseController db_ctrl;
-    api::APIModelelRequest api_model_request;
+    api::APIModelRequest api_model_request;
 
     controllers::ModelController model_ctrl(&api_model_request);
     
@@ -50,3 +50,19 @@ TEST(HandlersTests, NullHTTPReqInHandlerAuthorize) {
     EXPECT_THROW(auth_handler.handle(nullptr, nullptr), market_mentor::NullInHTTPError);
 }
 
+
+TEST(PredictHandlerTest, ConstructorThrowsOnNullController) {
+    EXPECT_THROW(handlers::PredictHandler{nullptr}, market_mentor::NullControllerInHandlerError);
+}
+
+TEST(ShowPlotHandlerTest, ConstructorThrowsOnNullController) {
+    EXPECT_THROW(handlers::ShowPlotHandler{nullptr}, market_mentor::NullControllerInHandlerError);
+}
+
+TEST(RegisterHandlerTest, ConstructorThrowsOnNullController) {
+    EXPECT_THROW(handlers::RegisterHandler{nullptr}, market_mentor::NullControllerInHandlerError);
+}
+
+TEST(AuthorizeHandlerTest, ConstructorThrowsOnNullController) {
+    EXPECT_THROW(handlers::AuthorizeHandler{nullptr}, market_mentor::NullControllerInHandlerError);
+}

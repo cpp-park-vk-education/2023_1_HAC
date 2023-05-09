@@ -23,18 +23,18 @@ enum TypeData {
 };
 
 namespace dbcontroller {
-    class  IDataBaseController {
+    class IDataBaseController {
     public:
         virtual Json::Value DataRequest(const Json::Value& request) = 0;
         
     protected:
         // TimeSeries
-        virtual bool TimeSeriesPost(const std::shared_ptr<TimeSeriesData>& data) = 0;
-        virtual std::shared_ptr<TimeSeriesData> TimeSeriesGet(const std::string& name_stock, const std::string& len_lags) = 0;
+        virtual Json::Value TimeSeriesPost(const Json::Value& data) = 0;
+        virtual Json::Value TimeSeriesGet(const std::string& name_stock, const std::string& len_lags) = 0;
         // Client
-        virtual bool ClientRequestPost(const std::shared_ptr<ClientData>& data) = 0;
-        virtual std::shared_ptr<ClientData> ClientRequestGet(const std::string& key) = 0;
-        virtual bool ClientRequestUpdate(const std::shared_ptr<ClientData> data) = 0;
+        virtual Json::Value ClientRequestPost(const Json::Value& data) = 0;
+        virtual Json::Value ClientRequestGet(const std::string& key) = 0;
+        virtual Json::Value ClientRequestUpdate(const Json::Value& data) = 0;
     };
 
 
@@ -48,18 +48,18 @@ namespace dbcontroller {
   
     private:
         // TimeSeries
-        bool TimeSeriesPost(const std::shared_ptr<TimeSeriesData>& data) override;
-        std::shared_ptr<TimeSeriesData> TimeSeriesGet(const std::string& name_stock, const std::string& len_lags) override;
+        Json::Value TimeSeriesPost(const Json::Value& data) override;
+        Json::Value TimeSeriesGet(const std::string& name_stock, const std::string& len_lags) override;
         // Client
-        bool ClientRequestPost(const std::shared_ptr<ClientData>& data) override;
-        std::shared_ptr<ClientData> ClientRequestGet(const std::string& key) override;
-        bool ClientRequestUpdate(const std::shared_ptr<ClientData> data) override;
+        Json::Value ClientRequestPost(const Json::Value& data) override;
+        Json::Value ClientRequestGet(const std::string& key) override;
+        Json::Value ClientRequestUpdate(const Json::Value& data) override;
 
-        static std::string host_addr_;
-        static std::string port_;
-        static std::string db_name_;
-        static std::string user_;
-        static std::string password_;
+        std::string host_addr_ = "127.0.0.1";
+        std::string port_ = "5432";
+        std::string db_name_ = "marketmentor";
+        std::string user_ = "marketmentor_server";
+        std::string password_ = "marketmentor_password";
         std::shared_ptr<IDataBase> database_;
         std::shared_ptr<ISubscriptionRepository> subscription_rep_;
         std::shared_ptr<ITimeSeriesRepository> timeseries_rep_;
@@ -67,4 +67,3 @@ namespace dbcontroller {
     };
 
 }
-

@@ -14,30 +14,112 @@ PostgresServer::PostgresServer(const std::string&  addr, const std::string&  por
 }
 
 bool PostgresServer::IsOpen() {
-    return true;
-}
-
-Json::Value PostgresServer::GetData(const std::string& query) {
-    std::string json_string = "{\"test\": 1}";
-    Json::Value json;
-    Json::Reader reader;
-    reader.parse(json_string, json);
-    return json;
-}
-
-Json::Value PostgresServer::GetRow(const std::string& query) {
-    std::string json_string = "{\"test\": 1}";
-    Json::Value json;
-    Json::Reader reader;
-    reader.parse(json_string, json);
-    return json;
-}
-
-bool PostgresServer::SendQuery(const std::string& query) {
-    return true;
+    return conn_->is_open();
 }
 
 void PostgresServer::Connect() {
-    return;
+    std::string connecting_string = "dbname = " + db_name_+ " user = " + user_ + " password = " + password_ +
+        " hostaddr = " + host_addr_ + " port = " + port_;
+    try {
+        conn_ = std::make_shared<pqxx::connection>(connecting_string);
+    } catch (pqxx::failure const &e) {
+        std::cerr << e.what() << std::endl;
+        throw ConnectError("[ERROR] Failed connect to database " + db_name_);
+    }
+}
+
+
+bool PostgresServer::SendQuery(const std::string& query) {
+pqxx::work transaction{*conn_};
+    try{
+        transaction.exec(query);
+        transaction.commit();
+    }
+    catch (pqxx::transaction_rollback const &e) {
+        std::cerr << e.what() << std::endl;
+        return false;
+
+    }
+    catch (pqxx::sql_error const &e) {
+        std::cerr << e.what() << std::endl;
+        return false;
+    }   
+    catch (pqxx::failure const &e) {
+        std::cerr << e.what() << std::endl;
+        return false;
+    }
+    return true;   
+}
+
+Json::Value PostgresServer::GetRow(const std::string& query) {
+    pqxx::nontransaction tx{*conn_};
+    pqxx::row row;
+    try {
+        row = tx.exec1(query);
+    }
+    catch (pqxx::sql_error const &e) {
+        std::cerr << e.what() << std::endl;
+        throw SqlError("Bad query: " + query);
+    }   
+    catch (pqxx::failure const &e) {
+        std::cerr << e.what() << std::endl;
+        throw ConnectError("Broken connection to database");
+    }
+
+    std::string json_string = "{\"test\": 1}";
+    Json::Value result;
+    int field_number = 0;
+    for (auto field = row.begin(); field != row.end(); field++){
+        if (!field.is_null()){
+            result[field_number++] = field.as<std::string>();
+        }
+        else{
+            result[field_number++] = "NULL";
+        }
+    }
+
+    return result;
+}
+
+Json::Value PostgresServer::GetData(const std::string& query) {
+    pqxx::nontransaction tx{*conn_};
+    pqxx::result table;
+    
+    try {
+        table = tx.exec(query);
+    }
+    catch (pqxx::plpgsql_no_data_found const &e) {
+        std::cerr << e.what() << std::endl;
+        throw ElementNotExist("Element doesn't exist in database");
+    }   
+    catch (pqxx::sql_error const &e) {
+        std::cerr << e.what() << std::endl;
+        throw SqlError("Bad query: " + query);
+    }   
+    catch (pqxx::failure const &e) {
+        std::cerr << e.what() << std::endl;
+        throw ConnectError("Broken connection to database");
+    }   
+
+    Json::Value result;
+    Json::Value row_buffer;
+    int row_number = 0;
+    int field_number = 0;
+
+    for (auto row = table.begin(); row != table.end(); row++){
+        for (auto field = row.begin(); field != row.end(); field++){
+            if (!field.is_null()) {
+                row_buffer[field_number++] = field.as<std::string>();
+
+            }
+            else {
+                row_buffer[field_number++] = "NULL";
+            }
+        }
+        result[row_number++] = row_buffer;
+        row_buffer.clear();
+    }
+    
+    return result;
 }
 

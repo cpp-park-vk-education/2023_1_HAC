@@ -20,6 +20,7 @@ TEST_F(RepositoryCacheTest, InsertCase) {
      EXPECT_NO_THROW({
          cache_->Insert(data.name, data);
      }); 
+
 }
 
 TEST_F(RepositoryCacheTest, HasCase) {
@@ -30,6 +31,9 @@ TEST_F(RepositoryCacheTest, HasCase) {
 }
 
 TEST_F(RepositoryCacheTest, GetCase) {
+    TestStruct data;
+    data.name = "test";
+    cache_->Insert(data.name, data);
     std::string key = "test";
     TestStruct result = cache_->Get(key);
     EXPECT_EQ(result.name, key);     
@@ -38,6 +42,7 @@ TEST_F(RepositoryCacheTest, GetCase) {
 TEST_F(RepositoryCacheTest, DeleteCase) {
     TestStruct data;
     data.name = "test";
+    cache_->Insert(data.name, data);    
     EXPECT_TRUE(cache_->Delete(data.name));
 }
 
@@ -50,4 +55,11 @@ TEST_F(RepositoryCacheTest, NotExistDeleteCase) {
 TEST_F(RepositoryCacheTest, NotHasCase) {
     std::string random_key = "test";
     EXPECT_FALSE(cache_->Has(random_key));
+}
+
+TEST_F(RepositoryCacheTest, DoubleInsertCase) {
+    TestStruct data;
+    data.name = "test";
+    EXPECT_TRUE(cache_->Insert(data.name, data));
+    EXPECT_FALSE(cache_->Insert(data.name, data));
 }

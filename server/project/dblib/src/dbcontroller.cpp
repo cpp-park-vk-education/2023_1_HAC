@@ -16,6 +16,12 @@ DataBaseController::DataBaseController(const std::shared_ptr<IClientRepository>&
 
 Json::Value DataBaseController::DataRequest(const Json::Value& request) {
     Json::Value response;
+    if (!database_->IsOpen()) {   
+        response["DatabaseIsOpen"] = false;
+        response["status"] = false;
+        return response;
+    }
+
     if (request["Type"] == GET_REQUEST) {
         // Получить данные пользователя
         if (request["TypeData"] == CLIENT_DATA) {
@@ -24,7 +30,7 @@ Json::Value DataBaseController::DataRequest(const Json::Value& request) {
 
         if (request["TypeData"] == AUTHORIZE_DATA) {
             response = ClientRequestGet(request["login"].asString());
-            if (response["status"] != false && response["password"] != request["password"].asString()) {
+            if (response["status"] == true && response["password"] != request["password"]) {
                 response["status"] = false;
             }
         }
@@ -50,7 +56,8 @@ Json::Value DataBaseController::DataRequest(const Json::Value& request) {
             response = ClientRequestUpdate(request); 
         }
     }
-
+    
+    response["DatabaseIsOpen"] = true;
     return response;
 }
 
@@ -71,12 +78,13 @@ Json::Value DataBaseController::TimeSeriesPost(const Json::Value& data) {
 Json::Value DataBaseController::TimeSeriesGet(const std::string& name_stock, const std::string& len_lags) {
     Json::Value response;
     auto data = timeseries_rep_->GetByKey(name_stock, std::stoi(len_lags));
-    if (data == nullptr) {
+    if (data == nullptr || data->param == Json::Value::null) {
         response["status"] = false;
     }
     else {
+        response["param"] = data->param; 
         response["status"] = true;
-        response["param"] = data->param;        
+    
     }
 
     return response;

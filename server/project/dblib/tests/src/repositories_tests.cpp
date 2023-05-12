@@ -141,17 +141,17 @@ TEST_F(RepositoryTest, TimeSeriesGetCase){
     reader.parse(json_string, time->param);
 
     Json::Value row;
-    row[0] = 0;
-    row[1] = time->name_stock;
-    row[2] = time->date;
-    row[3] = time->param;
+    row[0][0] = 0;
+    row[0][1] = time->name_stock;
+    row[0][2] = time->date;
+    row[0][3] = time->param;
 
     Json::Value table;
     table[0] = row;
     size_t len_lags = 1;
 
     EXPECT_CALL(*db, IsOpen()).WillOnce(Return(true));
-    EXPECT_CALL(*db, GetRow(_)).WillOnce(Return(table)); 
+    EXPECT_CALL(*db, GetData(_)).WillOnce(Return(table)); 
 
     EXPECT_NO_THROW(timeseries_rep->GetByKey(time->name_stock, len_lags));
 }
@@ -173,7 +173,7 @@ TEST_F(RepositoryTest, BadQueryForGetTimeSeries){
     std::string name_stock = "test";
     size_t len_lags = 1;
     EXPECT_CALL(*db, IsOpen()).WillOnce(Return(true));
-    EXPECT_CALL(*db, GetRow(_)).WillOnce(Throw(ConnectError("Error"))); 
+    EXPECT_CALL(*db, GetData(_)).WillOnce(Throw(ConnectError("Error"))); 
 
     EXPECT_EQ(timeseries_rep->GetByKey(name_stock, len_lags), nullptr);
 }

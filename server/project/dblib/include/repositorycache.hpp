@@ -1,7 +1,7 @@
 #pragma once // NO_LINT
 #include <iostream>
 #include <memory>
-#include <queue>
+#include <list>
 #include <unordered_map>
 #include "dbexception.hpp"
 
@@ -35,7 +35,7 @@ namespace cache {
 
         size_t size_;
         size_t max_size_;
-        std::queue<Key> keys_queue_;
+        std::list<Key> keys_list_;
         std::unordered_map<Key, Data> cache_;
     };
 
@@ -69,7 +69,7 @@ namespace cache {
 
         cache_[key] = data;
         size_++;
-        keys_queue_.push(key);
+        keys_list_.push_back(key);
         return true;
     }
 
@@ -81,25 +81,14 @@ namespace cache {
         }        
 
         cache_.erase(key);
-        std::queue<Key> new_queue;
-        Key front_key;
-        for (size_t i = 0; i < size_ ; i++) {
-            front_key = keys_queue_.front();
-            if (front_key != key) {
-                new_queue.push(front_key);
-                keys_queue_.pop();                
-            }
-        }
-
-        keys_queue_ = std::move(new_queue);
-        size_--;
+        keys_list_.remove(key);
         return true;
     }
 
     template <typename Key, typename Data>
     void RepositoryCache<Key, Data>::DeleteFirstElem() {
-        cache_.erase(keys_queue_.front());
-        keys_queue_.pop();
+        cache_.erase(keys_list_.front());
+        keys_list_.pop_front();
         size_--;
     }
 
@@ -110,18 +99,8 @@ namespace cache {
         }  
 
         Data result = cache_[key];
-        std::queue<Key> new_queue;
-        Key front_key;
-        for (size_t i = 0; i < size_ ; i++) {
-            front_key = keys_queue_.front();
-            if (front_key != key) {
-                new_queue.push(front_key);
-                keys_queue_.pop();                
-            }
-        }
-
-        keys_queue_ = std::move(new_queue);
-        keys_queue_.push(key);
+        keys_list_.remove(key);
+        keys_list_.push_back(key);
         return result;
     }
 
@@ -133,11 +112,9 @@ namespace cache {
     template <typename Key, typename Data>
     void RepositoryCache<Key, Data>::DeleteAll() {
         std::string front_key;
-        while (size_ != 0) {
-            front_key = keys_queue_.front();
-            cache_.erase(front_key);
-            keys_queue_.pop();      
-            size_--;          
-        }
+        keys_list_.clear();
+        size_ = 0;
+        cache_.clear();
     }
+    
 }

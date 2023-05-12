@@ -54,27 +54,29 @@ std::shared_ptr<ClientData> ClientRepository::GetByKey(const std::string& key){
     catch(ElementNotExist const &e) {
         return nullptr;
     }
+    catch(SqlError const &e) {
+        return nullptr;
+    }
 
     const int kUserId = 0;
     const int kLoginId = 1;
     const int kEmailId = 2;
     const int kPasswordId = 3;
 
-    Json::FastWriter convert_to_string;
     auto result = std::make_shared<ClientData>();
-    result->login = convert_to_string.write(buffer[kLoginId]);
-    result->email = convert_to_string.write(buffer[kEmailId]);
-    result->hash_password = convert_to_string.write(buffer[kPasswordId]);
+    result->login = buffer[kLoginId].asString();
+    result->email = buffer[kEmailId].asString();
+    result->hash_password = buffer[kPasswordId].asString();
     return result;
 }
 
 
 bool ClientRepository::Delete(const std::string& key) {
-    client_cache_->Delete(key);
-
     if (!database_->IsOpen()) {
         return false;
     }
+    
+    client_cache_->Delete(key);
 
     std::string query = "DELETE from client where login = '" + key + "'";
     bool result = database_->SendQuery(query);
@@ -83,16 +85,17 @@ bool ClientRepository::Delete(const std::string& key) {
 
 
 bool ClientRepository::Update(const std::string& key, const std::shared_ptr<ClientData>& data) {
-    client_cache_->Delete(key);
-    client_cache_->Insert(key, *data);    
     if (!database_->IsOpen()) {
         return false;
-    }
+    }    
+    
+    client_cache_->Delete(key);
+    client_cache_->Insert(key, *data);    
 
-    std::string query = "UPDATE client SET password = " + data->hash_password + ", email =  " 
-            + data->email + " WHERE login = '" + key + "'";
+    std::string query = "UPDATE client SET password = '" + data->hash_password + "', email =  '" 
+            + data->email + "' WHERE login = '" + key + "'";
     bool result = database_->SendQuery(query);    
-    return true;
+    return result;
 }
 
 
@@ -109,9 +112,9 @@ TimeSeriesRepository::TimeSeriesRepository(const std::shared_ptr<IDataBase>& db)
 
 
 bool TimeSeriesRepository::Insert(const std::shared_ptr<TimeSeriesData>& data){
-    Json::FastWriter convert_to_string;
-    std::string query = "INSERT into timeseries(name_stock,date, param) VALUES ('" + 
-        data->name_stock + "', '" + data->date + "', '" + convert_to_string.write(data->param) + "')";
+    Json::FastWriter json_to_string;
+    std::string query = "INSERT into timeseries(name,date, param) VALUES ('" + 
+        data->name_stock + "', '" + data->date + "', '" + json_to_string.write(data->param) + "')";
 
     if (!database_->IsOpen()) {
         return false;
@@ -137,16 +140,19 @@ std::shared_ptr<TimeSeriesData> TimeSeriesRepository::GetByKey(const std::string
     }
 
     std::string query = "SELECT * from timeseries where name = '" + name_stock 
-            + " ORDER by timeseries_id DESC LIMIT " + std::to_string(len_lags);
+            + "' ORDER by timeseries_id DESC LIMIT " + std::to_string(len_lags);
 
     Json::Value buffer;
     try {
-        buffer = database_->GetRow(query);
+        buffer = database_->GetData(query);
     }
     catch(ConnectError const &e) {
         return nullptr;
     }
     catch(ElementNotExist const &e) {
+        return nullptr;
+    }
+    catch(SqlError const &e) {
         return nullptr;
     }
 
@@ -160,8 +166,9 @@ std::shared_ptr<TimeSeriesData> TimeSeriesRepository::GetByKey(const std::string
     result->name_stock = name_stock;
     result->date = "";
     Json::Value json_param;
-    for (int i = 0; i < buffer.size(); i++) {
-        json_param[i] = buffer[i][kParamId];
+    Json::Reader reader;
+    for (int i = 0; i < buffer.size(); i++) {  
+        reader.parse(buffer[i][kParamId].asString(), json_param[i]);
     };
 
     result->param = json_param;
@@ -201,6 +208,9 @@ std::shared_ptr<SubscriptionData> SubscriptionRepository::GetByKey(const std::st
         return nullptr;
     }
     catch(ElementNotExist const &e) {
+        return nullptr;
+    }
+    catch(SqlError const &e) {
         return nullptr;
     }
 

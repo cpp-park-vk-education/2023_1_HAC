@@ -48,6 +48,7 @@ pqxx::work transaction{*conn_};
         std::cerr << e.what() << std::endl;
         return false;
     }
+
     return true;   
 }
 
@@ -64,6 +65,10 @@ Json::Value PostgresServer::GetRow(const std::string& query) {
     catch (pqxx::failure const &e) {
         std::cerr << e.what() << std::endl;
         throw ConnectError("Broken connection to database");
+    }
+    catch (pqxx::unexpected_rows const &e) {
+        std::cerr << e.what() << std::endl;
+        throw ElementNotExist("Bad query: " + query);
     }
 
     std::string json_string = "{\"test\": 1}";
@@ -91,6 +96,10 @@ Json::Value PostgresServer::GetData(const std::string& query) {
     catch (pqxx::plpgsql_no_data_found const &e) {
         std::cerr << e.what() << std::endl;
         throw ElementNotExist("Element doesn't exist in database");
+    }
+    catch (pqxx::unexpected_rows const &e) {
+        std::cerr << e.what() << std::endl;
+        throw ElementNotExist("Bad query: " + query);
     }   
     catch (pqxx::sql_error const &e) {
         std::cerr << e.what() << std::endl;

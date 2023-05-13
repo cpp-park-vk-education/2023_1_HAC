@@ -52,11 +52,11 @@ protected:
 
 // Client
 
-
 TEST_F(DBControllerTest, ClientPost) {
+
     Json::Value request;
-    request["type_request"] = POST_REQUEST;
-    request["type_data"] = CLIENT_DATA;
+    request["Type"] = POST_REQUEST;
+    request["TypeData"] = CLIENT_DATA;
     request["login"] = "test";
     request["email"] = "test@email.com";
     request["hash_password"] = "pass";
@@ -67,8 +67,8 @@ TEST_F(DBControllerTest, ClientPost) {
 
 TEST_F(DBControllerTest, ClientGet) {
     Json::Value request;
-    request["type_request"] = GET_REQUEST;
-    request["type_data"] = CLIENT_DATA;
+    request["Type"] = GET_REQUEST;
+    request["TypeData"] = CLIENT_DATA;
     request["login"] = "test";
     request["email"] = "test@email.com";
     request["hash_password"] = "pass";
@@ -79,8 +79,8 @@ TEST_F(DBControllerTest, ClientGet) {
 
 TEST_F(DBControllerTest, ClientUpdate) {
     Json::Value request;
-    request["type_request"] = UPDATE_REQUEST;
-    request["type_data"] = CLIENT_DATA;
+    request["Type"] = UPDATE_REQUEST;
+    request["TypeData"] = CLIENT_DATA;
     request["login"] = "test";
     request["email"] = "test@email.com";
     request["hash_password"] = "pass";
@@ -91,8 +91,8 @@ TEST_F(DBControllerTest, ClientUpdate) {
 
 TEST_F(DBControllerTest, ClientAutorize) {
     Json::Value request;
-    request["type_request"] = GET_REQUEST;
-    request["type_data"] = AUTHORIZE_DATA;
+    request["Type"] = GET_REQUEST;
+    request["TypeData"] = AUTHORIZE_DATA;
     request["login"] = "test";
     request["hash_password"] = "pass";
 
@@ -105,8 +105,8 @@ TEST_F(DBControllerTest, ClientAutorize) {
 
 TEST_F(DBControllerTest, GetTimeSeries) {
     Json::Value request;
-    request["type_request"] = GET_REQUEST;
-    request["type_data"] = TIMESERIES_REQUEST;
+    request["Type"] = GET_REQUEST;
+    request["TypeData"] = TIMESERIES_REQUEST;
     request["name_stock"] = "test";
     request["len_lags"] = 1;
 
@@ -124,8 +124,8 @@ TEST_F(DBControllerTest, PostTimeSeries) {
     Json::Reader reader;
     reader.parse(json_string, param);
 
-    request["type_request"] = POST_REQUEST;
-    request["type_data"] = TIMESERIES_DATA;
+    request["Type"] = POST_REQUEST;
+    request["TypeData"] = TIMESERIES_DATA;
     request["name_stock"] = "test";
     request["date"] = 1;
     request["param"] = param;

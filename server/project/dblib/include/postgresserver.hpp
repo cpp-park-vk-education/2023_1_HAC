@@ -3,7 +3,7 @@
 #include <memory>
 #include <pqxx/pqxx>
 #include <jsoncpp/json/json.h>
-#include "exception.hpp"
+#include "dbexception.hpp"
 
 namespace database {
     

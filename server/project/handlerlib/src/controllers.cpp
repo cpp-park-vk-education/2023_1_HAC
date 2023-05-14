@@ -43,7 +43,13 @@ Json::Value PredictController::makePredict(const Json::Value& request) {
 
 }
 
-Json::Value PredictController::makeDBProtocol(const Json::Value& request) {
+Json::Value PredictController::makeDBProtocol(const Json::Value& request, size_t lags) {
+    Json::Value db_protocol;
+    db_protocol["Type"] = TypeRequest::GET_REQUEST;
+    db_protocol["TypeData"] = TypeData::TIMESERIES_REQUEST;
+    db_protocol["name_stock"] = request["name_stock"];
+    db_ptotocol["len_lags"] = lags;
+    return db_protocol;
 
 }
 

@@ -11,14 +11,13 @@ using namespace database;
 
 enum TypeRequest {
     GET_REQUEST,
-    POST_REQUEST, 
-    UPDATE_REQUEST
+    POST_REQUEST
 };
 
 enum TypeData {
-    CLIENT_DATA,
-    AUTHORIZE_DATA,
-    TIMESERIES_DATA,
+    AUTHORIZATION,
+    REGISTRATION,
+    CHANGE_USER_SETTINGS,
     TIMESERIES_REQUEST
 };
 

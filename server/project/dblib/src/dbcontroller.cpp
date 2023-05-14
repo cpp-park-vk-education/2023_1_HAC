@@ -41,11 +41,6 @@ Json::Value DataBaseController::DataRequest(const Json::Value& request) {
     }
 
     if (request["Type"] == GET_REQUEST) {
-        // Получить данные пользователя
-        if (request["TypeData"] == CLIENT_DATA) {
-            response = ClientRequestGet(request["login"].asString());
-        }
-
         // Получить таймсерии
         if (request["TypeData"] == TIMESERIES_REQUEST) {
             response = TimeSeriesGet(request["name_stock"].asString(), request["len_lags"].asString());
@@ -53,19 +48,23 @@ Json::Value DataBaseController::DataRequest(const Json::Value& request) {
     }
 
     if (request["Type"] == POST_REQUEST) {
+        // Получить данные пользователя
+        if (request["TypeData"] == AUTHORIZATION) {
+            response = ClientRequestGet(request["login"].asString());
+        }
+
         // Добавить пользователя
-        if (request["TypeData"] == CLIENT_DATA) {
+        if (request["TypeData"] == REGISTRATION) {
             response = ClientRequestPost(request);
         }
+
         // Добавить таймсерию 
-        if (request["TypeData"] == TIMESERIES_DATA) {
+        if (request["TypeData"] == TIMESERIES_REQUEST) {
             response = TimeSeriesPost(request);
         }       
-    }
-
-    // Обновить пользователя
-    if (request["Type"] == UPDATE_REQUEST) {
-        if (request["TypeData"] == CLIENT_DATA) {
+        
+        // Обновить пользователя
+        if (request["TypeData"] == CHANGE_USER_SETTINGS) {
             response = ClientRequestUpdate(request); 
         }
     }
@@ -137,9 +136,15 @@ Json::Value DataBaseController::ClientRequestUpdate(const Json::Value& data) {
     Json::Value response;   
 
     auto client_data = std::make_shared<ClientData>();
+    if (data["email"] == Json::Value::null) {
+        client_data->email = "";   
+    }
+    else {
+        client_data->email = data["email"].asString();
+    }
+
     client_data->login = data["login"].asString();
     client_data->hash = data["password"].asString();
-    client_data->email = data["email"].asString();
 
     response["status"] = clien_rep_->Update(client_data->login, client_data);
     return response;

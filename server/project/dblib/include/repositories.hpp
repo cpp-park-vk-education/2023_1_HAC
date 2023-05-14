@@ -22,6 +22,7 @@ namespace repository {
         virtual std::shared_ptr<ClientData> GetByKey(const std::string& key) = 0;
     };
 
+
     class ITimeSeriesRepository {
     public:
         virtual ~ITimeSeriesRepository() {};
@@ -29,12 +30,14 @@ namespace repository {
         virtual std::shared_ptr<TimeSeriesData> GetByKey(const std::string& name_stock, const size_t& len_lags) = 0;
     };
 
+
     class ISubscriptionRepository {
     public:
         virtual ~ISubscriptionRepository() {};
         virtual std::shared_ptr<SubscriptionData> GetByKey(const std::string& key) = 0;
         virtual std::shared_ptr<AllSubscription> GetAll() = 0;
     };
+
 
     class ClientRepository: public IClientRepository{
     public:
@@ -47,9 +50,12 @@ namespace repository {
         std::shared_ptr<ClientData> GetByKey(const std::string& key) override;
 
     private:
+        std::shared_ptr<ClientData> DatabaseResponseParse(const Json::Value& db_response);
+
         std::shared_ptr<IDataBase> database_;
         std::shared_ptr<IRepositoryCache<std::string, ClientData>> client_cache_;
     };
+
 
     class TimeSeriesRepository: public ITimeSeriesRepository{
     public:
@@ -60,6 +66,8 @@ namespace repository {
         std::shared_ptr<TimeSeriesData> GetByKey(const std::string& name_stock, const size_t& len_lags) override;
 
     private:
+        std::shared_ptr<TimeSeriesData> DatabaseResponseParse(const Json::Value& db_response);
+
         std::shared_ptr<IDataBase> database_; 
         std::shared_ptr<IRepositoryCache<std::string, TimeSeriesData>> timeseries_cache_;
     };
@@ -74,6 +82,8 @@ namespace repository {
         std::shared_ptr<AllSubscription> GetAll() override;
 
     private:
+        std::shared_ptr<SubscriptionData> DatabaseResponseParse(const Json::Value& db_response);
+        
         std::shared_ptr<IDataBase> database_; 
         std::shared_ptr<RepositoryCache<std::string, SubscriptionData>> subscription_cache_;
     };

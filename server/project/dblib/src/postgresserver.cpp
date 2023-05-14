@@ -24,7 +24,7 @@ void PostgresServer::Connect() {
         conn_ = std::make_shared<pqxx::connection>(connecting_string);
     } catch (pqxx::failure const &e) {
         std::cerr << e.what() << std::endl;
-        throw ConnectError("[ERROR] Failed connect to database " + db_name_);
+        throw ConnectError("Failed connect to database " + db_name_);
     }
 }
 
@@ -71,7 +71,6 @@ Json::Value PostgresServer::GetRow(const std::string& query) {
         throw ElementNotExist("Bad query: " + query);
     }
 
-    std::string json_string = "{\"test\": 1}";
     Json::Value result;
     int field_number = 0;
     for (auto field = row.begin(); field != row.end(); field++){

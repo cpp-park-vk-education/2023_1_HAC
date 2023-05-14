@@ -32,6 +32,18 @@ bool ClientRepository::Insert(const std::shared_ptr<ClientData>& data) {
     return result;
 }
 
+std::shared_ptr<ClientData> ClientRepository::DatabaseResponseParse(const Json::Value& db_response) {
+    const int kUserId = 0;
+    const int kLoginId = 1;
+    const int kEmailId = 2;
+    const int kPasswordId = 3;
+
+    auto result = std::make_shared<ClientData>();
+    result->login = db_response[kLoginId].asString();
+    result->email = db_response[kEmailId].asString();
+    result->hash_password = db_response[kPasswordId].asString();
+    return result;
+}
 
 std::shared_ptr<ClientData> ClientRepository::GetByKey(const std::string& key){
     if (client_cache_->Has(key)) {
@@ -58,15 +70,8 @@ std::shared_ptr<ClientData> ClientRepository::GetByKey(const std::string& key){
         return nullptr;
     }
 
-    const int kUserId = 0;
-    const int kLoginId = 1;
-    const int kEmailId = 2;
-    const int kPasswordId = 3;
-
-    auto result = std::make_shared<ClientData>();
-    result->login = buffer[kLoginId].asString();
-    result->email = buffer[kEmailId].asString();
-    result->hash_password = buffer[kPasswordId].asString();
+    auto result = DatabaseResponseParse(buffer);
+    client_cache_->Insert(result->login, *result);
     return result;
 }
 
@@ -127,6 +132,25 @@ bool TimeSeriesRepository::Insert(const std::shared_ptr<TimeSeriesData>& data){
     return result;    
 }
 
+std::shared_ptr<TimeSeriesData> TimeSeriesRepository::DatabaseResponseParse(const Json::Value& db_response) {
+    const int kTimeSeriesId = 0;
+    const int kNameId = 1;
+    const int kParamId = 2;
+    const int kDateId = 3;
+
+    auto result = std::make_shared<TimeSeriesData>();
+
+    result->date = "";
+    Json::Value json_param;
+    Json::Reader reader;
+    for (int i = 0; i < db_response.size(); i++) {  
+        reader.parse(db_response[i][kParamId].asString(), json_param[i]);
+    };
+
+    result->param = json_param;
+    return result;
+}
+
 
 std::shared_ptr<TimeSeriesData> TimeSeriesRepository::GetByKey(const std::string& name_stock, const size_t& len_lags) {
     std::string key = name_stock + "::" + std::to_string(len_lags);
@@ -156,22 +180,8 @@ std::shared_ptr<TimeSeriesData> TimeSeriesRepository::GetByKey(const std::string
         return nullptr;
     }
 
-    const int kTimeSeriesId = 0;
-    const int kNameId = 1;
-    const int kParamId = 2;
-    const int kDateId = 3;
-
-    auto result = std::make_shared<TimeSeriesData>();
-
+    auto result = DatabaseResponseParse(buffer);
     result->name_stock = name_stock;
-    result->date = "";
-    Json::Value json_param;
-    Json::Reader reader;
-    for (int i = 0; i < buffer.size(); i++) {  
-        reader.parse(buffer[i][kParamId].asString(), json_param[i]);
-    };
-
-    result->param = json_param;
     timeseries_cache_->Insert(key, *result);
     return result;
 }
@@ -188,6 +198,19 @@ SubscriptionRepository::SubscriptionRepository(const std::shared_ptr<IDataBase>&
         subscription_cache_(std::make_shared<RepositoryCache<std::string, SubscriptionData>>(5)) {
 }
 
+std::shared_ptr<SubscriptionData> SubscriptionRepository::DatabaseResponseParse(const Json::Value& db_response) {
+    const int kSubId = 0;
+    const int kNameId = 1;
+    const int kCountId = 2;
+    const int kCostId = 3;
+
+    auto row = std::make_shared<SubscriptionData>();
+    row->name = db_response[kNameId].asString();
+    row->cost = db_response[kCostId].asInt();
+    row->count = db_response[kCountId].asInt();
+
+    return row;
+}
 
 std::shared_ptr<SubscriptionData> SubscriptionRepository::GetByKey(const std::string& key) {
     if (subscription_cache_->Has(key)) {
@@ -214,15 +237,8 @@ std::shared_ptr<SubscriptionData> SubscriptionRepository::GetByKey(const std::st
         return nullptr;
     }
 
-    const int kSubId = 0;
-    const int kNameId = 1;
-    const int kCountId = 2;
-    const int kCostId = 3;
-
-    auto result = std::make_shared<SubscriptionData>();
-    result->name = buffer[kNameId].asString();
-    result->count = buffer[kCountId].asInt();
-    result->cost = buffer[kCostId].asInt();
+    auto result = DatabaseResponseParse(buffer);
+    subscription_cache_->Insert(result->name, *result);
     return result;
 }
 
@@ -245,19 +261,15 @@ std::shared_ptr<AllSubscription> SubscriptionRepository::GetAll() {
     catch(ElementNotExist const &e) {
         return nullptr;
     }
-
-    const int kSubId = 0;
-    const int kNameId = 1;
-    const int kCountId = 2;
-    const int kCostId = 3;
-
-    SubscriptionData row;
+    catch(SqlError const &e) {
+        return nullptr;
+    }
+    
+    std::shared_ptr<SubscriptionData> row;
     std::shared_ptr<AllSubscription> result;
     for (int i = 0; i < buffer.size(); i++) {
-        row.name = buffer[i][kNameId].asString();
-        row.cost = buffer[i][kCostId].asInt();
-        row.count = buffer[i][kCountId].asInt();
-        result->data.push_back(row);
+        row = DatabaseResponseParse(buffer[i]);
+        result->data.push_back(*row);
     };
 
     return result;    

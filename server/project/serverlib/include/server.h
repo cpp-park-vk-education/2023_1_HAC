@@ -12,17 +12,18 @@
 #include <vector>
 #include <thread>
 #include <string>
-
+#include "data.hpp"
+#include "dbcontroller.hpp"
 #include "listener.h"
 #include "routers.h"
-#include "ihandler.h"
-#include "icontrollers.h"
+// #include "ihandler.h"
+// #include "icontrollers.h"
 #include "handlers.h"
 #include "controllers.h"
 #include "config_handler.h"
 
 using prtToIHandler = std::unique_ptr<handlers::IHandler>;
-using IDatabaseController = std::string;
+//using IDatabaseController = std::string;
 
 namespace net = boost::asio; // from <boost/asio.hpp>
 
@@ -38,7 +39,7 @@ class Server {
     };
 
  private:  
-    std::unique_ptr<IDatabaseController> database_controller;
+    std::unique_ptr<dbcontroller::IDataBaseController> database_controller;
     std::unique_ptr<controllers::IModelController> model_controller;
     std::unique_ptr<controllers::IShowPlotController> show_plot_controller;
     std::unique_ptr<controllers::IRegisterController> register_contoller;

@@ -3,19 +3,21 @@
 using namespace database;
 
 PostgresServer::PostgresServer(): host_addr_("127.0.0.1"), port_("5432"), db_name_("marketmentor"),
-     user_("marketmentor_server"), password_("marketmentor_password"){
+     user_("marketmentor_server"), password_("marketmentor_password") {
         Connect();
 }
 
 PostgresServer::PostgresServer(const std::string&  addr, const std::string&  port,
          const std::string&  db_name, const std::string&  user, const std::string&  pass): host_addr_(addr),
-    port_(port), db_name_(db_name), user_(user), password_(pass){
+        port_(port), db_name_(db_name), user_(user), password_(pass) {
     Connect();
 }
+
 
 bool PostgresServer::IsOpen() {
     return conn_->is_open();
 }
+
 
 void PostgresServer::Connect() {
     std::string connecting_string = "dbname = " + db_name_+ " user = " + user_ + " password = " + password_ +
@@ -24,7 +26,6 @@ void PostgresServer::Connect() {
         conn_ = std::make_shared<pqxx::connection>(connecting_string);
     } catch (pqxx::failure const &e) {
         std::cerr << e.what() << std::endl;
-    //    throw ConnectError("Failed connect to database " + db_name_);
     }
 }
 

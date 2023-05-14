@@ -23,7 +23,7 @@ bool ClientRepository::Insert(const std::shared_ptr<ClientData>& data) {
     }
 
     std::string query = "INSERT into client(login,password, email) VALUES ('" + 
-        data->login + "', '" + data->hash_password + "', '" + data->email + "')";
+        data->login + "', '" + data->hash + "', '" + data->email + "')";
 
     bool result = database_->SendQuery(query);
     if (result) {
@@ -41,7 +41,7 @@ std::shared_ptr<ClientData> ClientRepository::DatabaseResponseParse(const Json::
     auto result = std::make_shared<ClientData>();
     result->login = db_response[kLoginId].asString();
     result->email = db_response[kEmailId].asString();
-    result->hash_password = db_response[kPasswordId].asString();
+    result->hash = db_response[kPasswordId].asString();
     return result;
 }
 
@@ -93,13 +93,16 @@ bool ClientRepository::Update(const std::string& key, const std::shared_ptr<Clie
     if (!database_->IsOpen()) {
         return false;
     }    
-    
-    client_cache_->Delete(key);
-    client_cache_->Insert(key, *data);    
 
-    std::string query = "UPDATE client SET password = '" + data->hash_password + "', email =  '" 
+    std::string query = "UPDATE client SET password = '" + data->hash + "', email =  '" 
             + data->email + "' WHERE login = '" + key + "'";
-    bool result = database_->SendQuery(query);    
+    bool result = database_->SendQuery(query);
+
+    if (result) {
+        client_cache_->Delete(key);
+        client_cache_->Insert(key, *data);            
+    }    
+
     return result;
 }
 
@@ -132,6 +135,7 @@ bool TimeSeriesRepository::Insert(const std::shared_ptr<TimeSeriesData>& data){
     return result;    
 }
 
+
 std::shared_ptr<TimeSeriesData> TimeSeriesRepository::DatabaseResponseParse(const Json::Value& db_response) {
     const int kTimeSeriesId = 0;
     const int kNameId = 1;
@@ -141,14 +145,14 @@ std::shared_ptr<TimeSeriesData> TimeSeriesRepository::DatabaseResponseParse(cons
     auto result = std::make_shared<TimeSeriesData>();
 
     result->date = "";
-    std::vector<double> json_param;
-    json_param.resize(db_response.size());
+    Json::Value json_param;
     Json::Reader reader;
     for (int i = 0; i < db_response.size(); i++) {  
-        json_param.push_back(db_response[i][kParamId].asDouble());
+        // reader.parse(db_response[i][kParamId].asS(), json_param[i]);
+        json_param[i] = db_response[i][kParamId].asDouble();
     };
 
-   // result->param = json_param;
+    result->param = json_param;
     return result;
 }
 

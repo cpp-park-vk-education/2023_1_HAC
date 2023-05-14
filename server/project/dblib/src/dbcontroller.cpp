@@ -2,18 +2,35 @@
 
 using namespace dbcontroller;
 
-// DataBaseController::DataBaseController(): database_(new PostgresServer(host_addr_, port_, db_name_, user_, password_)), 
-//         clien_rep_(new ClientRepository(database_)), timeseries_rep_(new TimeSeriesRepository(database_)), 
-//         subscription_rep_(new SubscriptionRepository(database_)) {
-// }
 DataBaseController::DataBaseController() {
- }
+}
 
 DataBaseController::DataBaseController(const std::shared_ptr<IClientRepository>& client_rep, 
         const std::shared_ptr<ITimeSeriesRepository>& timeseries_rep, const std::shared_ptr<ISubscriptionRepository>& subscription_rep): 
         clien_rep_(client_rep), timeseries_rep_(timeseries_rep), subscription_rep_(subscription_rep), database_(nullptr) {
 }
 
+bool DataBaseController::ConnectToDatabase() {
+    database_ = std::make_shared<PostgresServer>(host_addr_, port_, db_name_, user_, password_);
+    if (!database_->IsOpen()) {
+        return false;
+    }
+
+    clien_rep_ = std::make_shared<ClientRepository>(database_);
+    timeseries_rep_ = std::make_shared<TimeSeriesRepository>(database_);
+    subscription_rep_ = std::make_shared<SubscriptionRepository>(database_);
+    return true;
+}
+
+
+void DataBaseController::SetDatabaseConfig(const std::string&  addr, const std::string&  port,
+         const std::string&  db_name, const std::string&  user, const std::string&  pass) {
+    host_addr_ = addr;
+    port_ = port;
+    db_name_ = db_name;
+    user_ = user;
+    password_ = pass;
+}
 
 Json::Value DataBaseController::DataRequest(const Json::Value& request) {
     Json::Value response;
@@ -29,12 +46,6 @@ Json::Value DataBaseController::DataRequest(const Json::Value& request) {
             response = ClientRequestGet(request["login"].asString());
         }
 
-        if (request["TypeData"] == AUTHORIZE_DATA) {
-            response = ClientRequestGet(request["login"].asString());
-            if (response["status"] == true && response["password"] != request["password"]) {
-                response["status"] = false;
-            }
-        }
         // Получить таймсерии
         if (request["TypeData"] == TIMESERIES_REQUEST) {
             response = TimeSeriesGet(request["name_stock"].asString(), request["len_lags"].asString());
@@ -52,6 +63,7 @@ Json::Value DataBaseController::DataRequest(const Json::Value& request) {
         }       
     }
 
+    // Обновить пользователя
     if (request["Type"] == UPDATE_REQUEST) {
         if (request["TypeData"] == CLIENT_DATA) {
             response = ClientRequestUpdate(request); 
@@ -79,13 +91,12 @@ Json::Value DataBaseController::TimeSeriesPost(const Json::Value& data) {
 Json::Value DataBaseController::TimeSeriesGet(const std::string& name_stock, const std::string& len_lags) {
     Json::Value response;
     auto data = timeseries_rep_->GetByKey(name_stock, std::stoi(len_lags));
-    if (data == nullptr || data->param == Json::Value::null) {
+    if (data == nullptr || data->param.empty()) {
         response["status"] = false;
     }
     else {
-        response["param"] = data->param; 
+        response["data"] = data->param; 
         response["status"] = true;
-    
     }
 
     return response;
@@ -97,7 +108,7 @@ Json::Value DataBaseController::ClientRequestPost(const Json::Value& data) {
 
     auto client_data = std::make_shared<ClientData>();
     client_data->login = data["login"].asString();
-    client_data->hash_password = data["hash_password"].asString();
+    client_data->hash = data["password"].asString();
     client_data->email = data["email"].asString();
 
     response["status"] = clien_rep_->Insert(client_data);
@@ -114,7 +125,7 @@ Json::Value DataBaseController::ClientRequestGet(const std::string& key) {
     else {
         response["status"] = true;
         response["login"] = data->login;
-        response["password"] = data->hash_password;                
+        response["password"] = data->hash;                
         response["email"] = data->email;                
     }
 
@@ -127,7 +138,7 @@ Json::Value DataBaseController::ClientRequestUpdate(const Json::Value& data) {
 
     auto client_data = std::make_shared<ClientData>();
     client_data->login = data["login"].asString();
-    client_data->hash_password = data["password"].asString();
+    client_data->hash = data["password"].asString();
     client_data->email = data["email"].asString();
 
     response["status"] = clien_rep_->Update(client_data->login, client_data);

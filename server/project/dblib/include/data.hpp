@@ -4,13 +4,8 @@
 
 struct ClientData {
     std::string login;
-    std::string hash_password;
+    std::string hash;
     std::string email;
-};
-
-struct AuthorizeData {
-    std::string login;
-    std::string hash_password;
 };
 
 struct TimeSeriesData {

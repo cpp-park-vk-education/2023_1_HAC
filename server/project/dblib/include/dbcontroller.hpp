@@ -26,7 +26,10 @@ namespace dbcontroller {
     class IDataBaseController {
     public:
         virtual Json::Value DataRequest(const Json::Value& request) = 0;
-        
+        virtual bool ConnectToDatabase() = 0;
+        virtual void SetDatabaseConfig(const std::string&  addr, const std::string&  port,
+            const std::string&  db_name, const std::string&  user, const std::string&  pass) = 0; 
+
     protected:
         // TimeSeries
         virtual Json::Value TimeSeriesPost(const Json::Value& data) = 0;
@@ -43,6 +46,9 @@ namespace dbcontroller {
         DataBaseController();
         DataBaseController(const std::shared_ptr<IClientRepository>& client_rep, 
             const std::shared_ptr<ITimeSeriesRepository>& timeseries_rep, const std::shared_ptr<ISubscriptionRepository>& subscription_rep);
+        bool ConnectToDatabase() override;
+        void SetDatabaseConfig(const std::string&  addr, const std::string&  port,
+            const std::string&  db_name, const std::string&  user, const std::string&  pass) override; 
 
         Json::Value DataRequest(const Json::Value& request) override;
 

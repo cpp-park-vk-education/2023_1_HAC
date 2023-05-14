@@ -22,39 +22,36 @@ class IPredictController {
    virtual Json::Value makePredict(const Json::Value& request) = 0;
  protected:
    virtual TimeSeriesPredicts makeTimeSeries(const std::vector<double>& samples_data, size_t window_size) = 0;
-   virtual Json::Value makeDBProtocol(const Json::Value& request, size_t lags) = 0;
    virtual std::vector<double> parseDBProtocol(const Json::Value& response) = 0;
 };
 
 class IModelController {
  public:
    virtual Json::Value callModelApi(const TimeSeriesPredicts& samples_data) = 0;
- protected:
-   virtual Json::Value parseModelResponse(const IHTTPResponse_ request) = 0;
-   virtual IHTTPRequest_ makeHttpForModel(const TimeSeriesPredicts& samples_data) = 0;
 };
 
 
 class IShowPlotController {
  public:
-    virtual Json::Value createPlotData(const Json::Value& request) = 0;
+   virtual Json::Value createPlotData(const Json::Value& request) = 0;
 };
 
 
 class IRegisterController {
  public:
-    virtual Json::Value registration(const Json::Value& request) = 0;
+   virtual Json::Value registration(const Json::Value& request) = 0;
  protected:
-    virtual hash_ hashPassword(const std::string& password) = 0;
+   virtual Json::Value makeDBProtocol(const Json::Value& request) = 0;
 
 };
 
 
 class IAuthorizeController {
  public:
-    virtual Json::Value authorization(const Json::Value& request) = 0;
+   virtual Json::Value authorization(const Json::Value& request) = 0;
  protected:
-    virtual hash_ hashPassword(const std::string& password) = 0;
+   virtual Json::Value makeDBProtocol(const Json::Value& request) = 0;
+   virtual Json::Value checkPassword(const Json::Value& db_response, const Json::Value& request) = 0;
 };
 
 
@@ -62,8 +59,8 @@ class IUpdateDataController {
  public:
    virtual bool updateData(const handlers::ProtocolAPI& protocol) = 0;
  protected:
-   virtual Json::Value parseHTTPToJson(IHTTPResponse_ response) = 0;
-   virtual std::string parseToApiRequest(const handlers::ProtocolAPI& protocol) = 0;
+   // virtual Json::Value parseHTTPToJson(IHTTPResponse_ response) = 0;
+   virtual Json::Value makeDBProtocol(const Json::Value& request) = 0;
 
 };
 

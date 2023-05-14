@@ -9,7 +9,7 @@ add_compile_options(-lssl -lcrypto -pedantic -pedantic-errors)
 
 SET(BOOST_INCLUDE_DIRS "/usr/local/boost_1_81_0")
 set(BOOST_ROOT "/usr/local/boost_1_81_0")
-SET(DB_INCLUDE_DIRS "../dblib/include")
+SET(DB_INCLUDE_DIRS ${CMAKE_SOURCE_DIR}/project/dblib/include)
 SET(SERVER_INCLUDE_DIRS "../serverlib/include")
 SET(SERVER_INCLUDE_GENERAL "../include")
 

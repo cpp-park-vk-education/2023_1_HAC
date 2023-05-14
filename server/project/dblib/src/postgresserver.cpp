@@ -24,7 +24,7 @@ void PostgresServer::Connect() {
         conn_ = std::make_shared<pqxx::connection>(connecting_string);
     } catch (pqxx::failure const &e) {
         std::cerr << e.what() << std::endl;
-        throw ConnectError("Failed connect to database " + db_name_);
+    //    throw ConnectError("Failed connect to database " + db_name_);
     }
 }
 

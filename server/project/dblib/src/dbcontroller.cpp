@@ -2,11 +2,12 @@
 
 using namespace dbcontroller;
 
-DataBaseController::DataBaseController(): database_(new PostgresServer(host_addr_, port_, db_name_, user_, password_)), 
-        clien_rep_(new ClientRepository(database_)), timeseries_rep_(new TimeSeriesRepository(database_)), 
-        subscription_rep_(new SubscriptionRepository(database_)) {
-}
-
+// DataBaseController::DataBaseController(): database_(new PostgresServer(host_addr_, port_, db_name_, user_, password_)), 
+//         clien_rep_(new ClientRepository(database_)), timeseries_rep_(new TimeSeriesRepository(database_)), 
+//         subscription_rep_(new SubscriptionRepository(database_)) {
+// }
+DataBaseController::DataBaseController() {
+ }
 
 DataBaseController::DataBaseController(const std::shared_ptr<IClientRepository>& client_rep, 
         const std::shared_ptr<ITimeSeriesRepository>& timeseries_rep, const std::shared_ptr<ISubscriptionRepository>& subscription_rep): 

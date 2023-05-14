@@ -1,0 +1,79 @@
+/*
+Общее для всех:
+    response["status"]: true/false  // Прошла операция или нет 
+    response["DatabaseIsOpen"]: true/false // Есть ли доступ к БД или нет. Вместо ошибок.
+
+//Получить клиента
+
+Запрос:
+    request["Type"] = GET_REQUEST;
+    request["TypeData"] = CLIENT_DATA;
+    request["login"] = "test";
+Ответ:
+    response["email"] : "test@email.com"
+    response["login"] : "test"
+    response["password"] : "hash"
+    response["status"] : true
+
+Если клиента нет:
+    response["status"] : false
+
+// Таймсерии получить
+Запрос:
+    request["Type"] = GET_REQUEST;
+    request["TypeData"] = TIMESERIES_REQUEST;
+    request["name_stock"] = "test";
+    request["len_lags"] = 1;
+
+Ответ:
+    response["status"]: true;
+    response["data"]: std::vector<float>
+
+Если ["len_lags"] > чем в БД:
+  Вернет сколько есть
+
+Запросить акции компании, которой нет:
+  status: false;
+
+// Добавить запрос на названий акций.
+
+// Добавить клиента
+Запрос:
+    request["Type"] = POST_REQUEST;
+    request["TypeData"] = CLIENT_DATA;
+    request["login"] = "test2";
+    request["password"] = "hash";
+    request["email"] = "unique_email@email.com";  
+
+Ответ:
+    status: true
+
+Логин/почта уже занята:
+
+    status: false
+
+// Таймсерии отправить в БД
+Запрос:
+    request["Type"] = POST_REQUEST;
+    request["TypeData"] = TIMESERIES_DATA;
+    request["name_stock"] = "test";
+    request["date"] = "2021-01-01 19:00";  //Округлять до часа
+    request["param"] = std::vector<double>;  
+
+Ответ:
+    status: true
+
+// Обновить клиента
+Запрос:
+    request["Type"] = UPDATE_REQUEST;
+    request["TypeData"] = CLIENT_DATA;
+    request["login"] = "test";
+    request["password"] = "new_password";
+    request["email"] = "new_email@email.com";  
+Ответ:
+    status: true
+
+Почта уже занята:
+    status: false
+
+*/

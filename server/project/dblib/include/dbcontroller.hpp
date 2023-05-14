@@ -45,7 +45,7 @@ namespace dbcontroller {
             const std::shared_ptr<ITimeSeriesRepository>& timeseries_rep, const std::shared_ptr<ISubscriptionRepository>& subscription_rep);
 
         Json::Value DataRequest(const Json::Value& request) override;
-  
+
     private:
         // TimeSeries
         Json::Value TimeSeriesPost(const Json::Value& data) override;

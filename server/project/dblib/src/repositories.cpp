@@ -141,13 +141,14 @@ std::shared_ptr<TimeSeriesData> TimeSeriesRepository::DatabaseResponseParse(cons
     auto result = std::make_shared<TimeSeriesData>();
 
     result->date = "";
-    Json::Value json_param;
+    std::vector<double> json_param;
+    json_param.resize(db_response.size());
     Json::Reader reader;
     for (int i = 0; i < db_response.size(); i++) {  
-        reader.parse(db_response[i][kParamId].asString(), json_param[i]);
+        json_param.push_back(db_response[i][kParamId].asDouble());
     };
 
-    result->param = json_param;
+   // result->param = json_param;
     return result;
 }
 

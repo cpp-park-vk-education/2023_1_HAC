@@ -15,6 +15,8 @@ using ptrToDBController = dbcontroller::IDataBaseController*;
 using ptrToModelController = controllers::IModelController*;
 
 
+Json::Value makeJsonError(const std::string& error_mes);
+
 // class PredictController
 class PredictController : public IPredictController {
  public:
@@ -24,8 +26,9 @@ class PredictController : public IPredictController {
    
 
  private:
-    TimeSeriesPredicts makeTimeSeries(const Json::Value& samples_data, size_t window_size) override;
-    //Json::Value makeDBProtocol(const Json::Value& request) override;
+    TimeSeriesPredicts makeTimeSeries(const std::vector<double>& samples_data, size_t window_size) override;
+    Json::Value makeDBProtocol(const Json::Value& request, size_t lags) override;
+    std::vector<double> parseDBProtocol(const Json::Value& response) override;
 
     ptrToDBController db_controller_;
     ptrToModelController model_controller_;

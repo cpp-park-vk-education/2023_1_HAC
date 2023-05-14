@@ -3,11 +3,11 @@
     response["status"]: true/false  // Прошла операция или нет 
     response["DatabaseIsOpen"]: true/false // Есть ли доступ к БД или нет. Вместо ошибок.
 
-//Получить клиента
+//авторизация
 
 Запрос:
-    request["Type"] = GET_REQUEST;
-    request["TypeData"] = CLIENT_DATA;
+    request["Type"] = POST_REQUEST;
+    request["TypeData"] = AUTHORIZATION;
     request["login"] = "test";
 Ответ:
     response["email"] : "test@email.com"
@@ -18,6 +18,22 @@
 Если клиента нет:
     response["status"] : false
 
+
+//регистрация
+
+Запрос:
+    request["Type"] = POST_REQUEST;
+    request["TypeData"] = REGISTRATION;
+    request["login"] = "test";
+    request["email"] : "test@email.com"
+    request["password"] : "hash"
+Ответ:
+    response["status"] : true
+
+Если клиента нет:
+    response["status"] : false
+
+
 // Таймсерии получить
 Запрос:
     request["Type"] = GET_REQUEST;
@@ -27,7 +43,7 @@
 
 Ответ:
     response["status"]: true;
-    response["data"]: std::vector<float>
+    response["data"]: json
 
 Если ["len_lags"] > чем в БД:
   Вернет сколько есть
@@ -35,40 +51,28 @@
 Запросить акции компании, которой нет:
   status: false;
 
-// Добавить запрос на названий акций.
+-------// Добавить запрос на названий акций. (для отображения табоицы кнопок)
 
-// Добавить клиента
+
+
+// Таймсерии записать в БД
 Запрос:
     request["Type"] = POST_REQUEST;
-    request["TypeData"] = CLIENT_DATA;
-    request["login"] = "test2";
-    request["password"] = "hash";
-    request["email"] = "unique_email@email.com";  
-
-Ответ:
-    status: true
-
-Логин/почта уже занята:
-
-    status: false
-
-// Таймсерии отправить в БД
-Запрос:
-    request["Type"] = POST_REQUEST;
-    request["TypeData"] = TIMESERIES_DATA;
+    request["TypeData"] = TIMESERIES_REQUEST;
     request["name_stock"] = "test";
     request["date"] = "2021-01-01 19:00";  //Округлять до часа
-    request["param"] = std::vector<double>;  
+    request["param"] = json;  
 
 Ответ:
     status: true
 
-// Обновить клиента
+
+// Обновить клиента, ченж настроек
 Запрос:
-    request["Type"] = UPDATE_REQUEST;
-    request["TypeData"] = CLIENT_DATA;
+    request["Type"] = POST_REQUEST;
+    request["TypeData"] = CHANGE_USER_SETTINGS;
     request["login"] = "test";
-    request["password"] = "new_password";
+    request["password"] = "new_password(hash)";
     request["email"] = "new_email@email.com";  
 Ответ:
     status: true

@@ -37,7 +37,7 @@ TEST_F(RepositoryTest, InsertClientDataCase){
     auto client = std::make_shared<ClientData>();
     client->login = "test";
     client->email = "test@email.com";
-    client->hash_password = "pass";
+    client->hash = "pass";
 
     EXPECT_CALL(*db, IsOpen()).WillOnce(Return(true));
     EXPECT_CALL(*db, SendQuery(_)).WillOnce(Return(true)); 
@@ -51,12 +51,12 @@ TEST_F(RepositoryTest, ClientGetCase){
     auto client = std::make_shared<ClientData>();
     client->login = "test";
     client->email = "test@email.com";
-    client->hash_password = "pass";
+    client->hash = "pass";
 
     Json::Value row;
     row[1] = client->login;
     row[2] = client->email;
-    row[3] = client->hash_password;
+    row[3] = client->hash;
 
 
     EXPECT_CALL(*db, IsOpen()).WillOnce(Return(true));
@@ -82,7 +82,7 @@ TEST_F(RepositoryTest, UpdateClientDataCase){
     auto update_client = std::make_shared<ClientData>();
     update_client->login = "updated_name";
     update_client->email = "test@email.com";
-    update_client->hash_password = "pass";
+    update_client->hash = "pass";
 
     EXPECT_CALL(*db, IsOpen()).WillOnce(Return(true));
     EXPECT_CALL(*db, SendQuery(_)).WillOnce(Return(true)); 
@@ -94,7 +94,7 @@ TEST_F(RepositoryTest, BadQueryForPostUser){
     auto client = std::make_shared<ClientData>();
     client->login = "test";
     client->email = "test@email.com";
-    client->hash_password = "pass";
+    client->hash = "pass";
 
     EXPECT_CALL(*db, IsOpen()).WillRepeatedly(Return(false));
     EXPECT_CALL(*db, SendQuery(_)).WillRepeatedly(Return(false)); 

@@ -59,7 +59,7 @@ TEST_F(DBControllerTest, ClientPost) {
     request["TypeData"] = CLIENT_DATA;
     request["login"] = "test";
     request["email"] = "test@email.com";
-    request["hash_password"] = "pass";
+    request["password"] = "pass";
     
     EXPECT_CALL(*test_client_rep, Insert(_)); 
     db_controller->DataRequest(request);
@@ -71,7 +71,7 @@ TEST_F(DBControllerTest, ClientGet) {
     request["TypeData"] = CLIENT_DATA;
     request["login"] = "test";
     request["email"] = "test@email.com";
-    request["hash_password"] = "pass";
+    request["password"] = "pass";
 
     EXPECT_CALL(*test_client_rep, GetByKey(_));
     db_controller->DataRequest(request);
@@ -83,7 +83,7 @@ TEST_F(DBControllerTest, ClientUpdate) {
     request["TypeData"] = CLIENT_DATA;
     request["login"] = "test";
     request["email"] = "test@email.com";
-    request["hash_password"] = "pass";
+    request["password"] = "pass";
 
     EXPECT_CALL(*test_client_rep, Update(_, _)); 
     db_controller->DataRequest(request);
@@ -94,7 +94,7 @@ TEST_F(DBControllerTest, ClientAutorize) {
     request["Type"] = GET_REQUEST;
     request["TypeData"] = AUTHORIZE_DATA;
     request["login"] = "test";
-    request["hash_password"] = "pass";
+    request["password"] = "pass";
 
     EXPECT_CALL(*test_client_rep, GetByKey(_));
     db_controller->DataRequest(request);
@@ -120,9 +120,8 @@ TEST_F(DBControllerTest, PostTimeSeries) {
     Json::Value request;
     Json::Value param;
     
-    std::string json_string = "{\"test\": 1}";
-    Json::Reader reader;
-    reader.parse(json_string, param);
+    std::vector<double> param;
+    param.push_back(0.1);
 
     request["Type"] = POST_REQUEST;
     request["TypeData"] = TIMESERIES_DATA;

@@ -33,3 +33,5 @@ TEST(PredictControllerTest, MakePredictReturnsCorrectSizeJson) {
     Json::Value response = controller.makePredict(request);
     ASSERT_EQ(response["predicted_values"].size(), 2);
 }
+
+

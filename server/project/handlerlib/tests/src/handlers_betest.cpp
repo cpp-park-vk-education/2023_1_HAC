@@ -9,53 +9,60 @@
 #include "http_protocol.h"
 
 
-// TEST(HandlersTests, NullHTTPReqInHandlePredict) {
-//     dbcontroller::DataBaseController TestDBController;
-//     api::APIModelelRequest TestAPIModelRequest;
-//     controllers::ModelController TestModelController(&TestAPIModelRequest);
-//     controllers::PredictController TestPredictController(&TestDBController, &TestModelController);
-//     handlers::PredictHandler TestPredictHandler(&TestPredictController);
-//     EXPECT_THROW(TestPredictHandler.handle(nullptr, nullptr), market_mentor::NullInHTTPError);
-    
-// }
+TEST(HandlersTests, NullHTTPReqInHandlerPredict) {
+    dbcontroller::DataBaseController db_ctrl;
+    api::APIModelRequest api_model_request;
 
-TEST(HandlersTests, NullHTTPReqInHandleShowPlot) {
+    controllers::ModelController model_ctrl(&api_model_request);
     
-    // class MockDBController : public IDataBaseController {
-    //     MOCK_METHOD0();  
-    // };
-    
-    
-    // handlers::PredictHandler()
+    controllers::PredictController predict_ctrl(&db_ctrl, &model_ctrl);
 
-    // EXPECT_THROW();
-    ASSERT_EQ(1, 1);
+    handlers::PredictHandler predict_handler(&predict_ctrl);
+    EXPECT_THROW(predict_handler.handle(nullptr, nullptr), market_mentor::NullInHTTPError);
+    
 }
 
-TEST(HandlersTests, NullHTTPReqInHandleRegister) {
-    
-    // class MockDBController : public IDataBaseController {
-    //     MOCK_METHOD0();  
-    // };
-    
-    
-    // handlers::PredictHandler()
+TEST(HandlersTests, NullHTTPReqInHandlerShowPlot) {
+    dbcontroller::DataBaseController db_controller;
+   
+    controllers::ShowPlotController mock_show_plot_ctrl(&db_controller);
 
-    // EXPECT_THROW();
-    ASSERT_EQ(1, 1);
+    handlers::ShowPlotHandler show_plot_handler(&mock_show_plot_ctrl);
+    EXPECT_THROW(show_plot_handler.handle(nullptr, nullptr), market_mentor::NullInHTTPError);
+}
+
+TEST(HandlersTests, NullHTTPReqInHandlerRegister) {
+    dbcontroller::DataBaseController db_controller;
+
+    controllers::RegisterController reg_controller(&db_controller);
+
+    handlers::RegisterHandler reg_handler(&reg_controller);
+    EXPECT_THROW(reg_handler.handle(nullptr, nullptr), market_mentor::NullInHTTPError);
 }
 
 
-TEST(HandlersTests, NullHTTPReqInHandleAuthorize) {
-    
-    // class MockDBController : public IDataBaseController {
-    //     MOCK_METHOD0();  
-    // };
-    
-    
-    // handlers::PredictHandler()
+TEST(HandlersTests, NullHTTPReqInHandlerAuthorize) {
+    dbcontroller::DataBaseController db_controller;
 
-    // EXPECT_THROW();
-    ASSERT_EQ(1, 1);
+    controllers::AuthorizeController auth_controller(&db_controller);
+
+    handlers::AuthorizeHandler auth_handler(&auth_controller);
+    EXPECT_THROW(auth_handler.handle(nullptr, nullptr), market_mentor::NullInHTTPError);
 }
 
+
+TEST(PredictHandlerTest, ConstructorThrowsOnNullController) {
+    EXPECT_THROW(handlers::PredictHandler{nullptr}, market_mentor::NullControllerInHandlerError);
+}
+
+TEST(ShowPlotHandlerTest, ConstructorThrowsOnNullController) {
+    EXPECT_THROW(handlers::ShowPlotHandler{nullptr}, market_mentor::NullControllerInHandlerError);
+}
+
+TEST(RegisterHandlerTest, ConstructorThrowsOnNullController) {
+    EXPECT_THROW(handlers::RegisterHandler{nullptr}, market_mentor::NullControllerInHandlerError);
+}
+
+TEST(AuthorizeHandlerTest, ConstructorThrowsOnNullController) {
+    EXPECT_THROW(handlers::AuthorizeHandler{nullptr}, market_mentor::NullControllerInHandlerError);
+}

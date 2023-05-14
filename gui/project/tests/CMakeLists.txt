@@ -6,8 +6,9 @@ INCLUDE_DIRECTORIES(include ../include ${GTEST_INCLUDE_DIRS})
 ADD_EXECUTABLE(
         tests
         src/main.cpp
-        src/gui_base_tests.cpp
-)
+        src/gui_authorization_tests.cpp
+        src/gui_registration_tests.cpp
+        src/gui_user_settings_tests.cpp src/gui_mainwindow_tests.cpp)
 TARGET_LINK_LIBRARIES(tests ${GTEST_BOTH_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT}  -lstdc++fs)
 
 SET(memcheck_command)

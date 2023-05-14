@@ -1,9 +1,11 @@
-// #include "session.h"
+#include "session.h"
 
-// Session::Session(tcp::socket&& socket) {
+Session::Session(tcp::socket&& socket): stream_(std::move(socket)){};
 
-// }
+void Session::setRouterAdapter(IRouterAdapter* router_adapter) {}
+void Session::run(){};
 
-// Session::setRouterAdapter(routers::RouterAdapter* router_adapter) {
-    
-// }
+void Session::doRead(){};
+void Session::onRead(){};
+void Session::sendResponce(){};
+void Session::doClouse(){};

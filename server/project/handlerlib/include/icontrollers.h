@@ -20,58 +20,50 @@ struct TimeSeriesPredicts {
 
 class IPredictController {
  public:
-    virtual void makePredict(IHTTPRequest_ request, IHTTPResponse_ response) = 0;
+   virtual Json::Value makePredict(const Json::Value& request) = 0;
  protected:
-    virtual Json::Value parseInputHttpRequest(const IHTTPRequest_ request) = 0;
-    virtual Json::Value getPlotDataFromDB(const Json::Value& data_protocol) = 0;
-    virtual TimeSeriesPredicts& makeTimeSeries(const Json::Value& samples_data, size_t window_size) = 0;
-    virtual IHTTPResponse_ parseModelResponse(const IHTTPResponse_ request) = 0;
+   virtual TimeSeriesPredicts makeTimeSeries(const Json::Value& samples_data, size_t window_size) = 0;
+   virtual Json::Value makeDBProtocol(const Json::Value& request) = 0;
 };
 
 class IModelController {
  public:
-    virtual IHTTPResponse_ callModelApi(const TimeSeriesPredicts& samples_data) = 0;
+   virtual Json::Value callModelApi(const TimeSeriesPredicts& samples_data) = 0;
  protected:
-    virtual IHTTPRequest_ makeHttpForModel(const TimeSeriesPredicts& samples_data) = 0;
+   virtual Json::Value parseModelResponse(const IHTTPResponse_ request) = 0;
+   virtual IHTTPRequest_ makeHttpForModel(const TimeSeriesPredicts& samples_data) = 0;
 };
 
 
 class IShowPlotController {
  public:
-    virtual IHTTPResponse_ createPlotData(const IHTTPRequest_ request) = 0;
-
- protected:
-    virtual Json::Value parseInputHttpRequest(const IHTTPRequest_ request) = 0;
-    virtual Json::Value getPlotDataFromDB(const Json::Value& data_protocol) = 0;
+    virtual Json::Value createPlotData(const Json::Value& request) = 0;
 };
 
 
 class IRegisterController {
  public:
-    virtual IHTTPResponse_ registration(const IHTTPRequest_ request) = 0;
+    virtual Json::Value registration(const Json::Value& request) = 0;
  protected:
-    virtual Json::Value parseInputHttpRequest(const IHTTPRequest_ request) = 0;
     virtual hash_ hashPassword(const std::string& password) = 0;
-    virtual bool postDataRegistrDB(const Json::Value& data_protocol) = 0; 
 
 };
 
 
 class IAuthorizeController {
  public:
-    virtual IHTTPResponse_ authorization(const IHTTPRequest_ request) = 0;
+    virtual Json::Value authorization(const Json::Value& request) = 0;
  protected:
-    virtual Json::Value parseInputHttpRequest(const IHTTPRequest_ request) = 0;
     virtual hash_ hashPassword(const std::string& password) = 0;
-    virtual bool getCheckAuthorData(const Json::Value& data_protocol) = 0; 
 };
 
 
 class IUpdateDataController {
  public:
-    virtual bool udateData(const handlers::ProtocolAPI& protocol) = 0;
+   virtual bool updateData(const handlers::ProtocolAPI& protocol) = 0;
  protected:
-    virtual std::string parseToApiRequest(const handlers::ProtocolAPI& protocol) = 0;
+   virtual Json::Value parseHTTPToJson(IHTTPResponse_ response) = 0;
+   virtual std::string parseToApiRequest(const handlers::ProtocolAPI& protocol) = 0;
 
 };
 

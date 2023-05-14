@@ -1,8 +1,4 @@
 #pragma once // NO_LINT
-#include <memory>
-#include <vector>
-#include <thread>
-#include <string>
 #include <boost/beast/core.hpp>
 #include <boost/beast/http.hpp>
 #include <boost/beast/version.hpp>
@@ -10,9 +6,15 @@
 #include <boost/asio/strand.hpp>
 #include <boost/asio/ssl.hpp>
 #include <boost/config.hpp>
+#include <stdexcept>
+#include <fstream>
+#include <memory>
+#include <vector>
+#include <thread>
+#include <string>
+
 #include "listener.h"
 #include "routers.h"
-
 #include "ihandler.h"
 #include "icontrollers.h"
 #include "handlers.h"
@@ -56,7 +58,8 @@ class Server {
     Config config_;
     handlers::ProtocolAPI protocol_API;
 
-    void setHandlers();
+    void setHandlers(std::map<std::string, handlers::IHandler*> &handlers, 
+                        const std::string& header, handlers::IHandler* hendler);
     Config parseConfigFhomFile(const std::string& path_to_config_file);
     handlers::ProtocolAPI parseAPIConfigFhomFile(const std::string& path_to_API_config);
 }; 

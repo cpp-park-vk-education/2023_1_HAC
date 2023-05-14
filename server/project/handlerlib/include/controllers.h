@@ -16,6 +16,9 @@ using ptrToModelController = controllers::IModelController*;
 
 
 Json::Value makeJsonError(const std::string& error_mes);
+Json::Value makeDBProtocolGetTS(const Json::Value& request);
+hash_ hashPassword(const std::string& password);
+
 
 // class PredictController
 class PredictController : public IPredictController {
@@ -27,7 +30,7 @@ class PredictController : public IPredictController {
 
  private:
     TimeSeriesPredicts makeTimeSeries(const std::vector<double>& samples_data, size_t window_size) override;
-    Json::Value makeDBProtocol(const Json::Value& request, size_t lags) override;
+    
     std::vector<double> parseDBProtocol(const Json::Value& response) override;
 
     ptrToDBController db_controller_;
@@ -37,15 +40,11 @@ class PredictController : public IPredictController {
 // class ModelController
 class ModelController : public IModelController {
  public:
-   explicit ModelController(const ptrToAPIModel api_model);
-
-   Json::Value callModelApi(const TimeSeriesPredicts& samples_data) override;
+  explicit ModelController(const ptrToAPIModel api_model);
+  Json::Value callModelApi(const TimeSeriesPredicts& samples_data) override;
 
  private:
-   Json::Value parseModelResponse(const IHTTPResponse_ request) override;
-   IHTTPRequest_ makeHttpForModel(const TimeSeriesPredicts& samples_data) override;
-
-   ptrToAPIModel api_model_;
+  ptrToAPIModel api_model_;
 };
 
 // class ShowPlotController 
@@ -62,40 +61,41 @@ class ShowPlotController : public IShowPlotController {
 // class RegisterController
 class RegisterController : public IRegisterController {
  public:
-   explicit RegisterController(const ptrToDBController db_controller);
+  explicit RegisterController(const ptrToDBController db_controller);
 
-   Json::Value registration(const Json::Value& request) override; 
+  Json::Value registration(const Json::Value& request) override; 
  private:
-   hash_ hashPassword(const std::string& password) override;
+  Json::Value makeDBProtocol(const Json::Value& request) override;
 
-   ptrToDBController db_controller_;
+  ptrToDBController db_controller_;
 };
 
 // class AuthorizeController
 class AuthorizeController : public IAuthorizeController {
  public:
-   explicit AuthorizeController(const ptrToDBController db_controller);
+  explicit AuthorizeController(const ptrToDBController db_controller);
 
-   Json::Value authorization(const Json::Value& request) override;
+  Json::Value authorization(const Json::Value& request) override;
  private:
-   hash_ hashPassword(const std::string& password) override;
+  Json::Value checkPassword(const Json::Value& db_response, const Json::Value& request) override;
+  Json::Value makeDBProtocol(const Json::Value& request) override;
 
-   ptrToDBController db_controller_;
+  ptrToDBController db_controller_;
 };
 
 // class UpdateDataController
 class UpdateDataController : public IUpdateDataController {
  public:
-   UpdateDataController(const ptrToDBController db_controller, const ptrToAPIStock api_stock);
+  UpdateDataController(const ptrToDBController db_controller, const ptrToAPIStock api_stock);
 
-   bool updateData(const handlers::ProtocolAPI& protocol) override;
+  bool updateData(const handlers::ProtocolAPI& protocol) override;
 
  private:
-   Json::Value parseHTTPToJson(IHTTPResponse_ response) override;
-   std::string parseToApiRequest(const handlers::ProtocolAPI& protocol) override;
+  // Json::Value parseHTTPToJson(IHTTPResponse_ response) override;
+  Json::Value makeDBProtocol(const Json::Value& request) override;
 
-   ptrToDBController db_controller_;
-   ptrToAPIStock api_stock_;
+  ptrToDBController db_controller_;
+  ptrToAPIStock api_stock_;
 };
 
 } // namespace controllers 

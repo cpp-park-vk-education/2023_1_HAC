@@ -16,6 +16,19 @@ Json::Value makeJsonError(const std::string& error_mes) {
   return response;
 }
 
+Json::Value makeDBProtocolGetTS(const Json::Value& request) {
+    Json::Value db_protocol;
+    db_protocol["Type"] = TypeRequest::GET_REQUEST;
+    db_protocol["TypeData"] = TypeData::TIMESERIES_REQUEST;
+    db_protocol["name_stock"] = request["name_stock"];
+    db_protocol["len_lags"] = request["lags"];
+    return db_protocol;
+}
+
+hash_ hashPassword(const std::string& password) {
+    return password;
+}
+
 
 // class PredictController
 PredictController::PredictController
@@ -25,15 +38,14 @@ PredictController::PredictController
 Json::Value PredictController::makePredict(const Json::Value& request) {
     // получает джейсон
     // получает из него название акции 
-    Json::Value request_to_db = makeDBProtocol(request, std::stol(request["lags"].asString()));
+    Json::Value request_to_db = makeDBProtocolGetTS(request);
     // отправляет название ДБ контроллеру
     Json::Value response_db = db_controller_->DataRequest(request_to_db);
     try {
         std::vector<double> timeseries_vector = parseDBProtocol(response_db);        
         auto time_series = makeTimeSeries(timeseries_vector, std::stol(request["window_size"].asString()));
 
-        Json::Value model_response = model_controller_->callModelApi(time_series);
-        return model_response;
+        return model_controller_->callModelApi(time_series);
 
     } catch (market_mentor::MarketMentorException &e) {
         return makeJsonError(e.what());
@@ -43,14 +55,7 @@ Json::Value PredictController::makePredict(const Json::Value& request) {
 
 }
 
-Json::Value PredictController::makeDBProtocol(const Json::Value& request, size_t lags) {
-    Json::Value db_protocol;
-    db_protocol["Type"] = TypeRequest::GET_REQUEST;
-    db_protocol["TypeData"] = TypeData::TIMESERIES_REQUEST;
-    db_protocol["name_stock"] = request["name_stock"];
-    db_protocol["len_lags"] = lags;
-    return db_protocol;
-}
+
 
 std::vector<double> PredictController::parseDBProtocol(const Json::Value& response) {
     if (!response["status"]) {
@@ -79,54 +84,19 @@ ModelController::ModelController(const ptrToAPIModel api_model)
     : api_model_(api_model) {}
 
 Json::Value ModelController::callModelApi(const TimeSeriesPredicts& samples_data) {
-    // создаёт реквест для апи модели
-    //auto request_to_model = makeHttpForModel(sample_data);
-    // // отправляет реквест апи
-    // // принимает респонс
-    // auto response = api_model_->getData(request_to_model);
-    // // парсит респонс
-    // Json::Value response_json = parseModelResponse(response);
-    // // формирует хороший или плохой джейсон
-    // return response_json;
+    return api_model_->getData(samples_data);  
 }
 
-IHTTPRequest_ ModelController::makeHttpForModel(const TimeSeriesPredicts& samples_data) {
-    // создание реквеста по тайм серии
-}
 
-Json::Value ModelController::parseModelResponse(const IHTTPResponse_ request) {
-    // // парсинг респоса от модели
-    // Json::Value result;
-    // result["data"] = "распарсил";
-    // return result;
-}
 
 // class ShowPlotController
 ShowPlotController::ShowPlotController(const ptrToDBController db_controller) 
     : db_controller_(db_controller) {}
 
 Json::Value ShowPlotController::createPlotData(const Json::Value& request) {
-    // // получает из джейсона название акции
-    // try {
-    //     std::string name_stok = request["name_stock"];
-    // } catch (...) {
-    //     std::cerr << "Invalid name stock" << std::endl;
-    //     Json::Value response;
-    //      // отдаёт плохой джейсон
-    //     response["error"] = "Error";
-    //     return response;
-    // }
-    // // запрашивает у ДБ контроллера 
-    // Json::Value response_from_db = db_controller_->DataRequest(request);
-    // // проверяет ответ
-    // if (name_stock != response_from_db["name_stock"] || !response_from_db["data_stock"]) {
-    //     Json::Value response;
-    //      // отдаёт плохой джейсон
-    //     response["error"] = "Error";
-    //     return response;
-    // }
-    // // отдаёт хороший джейсон
-    // return response_from_db;
+    // получает из джейсона название акции
+    Json::Value request_to_db = makeDBProtocolGetTS(request);
+    return db_controller_->DataRequest(request_to_db);
 }
 
 // class RegisterController
@@ -134,65 +104,48 @@ RegisterController::RegisterController(const ptrToDBController db_controller)
     : db_controller_(db_controller) {}
 
 Json::Value RegisterController::registration(const Json::Value& request) {
-    //  // получаем джейсон
-    // Json::Value response;
-    // // хешируем пароль
-    // try {
-    //     request["password"] = hashPassword(request["password"]);
-    // } catch {
-    //     std::cerr << "Invalid password" << std::endl;
-    //      // отдаёт плохой джейсон
-    //     response["error"] = "Error";
-    //     return response;
-    // }
-    // // отправляем бд
-
-    // Json::Value response_from_db = db_controller_->DataRequest(request);
-    // if (request["status"] != "OK") {
-    //      // отдаёт плохой джейсон
-    //     response["error"] = "Error";
-    //     return response;
-    // }
-    // response["status"] = "OK";
-    // return response;
+    request["password"] = hashPassword(request["password"].asString());
+    Json::Value request_to_db = makeDBProtocol(request);
+    return db_controller_->DataRequest(request_to_db);
 }
 
-hash_ RegisterController::hashPassword(const std::string& password) {
-  //  return password;
+
+Json::Value RegisterController::makeDBProtocol(const Json::Value& request) {
+    Json::Value db_protocol;
+    db_protocol["Type"] = TypeRequest::POST_REQUEST;
+    db_protocol["TypeData"] = TypeData::REGISTRATION;
+    db_protocol["login"] = request["login"];
+    db_protocol["email"] = request["email"];
+    db_protocol["password"] = request["password"];
+    return db_protocol;
 }
+
 
 // class AuthorizeController
 AuthorizeController::AuthorizeController(const ptrToDBController db_controller)
     : db_controller_(db_controller) {}
 
 Json::Value AuthorizeController::authorization(const Json::Value& request) {
-    // // получаем джейсон
-    // Json::Value response;
-    // // хешируем пароль
-    // try {
-    //     request["password"] = hashPassword(request["password"]);
-    // } catch {
-    //     std::cerr << "Invalid password" << std::endl;
-    //      // отдаёт плохой джейсон
-    //     response["error"] = "Error";
-    //     return response;
-    // }
-    // // отправляем бд
-
-    // Json::Value response_from_db = db_controller_->DataRequest(request);
-    // if (request["status"] != "OK") {
-    //      // отдаёт плохой джейсон
-    //     response["error"] = "Error";
-    //     return response;
-    // }
-    // response["status"] = "OK";
-   // return response;
+    Json::Value request_to_db = makeDBProtocol(request);
+    Json::Value response_db = db_controller_->DataRequest(request_to_db);
+    request["password"] = hashPassword(request["password"].asString());
+    return checkPassword(response_db, request);
     
 } 
 
-hash_ AuthorizeController::hashPassword(const std::string& password) {
-    return password;
+Json::Value AuthorizeController::makeDBProtocol(const Json::Value& request) {
+    Json::Value db_protocol;
+    db_protocol["Type"] = TypeRequest::POST_REQUEST;
+    db_protocol["TypeData"] = TypeData::AUTHORIZATION;
+    db_protocol["login"] = request["login"];
+    return db_protocol;
 }
+
+Json::Value AuthorizeController::checkPassword(const Json::Value& db_response, const Json::Value& request) {
+    Json::Value result_response;
+    result_response["status"] = (db_response["password"] == request["password"]);
+    return result_response;
+}   
 
 // class UpdateDataController
 UpdateDataController::UpdateDataController(const ptrToDBController db_controller, const ptrToAPIStock api_stock)
@@ -200,31 +153,21 @@ UpdateDataController::UpdateDataController(const ptrToDBController db_controller
 
 bool UpdateDataController::updateData(const handlers::ProtocolAPI& protocol) {
     // создаём из структуры стрингу
-    // std::string protocol_string = parseToApiRequest(protocol);
-    
-    // // отдаём на вход апи стрингу
-    // auto response_model = api_stock_->getData(protocol_string);
-    // // парсим хттп в json
-    // Json::Value json_response_model = parseHTTPToJson(&response);
-    // // отдаём json ДБ контроллеру на запись
-    // Json::Value json_response_db = db_controller_->DataRequest(json_response_model);
-    // // возращаем статус состояния
-    // return (json_response_db["status"] == "OK");
-
+    auto response_model = api_stock_->getData(protocol); // json
+    Json::Value db_protocol = makeDBProtocol(response_model);
+    Json::Value json_response_db = db_controller_->DataRequest(db_protocol);
+    return json_response_db["status"];
 }
 
-
-Json::Value UpdateDataController::parseHTTPToJson(IHTTPResponse_ response) {
-    // из поданнной на вход структуры делаем стрингу по протоколу 
-    // Json::Value result;
-    // result["data"] = "распарсил";
-    // return result;
+Json::Value UpdateDataController::makeDBProtocol(const Json::Value& request) {
+    Json::Value db_protocol;
+    db_protocol["Type"] = TypeRequest::POST_REQUEST;
+    db_protocol["TypeData"] = TypeData::TIMESERIES_REQUEST;
+    db_protocol["name_stock"] = request["name_stock"];
+    db_protocol["date"] = request["date"];
+    db_protocol["data"] = request["data"];
+    return db_protocol;
 }
 
-std::string UpdateDataController::parseToApiRequest(const handlers::ProtocolAPI& protocol) {
-    // из поданнной на вход структуры делаем стрингу по протоколу
-    return "распаршено";
-
-}
 
 } // namespace controllers 

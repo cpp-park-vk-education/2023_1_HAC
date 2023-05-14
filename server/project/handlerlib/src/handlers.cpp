@@ -7,6 +7,8 @@ PredictHandler::PredictHandler(ptrToPredictController controller)
     : controller_(controller) {};
 
 void PredictHandler::handle(IHTTPRequest_ request, IHTTPResponse_ response) {
+    // /?name=apple&graph=predict&lag=8&window_size=8
+    
     // парс реквеста
     // вызов конроллера
     // парс ответа от контроллера

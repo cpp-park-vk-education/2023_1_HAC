@@ -94,8 +94,15 @@ bool ClientRepository::Update(const std::string& key, const std::shared_ptr<Clie
         return false;
     }    
 
-    std::string query = "UPDATE client SET password = '" + data->hash + "', email =  '" 
-            + data->email + "' WHERE login = '" + key + "'";
+    std::string query;
+    if (data->email != "") {
+        query = "UPDATE client SET password = '" + data->hash + "', email =  '" 
+                + data->email + "' WHERE login = '" + key + "'";        
+    }
+    else {
+        query = "UPDATE client SET password = '" + data->hash + "' WHERE login = '" + key + "'";        
+    }
+
     bool result = database_->SendQuery(query);
 
     if (result) {
@@ -122,7 +129,7 @@ TimeSeriesRepository::TimeSeriesRepository(const std::shared_ptr<IDataBase>& db)
 bool TimeSeriesRepository::Insert(const std::shared_ptr<TimeSeriesData>& data){
     Json::FastWriter json_to_string;
     std::string query = "INSERT into timeseries(name,date, param) VALUES ('" + 
-        data->name_stock + "', '" + data->date + "', '" + json_to_string.write(data->param) + "')";
+        data->name_stock + "', '" + data->date + "', " + data->param[0].asString() + ")";
 
     if (!database_->IsOpen()) {
         return false;
@@ -139,17 +146,20 @@ bool TimeSeriesRepository::Insert(const std::shared_ptr<TimeSeriesData>& data){
 std::shared_ptr<TimeSeriesData> TimeSeriesRepository::DatabaseResponseParse(const Json::Value& db_response) {
     const int kTimeSeriesId = 0;
     const int kNameId = 1;
-    const int kParamId = 2;
-    const int kDateId = 3;
+    const int kParamId = 3;
+    const int kDateId = 2;
 
     auto result = std::make_shared<TimeSeriesData>();
 
     result->date = "";
     Json::Value json_param;
     Json::Reader reader;
+    std::string number;
     for (int i = 0; i < db_response.size(); i++) {  
-        // reader.parse(db_response[i][kParamId].asS(), json_param[i]);
-        json_param[i] = db_response[i][kParamId].asDouble();
+        if (db_response[i][kParamId] != Json::Value::null) {
+            number = db_response[i][kParamId].asString();
+            json_param[i] = std::stod(number);
+        }
     };
 
     result->param = json_param;

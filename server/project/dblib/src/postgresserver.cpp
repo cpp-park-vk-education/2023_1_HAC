@@ -126,7 +126,7 @@ Json::Value PostgresServer::GetData(const std::string& query) {
             }
         }
         result[row_number++] = row_buffer;
-        row_buffer.clear();
+        field_number = 0;
     }
     
     return result;

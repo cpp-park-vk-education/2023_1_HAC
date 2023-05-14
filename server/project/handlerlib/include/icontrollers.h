@@ -14,16 +14,16 @@ namespace controllers {
 
 struct TimeSeriesPredicts {
     std::vector<double> matrix_samples;
-    size_t rows;
-    size_t cols;
+    size_t window_size;
 };
 
 class IPredictController {
  public:
    virtual Json::Value makePredict(const Json::Value& request) = 0;
  protected:
-   virtual TimeSeriesPredicts makeTimeSeries(const Json::Value& samples_data, size_t window_size) = 0;
-  // virtual Json::Value makeDBProtocol(const Json::Value& request) = 0;
+   virtual TimeSeriesPredicts makeTimeSeries(const std::vector<double>& samples_data, size_t window_size) = 0;
+   virtual Json::Value makeDBProtocol(const Json::Value& request, size_t lags) = 0;
+   virtual std::vector<double> parseDBProtocol(const Json::Value& response) = 0;
 };
 
 class IModelController {

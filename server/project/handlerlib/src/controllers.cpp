@@ -1,9 +1,21 @@
 #include "controllers.h"
+#include "handler_exception.h"
+
 
 #include <iostream>
+#include <vector>
 
 
 namespace controllers {
+
+
+Json::Value makeJsonError(const std::string& error_mes) {
+  Json::Value response;
+  response["status"] = false;
+  response["error"] = error_mes;
+  return response;
+}
+
 
 // class PredictController
 PredictController::PredictController
@@ -12,52 +24,54 @@ PredictController::PredictController
 
 Json::Value PredictController::makePredict(const Json::Value& request) {
     // получает джейсон
-    // получает из него название акций 
-    // Json::Value request_to_db["name_stock"] = request["name_stock"];
-    // // отправляет название ДБ контроллеру
-    // Json::Value response_db = db_controller_->DataRequest(request_to_db);
-    // // проверка ответа 
-    //     // сформировать джейсон с ошибкой
-    //     // выйти из функции
+    // получает из него название акции 
+    Json::Value request_to_db = makeDBProtocol(request, std::stol(request["lags"].asString()));
+    // отправляет название ДБ контроллеру
+    Json::Value response_db = db_controller_->DataRequest(request_to_db);
+    try {
+        std::vector<double> timeseries_vector = parseDBProtocol(response_db);        
+        auto time_series = makeTimeSeries(timeseries_vector, std::stol(request["window_size"].asString()));
 
+        Json::Value model_response = model_controller_->callModelApi(time_series);
+        return model_response;
 
-    // // создаём таймсериес
-    // size_t window_size = 5;
-    // auto time_series = makeTimeSeries(json_plot_data, window_size);
-    // // ловим исключение
-    //     // сформировать джейсон с ошибкой
-    //     // выйти из функции
-
-    // // передаём управление
-    // // получаем предикт в джейсоне
-    // Json::Value model_response = model_controller_->callModelApi(time_series);
-    
-
-    // // проверяем предикт и добавляем дату 
-    //     // сформировать джейсон с ошибкой
-    //     // выйти из функции
-
-    // return model_response;
-    // // отдаём джейсон
-    // // выходим из функции
+    } catch (market_mentor::MarketMentorException &e) {
+        return makeJsonError(e.what());
+    } catch (std::exception &e) {
+        return makeJsonError(e.what());
+    }
 
 }
 
-// Json::Value PredictController::makeDBProtocol(const Json::Value& request, size_t lags) {
-//     // Json::Value db_protocol;
-//     // db_protocol["Type"] = TypeRequest::GET_REQUEST;
-//     // db_protocol["TypeData"] = TypeData::TIMESERIES_REQUEST;
-//     // db_protocol["name_stock"] = request["name_stock"];
-//     // db_ptotocol["len_lags"] = lags;
-//     // return db_protocol;
+Json::Value PredictController::makeDBProtocol(const Json::Value& request, size_t lags) {
+    Json::Value db_protocol;
+    db_protocol["Type"] = TypeRequest::GET_REQUEST;
+    db_protocol["TypeData"] = TypeData::TIMESERIES_REQUEST;
+    db_protocol["name_stock"] = request["name_stock"];
+    db_protocol["len_lags"] = lags;
+    return db_protocol;
+}
 
-// }
+std::vector<double> PredictController::parseDBProtocol(const Json::Value& response) {
+    if (!response["status"]) {
+        throw market_mentor::ErrorInGetDataFromDB("timeseries");
+    }
+    std::vector<double> timeseries_vector;
+    for (int i = 0; i < response["data"].size(); ++i) {
+        timeseries_vector.push_back(std::stod(response["data"][i].asString()));
+    }
+    return timeseries_vector;
+}
 
-TimeSeriesPredicts PredictController::makeTimeSeries(const Json::Value& samples_data, size_t window_size) {
-    // идём по джейсону
-    // формируем кортежи с размером window_size
-    // записываем их в вектор
-    // возращаем таймсериес
+
+TimeSeriesPredicts PredictController::makeTimeSeries(const std::vector<double>& samples_data, size_t window_size) {
+    TimeSeriesPredicts ts;
+    ts.window_size = window_size;
+    if (samples_data.size() % ts.window_size != 0) {
+        throw market_mentor::ErrorInGetDataFromDB("timeseries (size)");
+    }
+    ts.matrix_samples = samples_data;
+    return ts;
 }
 
 // class ModelController
@@ -65,8 +79,8 @@ ModelController::ModelController(const ptrToAPIModel api_model)
     : api_model_(api_model) {}
 
 Json::Value ModelController::callModelApi(const TimeSeriesPredicts& samples_data) {
-    // // создаёт реквест для апи модели
-    // auto request_to_model = makeHttpForModel(sample_data);
+    // создаёт реквест для апи модели
+    //auto request_to_model = makeHttpForModel(sample_data);
     // // отправляет реквест апи
     // // принимает респонс
     // auto response = api_model_->getData(request_to_model);

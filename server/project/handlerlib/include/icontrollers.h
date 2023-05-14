@@ -23,7 +23,7 @@ class IPredictController {
    virtual Json::Value makePredict(const Json::Value& request) = 0;
  protected:
    virtual TimeSeriesPredicts makeTimeSeries(const Json::Value& samples_data, size_t window_size) = 0;
-    
+   virtual Json::Value makeDBProtocol(const Json::Value& request) = 0;
 };
 
 class IModelController {

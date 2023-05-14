@@ -21,9 +21,11 @@ class PredictController : public IPredictController {
    PredictController(const ptrToDBController db_controller, const ptrToModelController model_controller);
 
    Json::Value makePredict(const Json::Value& request) override;
+   
 
  private:
     TimeSeriesPredicts makeTimeSeries(const Json::Value& samples_data, size_t window_size) override;
+    Json::Value makeDBProtocol(const Json::Value& request) override;
 
     ptrToDBController db_controller_;
     ptrToModelController model_controller_;

@@ -89,6 +89,7 @@ GUIController::GUIController(QWidget *parent)
     registration_network_ptr->setRegistrationNetwork(network_ptr);
 
 
+
     setCentralWidget(pages);
     pages->setCurrentIndex(0);
 }

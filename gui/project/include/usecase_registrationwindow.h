@@ -59,6 +59,7 @@ public:
         registration_window_ptr->createErrorMessage(error_message);
         registration_window_ptr->showErrorMessage();
     }
+
     void setUser(const std::string& user) override {}
     std::string getUrl() override {}
     void setUrl(const std::string& url) override {}

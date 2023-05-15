@@ -43,6 +43,7 @@ public:
 public slots:
     void start_auth();
     void open_reg_window();
+
 private:
     Ui::AuthorizationWindow *ui;
     ptr_to_authorization_handler authorization_handler_ptr;
@@ -50,6 +51,7 @@ private:
     std::string password;
     QPushButton* btn_enter;
     QPushButton* btn_reg;
+
 
     QString* error_message_;
     QString* error_type_;

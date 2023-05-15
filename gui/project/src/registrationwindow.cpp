@@ -11,6 +11,7 @@ RegistrationWindow::RegistrationWindow(QWidget *parent) :
     ui->setupUi(this);
     btn_enter = ui->btnEnter;
     connect(this->get_enter_btn(),SIGNAL(clicked(bool)),this, SLOT(start_reg()));
+
 }
 
 RegistrationWindow::~RegistrationWindow()
@@ -46,5 +47,4 @@ void RegistrationWindow::start_reg() {
     std::cout << "In start reg" <<std::endl;
     registration_handler_ptr->regHandler(getEmail(), getLogin(), getPassword(), getPasswordConfirm());
 }
-
 

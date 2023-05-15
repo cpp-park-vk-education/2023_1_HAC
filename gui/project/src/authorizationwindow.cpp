@@ -16,6 +16,7 @@ AuthorizationWindow::AuthorizationWindow(QWidget *parent) :
 
     connect(this->get_enter_btn(),SIGNAL(clicked(bool)),this, SLOT(start_auth()));
     connect(this->get_reg_btn(),SIGNAL(clicked(bool)),this, SLOT(open_reg_window()));
+
 }
 
 AuthorizationWindow::~AuthorizationWindow()
@@ -47,6 +48,7 @@ QPushButton* AuthorizationWindow::get_enter_btn() {
 QPushButton* AuthorizationWindow::get_reg_btn() {
     return btn_reg;
 }
+
 
 void AuthorizationWindow::start_auth() {
     //std::string str_log = getLogin();

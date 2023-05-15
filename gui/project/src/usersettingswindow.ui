@@ -1,21 +1,100 @@
+
+<?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <author/>
- <comment/>
- <exportmacro/>
  <class>UserSettingsWindow</class>
  <widget class="QWidget" name="UserSettingsWindow">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>400</width>
-    <height>300</height>
+    <width>861</width>
+    <height>545</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Form</string>
   </property>
+  <widget class="QPushButton" name="Return">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>10</y>
+     <width>131</width>
+     <height>71</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Вернуться назад</string>
+   </property>
+  </widget>
+  <widget class="QWidget" name="layoutWidget">
+   <property name="geometry">
+    <rect>
+     <x>310</x>
+     <y>180</y>
+     <width>211</width>
+     <height>212</height>
+    </rect>
+   </property>
+   <layout class="QGridLayout" name="gridLayout_2">
+    <item row="6" column="0">
+     <widget class="QPushButton" name="btnEnter">
+      <property name="text">
+       <string>Потвердить</string>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="0">
+     <widget class="QLabel" name="OldPassword_2">
+      <property name="text">
+       <string>Старый пароль</string>
+      </property>
+     </widget>
+    </item>
+    <item row="2" column="0">
+     <widget class="QLabel" name="NewPassword">
+      <property name="text">
+       <string>Новый пароль</string>
+      </property>
+     </widget>
+    </item>
+    <item row="4" column="0">
+     <widget class="QLabel" name="RepeatPassword">
+      <property name="text">
+       <string>Повторите пароль</string>
+      </property>
+     </widget>
+    </item>
+    <item row="3" column="0">
+     <widget class="QLineEdit" name="leNewPassword_2"/>
+    </item>
+    <item row="1" column="0">
+     <widget class="QLineEdit" name="leOldPassword_2"/>
+    </item>
+    <item row="5" column="0">
+     <widget class="QLineEdit" name="leRepeatPassword_2"/>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QLabel" name="Settings">
+   <property name="geometry">
+    <rect>
+     <x>300</x>
+     <y>110</y>
+     <width>241</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>14</pointsize>
+    </font>
+   </property>
+   <property name="text">
+    <string>Настройки пользователя</string>
+   </property>
+  </widget>
  </widget>
- <pixmapfunction/>
+ <resources/>
  <connections/>
 </ui>

@@ -1,7 +1,8 @@
 #ifndef USERSETTINGSWINDOW_NETWORK_INTERFACE_H
 #define USERSETTINGSWINDOW_NETWORK_INTERFACE_H
 
-//#include <memory>
+
+#include <memory>
 
 struct ConfirmEdit {
     std::string old_password;

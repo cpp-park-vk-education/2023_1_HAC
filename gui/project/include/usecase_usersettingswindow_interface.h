@@ -7,6 +7,8 @@
 
 #include<memory>
 
+#include "../include/ionetwork_interface.h"
+
 class IWindowManager;
 using ptr_to_iwindow_manager = std::shared_ptr<IWindowManager>;
 
@@ -28,10 +30,11 @@ public:
     virtual void sendError(const Error& error_message) = 0;
     virtual void passToMain() = 0;
     virtual void ConfirmHandler(const std::string& old_password,
-                                         const std::string& new_password) = 0;
+
+                                         const std::string& new_password, const std::string& repeat_password) = 0;
     virtual std::string getUser() = 0;
-    virtual std::string getUrl() = 0;
-    virtual void setUrl(const std::string& url) = 0;
+//     virtual std::string getUrl() = 0;
+//     virtual void setUrl(const std::string& url) = 0;
     virtual void setUser(const std::string& user) = 0;
 };
 

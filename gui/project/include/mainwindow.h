@@ -9,6 +9,7 @@
 
 //#include <memory>
 #include <iostream>
+
 #include <string>
 #include "../include/mainwindow_interface.h"
 
@@ -41,6 +42,7 @@ public:
         std::cout << "created error message"<<std::endl;
     }
 
+
     QPushButton* get_apple_btn();
     QPushButton* get_predict_btn();
     QPushButton* get_user_set_btn();
@@ -60,6 +62,7 @@ private:
     QVector<double> y;
     QString* error_message_;
     QString* error_type_;
+
 
     std::string stock_name;
 

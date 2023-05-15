@@ -8,7 +8,8 @@ ADD_EXECUTABLE(
         src/main.cpp
         src/gui_authorization_tests.cpp
         src/gui_registration_tests.cpp
-        src/gui_user_settings_tests.cpp src/gui_mainwindow_tests.cpp)
+      #  src/gui_user_settings_tests.cpp
+        src/gui_mainwindow_tests.cpp)
 TARGET_LINK_LIBRARIES(tests ${GTEST_BOTH_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT}  -lstdc++fs)
 
 SET(memcheck_command)

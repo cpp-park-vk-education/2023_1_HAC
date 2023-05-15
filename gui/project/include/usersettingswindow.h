@@ -3,8 +3,12 @@
 
 #include <QWidget>
 
+
+#include <iostream>
 #include <string>
 #include <memory>
+#include <QErrorMessage>
+#include <QDebug>
 
 #include "../include/usersettingswindow_interface.h"
 
@@ -19,15 +23,30 @@ public:
     explicit UserSettingsWindow(QWidget *parent = nullptr);
     ~UserSettingsWindow();
     void setUserSettingsWindowHandler(
-            ptr_to_settings_handler set_handler_ptr) override {}
-    void showErrorMessage() override {}
-    void createErrorMessage(const Error& error_message) override {}
-    std::string getOldPassword() override {return {};}
-    std::string getNewPassword() override {return {};}
+
+            ptr_to_settings_handler set_handler_ptr) override;
+    void showErrorMessage() override;
+    void createErrorMessage(const Error& error_message) override;
+    std::string getOldPassword() override;
+    std::string getNewPassword() override;
+    std::string getRepeatPassword() override;
+
+public slots:
+    void send_setting();
 
 private:
     Ui::UserSettingsWindow *ui;
     ptr_to_settings_handler settings_handler_ptr;
+
+
+    std::string old_password;
+    std::string new_password;
+    
+    QPushButton* btn_enter;
+    QPushButton* btn_return;
+    QString* error_message_;
+    QString* error_type_;
+    QErrorMessage* errorMes;
 };
 
 #endif // USERSETTINGSWINDOW_H

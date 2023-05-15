@@ -17,6 +17,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->widget->xAxis->setRange(0,10);
     ui->widget->yAxis->setRange(0, 10);
 
+
     connect(this->get_apple_btn(),SIGNAL(clicked(bool)),this, SLOT(start_apple_plot()));
     connect(this->get_predict_btn(),SIGNAL(clicked(bool)),this, SLOT(start_predict()));
     connect(this->get_user_set_btn(),SIGNAL(clicked(bool)),this, SLOT(open_user_set()));

@@ -7,6 +7,7 @@
 
 #include <iostream>
 
+
 #include "../include/registrationwindow_interface.h"
 //#include "../include/usecase_registrationwindow_interface.h"
 
@@ -61,6 +62,7 @@ private:
     QErrorMessage* errorMes;
 
     QPushButton* btn_enter;
+
 };
 
 #endif // REGISTRATIONWINDOW_H

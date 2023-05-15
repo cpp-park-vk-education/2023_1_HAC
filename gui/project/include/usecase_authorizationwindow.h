@@ -64,6 +64,7 @@ public:
         window_manager_ptr->openRegistrationWindow();
     }
 
+
 private:
     ptr_to_iauthorization_network authorization_network_ptr;
     ptr_to_iauthorization_window authorization_window_ptr;

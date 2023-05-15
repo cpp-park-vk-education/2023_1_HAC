@@ -21,8 +21,8 @@ class NullControllerInHandlerError : public MarketMentorException {
 
 class InvalidHttpRequestError : public MarketMentorException {
  public:
-    InvalidHttpRequestError() :
-        MarketMentorException("Invalid HTTP request") {}
+    InvalidHttpRequestError(const std::string& message) :
+        MarketMentorException("Invalid HTTP request (" + message + ")") {}
 };
 
 class InvalidJsonFormatError : public MarketMentorException {

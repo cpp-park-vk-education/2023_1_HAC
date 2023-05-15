@@ -5,6 +5,8 @@
 #include "dbcontroller.hpp"
 #include "icontrollers.h"
 
+#include <map>
+#include <memory>
 #include <vector>
 #include <gmock/gmock.h>
 #include <jsoncpp/json/value.h>

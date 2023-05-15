@@ -7,7 +7,13 @@
 8 предсказаний
 8 ширина окна 
 
-Header:   GET(POST):  AUTHORIZATION/REGISTRATION/CHANGE_USER_SETTINGS/TIMESERIES_REQUEST
+
+mapa:
+method : GET/POST
+action : AUTHORIZATION/REGISTRATION/CHANGE_USER_SETTINGS/TIMESERIES_REQUEST
+
+
+Header:   GET(POST)  :  AUTHORIZATION/REGISTRATION/CHANGE_USER_SETTINGS/TIMESERIES_REQUEST
 
 
 ====== Client HTTP =======
@@ -36,8 +42,17 @@ old_password
 
 ```
 
-GET TIMESERIES_REQUEST (predict / showplot)
+GET PREDICT
 ```
+// url
+```
+
+GET PLOT
+```
+// url
+```
+
+
 name/predict(plot)/lag/window_size
 ```
 

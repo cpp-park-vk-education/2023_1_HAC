@@ -4,11 +4,11 @@
 // // #include <boost/config.hpp>
 
 
-Server::Config parseConfigFromFile(const std::string& path_to_config_file) {
-    Server::Config config;
+Config Server::parseConfigFhomFile(const std::string& path_to_config_file) {
+    Config config;
     config.address = "127.0.0.1";
-    config.port = 12;
-    config.threads = 10;
+    config.port = 8889;
+    config.threads = 1;
     return config;
 }
 
@@ -18,8 +18,8 @@ Server::Server(const std::string& path_to_config_file) {
 
     std::unique_ptr<dbcontroller::IDataBaseController> database_controller 
                    = std::make_unique<dbcontroller::DataBaseController>();
-    std::unique_ptr<controllers::IShowPlotController> show_plot_controller 
-                    = std::make_unique<controllers::ShowPlotController>(database_controller.get());
+    //std::unique_ptr<controllers::IShowPlotController> show_plot_controller 
+    //                = std::make_unique<controllers::ShowPlotController>(database_controller.get());
     // std::unique_ptr<controllers::IRegisterController> register_contoller
     //                 = std::make_unique<controllers::RegisterController>(database_controller.get());
     // std::unique_ptr<controllers::IAuthorizeController> aurhorize_controller
@@ -33,13 +33,18 @@ Server::Server(const std::string& path_to_config_file) {
     // prtToIHandler register_handler = std::make_unique<handlers::RegisterHandler>(register_contoller.get());
     // prtToIHandler authorize_handler = std::make_unique<handlers::AuthorizeHandler>(aurhorize_controller.get());
     // prtToIHandler show_plot_handler = std::make_unique<handlers::ShowPlotHandler>(show_plot_controller.get());
-    
-    // config_ = parseConfigFhomFile(path_to_config_file);
+    // std::unique_ptr<IRouterAdapter> router_adapter = std::make_unique<RouterAdapter>
+
+    config_ = Server::parseConfigFhomFile(path_to_config_file);
+    net::io_context ioc{config_.threads};    
+
+    //std::make_shared<Listener>(
+    //    ioc,
+    //    tcp::endpoint{net::ip::make_address(config_.address), config_.port})->Run();
 
     // router_();
     // listner(&router_);
     //  
-    //  boost::asio::io_context ioc_{config_.threads};
 
 
 
@@ -48,5 +53,5 @@ void Server::setHandlers(std::map<std::string, handlers::IHandler*> &handlers,
                         const std::string& header, handlers::IHandler* hendler) {
     //handlers.insert(std::make_pair(header, header));
 };
-Server::Config parseConfigFhomFile(const std::string& path_to_config_file){};
+//Server::Config parseConfigFhomFile(const std::string& path_to_config_file){};
 handlers::ProtocolAPI Server::parseAPIConfigFhomFile(const std::string& path_to_API_config){};

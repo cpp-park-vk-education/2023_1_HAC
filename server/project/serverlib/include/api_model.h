@@ -6,7 +6,9 @@
 #include <boost/asio/ip/tcp.hpp>
 #include <boost/asio/ssl/error.hpp>
 #include <boost/asio/ssl/stream.hpp>
+#include <jsoncpp/json/value.h>
 #include "http_protocol.h"
+#include "icontrollers.h"
 
 using tcp = boost::asio::ip::tcp;       // from <boost/asio/ip/tcp.hpp>
 namespace ssl = boost::asio::ssl;       // from <boost/asio/ssl.hpp>
@@ -17,7 +19,7 @@ namespace api {
 
 class IAPIModelRequest {
  public:
-    virtual IHTTPResponse* getData(IHTTPRequest* req) = 0;
+    virtual Json::Value getData(const controllers::TimeSeriesPredicts& samples_data) = 0;
 };
 
 using ptrToAPIModel = IAPIModelRequest*;
@@ -25,7 +27,7 @@ using ptrToAPIModel = IAPIModelRequest*;
 class APIModelRequest : public IAPIModelRequest{
  public:
     APIModelRequest();
-    IHTTPResponse* getData(IHTTPRequest* req) override;
+    Json::Value getData(const controllers::TimeSeriesPredicts& samples_data) override;
  private:
     void doConnect(std::string path);
     IHTTPResponse* onConnect(ssl::stream<tcp::socket> stream);   

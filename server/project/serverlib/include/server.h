@@ -12,18 +12,20 @@
 #include <vector>
 #include <thread>
 #include <string>
-#include "data.hpp"
-#include "dbcontroller.hpp"
+
 #include "listener.h"
 #include "routers.h"
-// #include "ihandler.h"
-// #include "icontrollers.h"
+#include "ihandler.h"
+#include "icontrollers.h"
 #include "handlers.h"
 #include "controllers.h"
 #include "config_handler.h"
+#include "dbcontroller.hpp"
+#include "api_model.h"
+#include "api_stock.h"
 
 using prtToIHandler = std::unique_ptr<handlers::IHandler>;
-//using IDatabaseController = std::string;
+using IDatabaseController = std::string;
 
 namespace net = boost::asio; // from <boost/asio.hpp>
 
@@ -31,6 +33,7 @@ class Server {
  public:
     Server() = delete;
     Server(const std::string& path_to_config_file);
+    
 
     struct Config {
         std::string address;
@@ -39,16 +42,16 @@ class Server {
     };
 
  private:  
-    std::unique_ptr<dbcontroller::IDataBaseController> database_controller;
+    std::unique_ptr<IDatabaseController> database_controller;
     std::unique_ptr<controllers::IModelController> model_controller;
     std::unique_ptr<controllers::IShowPlotController> show_plot_controller;
     std::unique_ptr<controllers::IRegisterController> register_contoller;
     std::unique_ptr<controllers::IAuthorizeController> aurhorize_controller;
+    std::unique_ptr<controllers::IPredictController> predict_controller;
 
     prtToIHandler predict_handler;
     prtToIHandler register_handler;
     prtToIHandler authorize_handler;
-    prtToIHandler update_handler;
     prtToIHandler router;
     
     //std::unique_ptr<IRouterAdapter> router_adapter;
@@ -58,6 +61,7 @@ class Server {
     std::vector<std::thread> listeners;
     Config config_;
     handlers::ProtocolAPI protocol_API;
+    std::vector<std::string> router_paths;
 
     void setHandlers(std::map<std::string, handlers::IHandler*> &handlers, 
                         const std::string& header, handlers::IHandler* hendler);

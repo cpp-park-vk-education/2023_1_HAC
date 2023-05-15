@@ -48,6 +48,9 @@ public:
     std::string getPassword() override {
         return {};
     }
+    std::string getPasswordConfirm() override {
+        return {};
+    }
     std::string getEmail() override {
         return {};
     }
@@ -63,8 +66,10 @@ public:
     void setRegistrationNetwork(ptr_to_iregistration_network reg_net_ptr)
     override {}
     ptr_to_iregistration_window getRegistrationWindow() override {}
-    void regHandler(const std::string &login,
-                    const std::string &password) override {}
+    void regHandler(const std::string& email,
+                    const std::string& login,
+                    const std::string& password,
+                    const std::string& pass_confirm) override {}
     void passToMain() override {}
     void sendError(const Error &error_message) override {
         error_type = error_message.type;
@@ -85,7 +90,7 @@ TEST(RegistrationQtLogicTest, TestRegHandler) {
     std::shared_ptr<MNetworkRegistrationWindow> ptr_to_net =
             std::make_shared<MNetworkRegistrationWindow>(net_reg);
     handler_reg.setRegistrationNetwork(ptr_to_net);
-    handler_reg.regHandler("User", "Password");
+    handler_reg.regHandler("Email","User", "Password", "Password");
     std::string expected = "User";
     EXPECT_EQ(ptr_to_net->reg_params_.login, expected);
 }
@@ -114,9 +119,13 @@ TEST(RegistrationQtLogicTest, TestRegEmptyInput) {
             std::make_shared<SMRegistrationWindow>(reg_window);
     handler_reg.setRegistrationWindow(ptr_to_reg_window);
     handler_reg.regHandler(handler_reg
+                           .getRegistrationWindow()->getEmail(),
+                           handler_reg
                                      .getRegistrationWindow()->getLogin(),
-                                     handler_reg
-                                     .getRegistrationWindow()->getPassword());
+                           handler_reg
+                                     .getRegistrationWindow()->getPassword(),
+                           handler_reg
+                                     .getRegistrationWindow()->getPasswordConfirm());
     std::string expected = "EmptyInput";
     EXPECT_EQ(reg_window.error_message_.type, expected);
 }

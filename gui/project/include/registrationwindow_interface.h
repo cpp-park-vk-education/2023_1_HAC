@@ -14,6 +14,7 @@ public:
     virtual void createErrorMessage(const Error& error_message) = 0;
     virtual std::string getLogin() = 0;
     virtual std::string getPassword() = 0;
+    virtual std::string getPasswordConfirm() = 0;
     virtual std::string getEmail() = 0;
 };
 

@@ -24,8 +24,10 @@ public:
     virtual void setRegistrationWindow(ptr_to_iregistration_window reg_window_ptr) = 0;
     virtual void setRegistrationNetwork(ptr_to_iregistration_network reg_net_ptr) = 0;
     virtual ptr_to_iregistration_window getRegistrationWindow() = 0;
-    virtual void regHandler(const std::string& login,
-                            const std::string& password) = 0;
+    virtual void regHandler(const std::string& email,
+                            const std::string& login,
+                            const std::string& password,
+                            const std::string& pass_confirm) = 0;
     virtual void passToMain() = 0;
     virtual void sendError(const Error& error_message) = 0;
     virtual void setUser(const std::string& user) = 0;

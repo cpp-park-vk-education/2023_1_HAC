@@ -60,6 +60,9 @@ public:
     void setUrl(const std::string& url) override {
         url_ = url;
     }
+    void openRegistrationWindow() override {
+        window_manager_ptr->openRegistrationWindow();
+    }
 
 private:
     ptr_to_iauthorization_network authorization_network_ptr;

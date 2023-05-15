@@ -20,6 +20,11 @@
 #include "../include/usecase_usersettingswindow.h"
 #include "../include/usersettingswindow_network.h"
 
+#include "../include/registrationwindow.h"
+#include "../include/usecase_registrationwindow.h"
+#include "../include/registrationwindow_network.h"
+
+
 #include "../include/ionetwork.h"
 
 GUIController::GUIController(QWidget *parent)
@@ -70,6 +75,18 @@ GUIController::GUIController(QWidget *parent)
     user_settings_network_ptr->setUrl("http://25.21.238.202:8081/");
     user_settings_network_ptr->setUserSettingsHandler(user_settings_handler_ptr);
     user_settings_network_ptr->setUserSettingsNetwork(network_ptr);
+
+    reg_window = new RegistrationWindow(this);
+    pages->addWidget(reg_window);
+    registration_handler_ptr = std::make_shared<UseCaseRegistrationWindow>();
+    reg_window->setRegistrationWindowHandler(registration_handler_ptr);
+    registration_handler_ptr->setRegistrationWindow(std::shared_ptr<RegistrationWindow>(reg_window));
+    registration_handler_ptr->setWindowManager(window_manager_ptr);
+    registration_network_ptr = std::make_shared<NetworkRegistrationWindow>();
+    registration_network_ptr->setUrl("http://25.21.238.202:8081/");
+    registration_handler_ptr->setRegistrationNetwork(registration_network_ptr);
+    registration_network_ptr->setRegistrationHandler(registration_handler_ptr);
+    registration_network_ptr->setRegistrationNetwork(network_ptr);
 
 
     setCentralWidget(pages);

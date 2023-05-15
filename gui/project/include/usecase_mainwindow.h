@@ -2,6 +2,7 @@
 #define USECASE_MAINWINDOW_H
 
 #include <string>
+#include <vector>
 #include <iostream>
 #include "../include/usecase_mainwindow_interface.h"
 
@@ -17,7 +18,22 @@ public:
     void setMainNetwork(ptr_to_imain_network main_net_ptr) override {
         main_network_ptr = main_net_ptr;
     };
-    void drawPlotHandler(std::istream& network_output) override {};
+    void drawPlotHandler(std::istream& network_output) override {
+        //распарсить
+        std::vector<double> new_y;
+        std::string s;
+        std::getline(network_output, s, '\n');
+        if (s == "predict") {
+            //merge two vectors
+            new_y.insert(new_y.end(), y.begin(), y.end());
+        } else {
+            //after parsed new_y
+            y = new_y;
+        }
+        main_window_ptr->createPlot(new_y);
+        main_window_ptr->drawPlot();
+        return;
+    };
     void stockSelectHandler(const std::string& stock_name) override {
         std::cout << "In stock selected: " <<stock_name<< std::endl;
         //stock_name_ = stock_name;
@@ -31,6 +47,7 @@ public:
     void predictHandler(const std::string& stock_name) override {
         std::cout << "In predict Handler: " <<stock_name<< std::endl;
         //stock_name_ = stock_name;
+        stockSelectHandler(stock_name); // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         MainData stock_data;
         stock_data.operation_title = "predict";
         stock_data.stock_name = stock_name;
@@ -38,7 +55,10 @@ public:
         stock_data.window_size = 0;
         main_network_ptr->getPredictData(stock_data);
     };
-    void sendError(const Error& error_message) override {};
+    void sendError(const Error& error_message) override {
+        main_window_ptr->createErrorMessage(error_message);
+        main_window_ptr->showErrorMessage();
+    };
     std::string getUrl() override {};
     void setUrl(const std::string& url) override {};
     void openUserSettings() override {
@@ -49,6 +69,7 @@ private:
     ptr_to_imain_window main_window_ptr;
     ptr_to_iwindow_manager window_manager_ptr;
     ptr_to_imain_network main_network_ptr;
+    std::vector<double> y;
 
     //std::string stock_name_;
 };

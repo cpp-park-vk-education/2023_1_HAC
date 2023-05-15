@@ -7,9 +7,15 @@
 
 class NetworkRegistrationWindow : public INetworkRegistrationWindow {
 public:
-    void setRegistrationHandler(ptr_to_registration_handler reg_handler_ptr) override {};
-    void setRegistrationNetwork(ptr_to_inetwork net_ptr) override {};
-    void getRegistration(const RegInput& reg_params) override {};
+    void setRegistrationHandler(ptr_to_registration_handler reg_handler_ptr) override {
+        registration_handler_ptr = reg_handler_ptr;
+    };
+    void setRegistrationNetwork(ptr_to_inetwork net_ptr) override {
+        network_ptr = net_ptr;
+    };
+    void getRegistration(const RegInput& reg_params) override {
+        std::cout << "in get reg" <<std::endl;
+    };
     void onGetRegistrationResponse(const Error& error_state) override {};
     void setUser(const std::string user) override {};
     std::string getUrl() override {};

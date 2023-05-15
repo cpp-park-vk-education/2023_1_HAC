@@ -4,6 +4,7 @@
 #include <memory>
 
 struct RegInput {
+    std::string email;
     std::string login;
     std::string password;
 };

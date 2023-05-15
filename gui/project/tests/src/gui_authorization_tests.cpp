@@ -76,6 +76,7 @@ public:
     }
     std::string getUrl() override { return {}; }
     void setUrl(const std::string& url) override {}
+    void openRegistrationWindow() override {}
     std::string error_type;
     std::string user_;
 };

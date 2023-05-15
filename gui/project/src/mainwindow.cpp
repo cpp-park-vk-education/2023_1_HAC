@@ -13,6 +13,9 @@ MainWindow::MainWindow(QWidget *parent) :
     btn_apple = ui->btnApple;
     btn_predict = ui->btnPredict;
     btn_user_set = ui->btnUserSet;
+    //widget_graph = ui->widgetGraph;
+    ui->widget->xAxis->setRange(0,10);
+    ui->widget->yAxis->setRange(0, 10);
 
     connect(this->get_apple_btn(),SIGNAL(clicked(bool)),this, SLOT(start_apple_plot()));
     connect(this->get_predict_btn(),SIGNAL(clicked(bool)),this, SLOT(start_predict()));
@@ -48,4 +51,21 @@ QPushButton* MainWindow::get_predict_btn() {
 
 QPushButton* MainWindow::get_user_set_btn() {
     return btn_user_set;
+}
+
+void MainWindow::drawPlot() {
+    //ui->widgetGraph
+    ui->widget->clearGraphs();
+    QVector<double> x;
+    double max_element =*std::max_element(y.begin(), y.end());
+    ui->widget->xAxis->setRange(0, y.size()+2);
+    ui->widget->yAxis->setRange(0, max_element+2);
+    for (size_t i = 0; i < y.size(); ++i) {
+        x.push_back(i);
+    }
+    ui->widget->addGraph();
+    ui->widget->graph(0)->addData(x, y);
+    ui->widget->replot();
+    y.clear();
+    std::cout << "Graphic is drawn" << std::endl;
 }

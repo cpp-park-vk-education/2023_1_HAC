@@ -41,11 +41,8 @@ public:
         //QByteArray data;
         std::string user = body_args[0];
         for (size_t i = 0; i < body_args.size(); ++i) {
-            if (i % 2 == 0) {
-                data.append((body_args[i] + "/").c_str());
-            } else {
-                data.append((body_args[i] + "//").c_str());
-            }
+            data.append((body_args[i] + "/").c_str());
+
             std::cout <<"&"<< body_args[i] <<"&"<<std::endl;
         }
         /*data.append("username/");

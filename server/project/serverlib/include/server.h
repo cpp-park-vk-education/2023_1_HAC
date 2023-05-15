@@ -31,17 +31,17 @@ namespace net = boost::asio; // from <boost/asio.hpp>
 
 struct Config {
     std::string address;
-    int port;
+    unsigned short port;
     int threads;
 };
 
 
-class Server {
+class Server : public std::enable_shared_from_this<Server>{
  public:
     Server() = delete;
     Server(const std::string& path_to_config_file);
     
- private:  
+// private:  
     std::unique_ptr<IDatabaseController> database_controller;
     std::unique_ptr<controllers::IModelController> model_controller;
     std::unique_ptr<controllers::IShowPlotController> show_plot_controller;
@@ -56,7 +56,6 @@ class Server {
     
     //std::unique_ptr<IRouterAdapter> router_adapter;
     //std::shared_ptr<IListener> lister;
-    net::io_context ioc;
     std::map<std::string, handlers::IHandler*> handlers;
     std::vector<std::thread> listeners;
     Config config_;

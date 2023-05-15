@@ -60,10 +60,10 @@ public:
         pages->setCurrentIndex(0);
     };
     void openRegistrationWindow() override {
-        pages->setCurrentIndex(2);
+        pages->setCurrentIndex(3);
     };
     void openUserSettingsWindow() override {
-        pages->setCurrentIndex(3);
+        pages->setCurrentIndex(2);
     };
     virtual std::string getUser() override {
         return user_;

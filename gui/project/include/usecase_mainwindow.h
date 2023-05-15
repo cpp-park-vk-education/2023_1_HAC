@@ -41,6 +41,10 @@ public:
     void sendError(const Error& error_message) override {};
     std::string getUrl() override {};
     void setUrl(const std::string& url) override {};
+    void openUserSettings() override {
+        std::cout <<"handler" <<std::endl;
+        window_manager_ptr->openUserSettingsWindow();
+    }
 private:
     ptr_to_imain_window main_window_ptr;
     ptr_to_iwindow_manager window_manager_ptr;

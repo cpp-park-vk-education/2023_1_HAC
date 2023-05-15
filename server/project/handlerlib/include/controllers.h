@@ -40,7 +40,7 @@ class PredictController : public IPredictController {
 // class ModelController
 class ModelController : public IModelController {
  public:
-  explicit ModelController(api::IAPIModelRequest* api_model){};
+  explicit ModelController(api::IAPIModelRequest* api_model);
   Json::Value callModelApi(const TimeSeriesPredicts& samples_data) override;
 
  private:
@@ -63,7 +63,7 @@ class RegisterController : public IRegisterController {
  public:
   explicit RegisterController(const ptrToDBController db_controller);
 
-  Json::Value registration(const Json::Value& request) override; 
+  Json::Value registration(Json::Value& request) override; 
  private:
   Json::Value makeDBProtocol(const Json::Value& request) override;
 
@@ -75,7 +75,7 @@ class AuthorizeController : public IAuthorizeController {
  public:
   explicit AuthorizeController(const ptrToDBController db_controller);
 
-  Json::Value authorization(const Json::Value& request) override;
+  Json::Value authorization(Json::Value& request) override;
  private:
   Json::Value checkPassword(const Json::Value& db_response, const Json::Value& request) override;
   Json::Value makeDBProtocol(const Json::Value& request) override;

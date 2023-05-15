@@ -39,7 +39,7 @@ class IShowPlotController {
 
 class IRegisterController {
  public:
-   virtual Json::Value registration(const Json::Value& request) = 0;
+   virtual Json::Value registration(Json::Value& request) = 0;
  protected:
    virtual Json::Value makeDBProtocol(const Json::Value& request) = 0;
 
@@ -48,7 +48,7 @@ class IRegisterController {
 
 class IAuthorizeController {
  public:
-   virtual Json::Value authorization(const Json::Value& request) = 0;
+   virtual Json::Value authorization(Json::Value& request) = 0;
  protected:
    virtual Json::Value makeDBProtocol(const Json::Value& request) = 0;
    virtual Json::Value checkPassword(const Json::Value& db_response, const Json::Value& request) = 0;

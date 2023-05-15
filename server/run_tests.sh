@@ -5,4 +5,6 @@ set -e
 cd build
 
 echo "Running tests"
-ctest -V -R Handler Net DB
+ctest -V -R Net
+ctest -V -R Handler
+ctest -V -R DB

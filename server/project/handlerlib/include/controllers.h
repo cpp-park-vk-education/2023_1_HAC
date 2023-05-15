@@ -1,98 +1,101 @@
 #pragma once // NO_LINT
+#include "handlers.h"
+#include "icontrollers.h"
+#include "api_model.h"
+#include "api_stock.h"
+#include "config_handler.h"
+#include "dbcontroller.hpp"
 
-#include "icontroller.h"
-#include "ihandler.h"
 
 namespace controllers {
 
+using namespace api;
+
+using ptrToDBController = dbcontroller::IDataBaseController*;
+using ptrToModelController = controllers::IModelController*;
+
+
+Json::Value makeJsonError(const std::string& error_mes);
+Json::Value makeDBProtocolGetTS(const Json::Value& request);
+hash_ hashPassword(const std::string& password);
+
+
+// class PredictController
 class PredictController : public IPredictController {
  public:
-    PredictController(const ptrToDBController db_controller, const ptrToModelController model_controller);
+   PredictController(const ptrToDBController db_controller, const ptrToModelController model_controller);
 
-    httpResponse makePredict(const httpRequest& request) override;
+   Json::Value makePredict(const Json::Value& request) override;
+   
 
  private:
-    DataDBProtocol& parseInputHttpRequest(const httpRequest& request) override;
-    Json::Value& getPlotDataFromDB(const DataDBProtocol& data_protocol) override;
-    TimeSeriesPredicts& makeTimeSeries(const Json::Value& samples_data, size_t window_size) override;
-    httpResponse& parseModelResponse(const httpResponse& request) override;   
+    TimeSeriesPredicts makeTimeSeries(const std::vector<double>& samples_data, size_t window_size) override;
+    
+    std::vector<double> parseDBProtocol(const Json::Value& response) override;
 
     ptrToDBController db_controller_;
-    ptrToModelController model_controller_
+    ptrToModelController model_controller_;
 };
 
+// class ModelController
 class ModelController : public IModelController {
  public:
-    explicit ModelController(const ptrToAPIModel api_model);
-
-    httpResponse& callModelApi(const TimeSeriesPredicts& samples_data) override;
+  explicit ModelController(api::IAPIModelRequest* api_model);
+  Json::Value callModelApi(const TimeSeriesPredicts& samples_data) override;
 
  private:
-    httpRequest& makeHttpForModel(const TimeSeriesPredicts& samples_data) override;
-
-    ptrToAPIModel api_model_;
+  api::IAPIModelRequest* api_model_;
 };
 
-
+// class ShowPlotController 
 class ShowPlotController : public IShowPlotController {
  public:
-    explicit ShowPlotController(const ptrToDBController db_controller);
+   explicit ShowPlotController(const ptrToDBController db_controller);
 
-    httpResponse createPlotData(httpRequest request) override;
+   Json::Value createPlotData(const Json::Value& request) override;
 
  private:
-    DBRequestProtocol& parseInputHttpRequest(const httpRequest& request) override;
-    Json::Value& getPlotDataFromDB(const DataDBProtocol& data_protocol) override;
-
-    ptrToDBController db_controller_;
+   ptrToDBController db_controller_;
 };
 
-
+// class RegisterController
 class RegisterController : public IRegisterController {
  public:
-    explicit RegisterController(const ptrToDBController db_controller);
+  explicit RegisterController(const ptrToDBController db_controller);
 
-    httpResponse registration(const httpRequest& request) override;
- 
+  Json::Value registration(Json::Value& request) override; 
  private:
-    DBRequestProtocol& parseInputHttpRequest(const httpRequest& request) override;
-    hash_ hashPassword(const std::string& password) override;
-    bool postDataRegistrDB(const DBRequestProtocol& data_protocol) override;
+  Json::Value makeDBProtocol(const Json::Value& request) override;
 
-    ptrToDBController db_controller_;
-
+  ptrToDBController db_controller_;
 };
 
-
+// class AuthorizeController
 class AuthorizeController : public IAuthorizeController {
  public:
-    explicit AuthorizeController(const ptrToDBController db_controller);
+  explicit AuthorizeController(const ptrToDBController db_controller);
 
-    httpResponse registration(const httpRequest& request) override;
-    
+  Json::Value authorization(Json::Value& request) override;
  private:
-    DBRequestProtocol& parseInputHttpRequest(const httpRequest& request) override;
-    hash_ hashPassword(const std::string& password) override;
-    bool getCheckAuthorData(const DBRequestProtocol& data_protocol) override; 
+  Json::Value checkPassword(const Json::Value& db_response, const Json::Value& request) override;
+  Json::Value makeDBProtocol(const Json::Value& request) override;
 
-    ptrToDBController db_controller_;
-
+  ptrToDBController db_controller_;
 };
 
-
+// class UpdateDataController
 class UpdateDataController : public IUpdateDataController {
  public:
-    UpdateDataController(const ptrToDBController db_controller, const ptrToApiStock api_stock);
+  UpdateDataController(const ptrToDBController db_controller, const ptrToAPIStock api_stock);
 
-    bool udateData(const ProtocolAPI& protocol) = 0;
+  bool updateData(const handlers::ProtocolAPI& protocol) override;
 
  private:
-    std::string parseToApiRequest(const ProtocolAPI& protocol) = 0;
+  // Json::Value parseHTTPToJson(IHTTPResponse_ response) override;
+  Json::Value makeDBProtocol(const Json::Value& request) override;
 
-    ptrToDBController db_controller_;
-    ptrToApiStock api_stock_;
+  ptrToDBController db_controller_;
+  ptrToAPIStock api_stock_;
 };
-
-
 
 } // namespace controllers 

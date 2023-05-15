@@ -1,0 +1,74 @@
+1) тип запроса GET/POST
+
+2) запрос на что? 
+
+3) параметры запроса (разные)
+
+8 предсказаний
+8 ширина окна 
+
+
+mapa:
+method : GET/POST
+action : AUTHORIZATION/REGISTRATION/CHANGE_USER_SETTINGS/TIMESERIES_REQUEST
+
+
+Header:   GET(POST)  :  AUTHORIZATION/REGISTRATION/CHANGE_USER_SETTINGS/TIMESERIES_REQUEST
+
+
+====== Client HTTP =======
+POST AUTHORIZATION (authorization)
+Body:
+```
+login
+password
+```
+
+POST REGISTRATION (registration)
+Body:
+```
+email 
+login 
+password
+
+```
+
+POST CHANGE_USER_SETTINGS (update user settings) 
+Body:
+```
+login 
+new_password
+old_password
+
+```
+
+GET PREDICT
+```
+// url
+```
+
+GET PLOT
+```
+// url
+```
+
+
+name/predict(plot)/lag/window_size
+```
+
+=========
+
+====== API HTTP =======
+
+GET TIMESERIES_REQUEST (запросить новые данные у апи)
+Body:
+```
+```
+
+
+GET TIMESERIES_REQUEST (запросить предсказание)
+Body:
+```
+
+
+```

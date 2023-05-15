@@ -1,81 +1,74 @@
-#pragma once
+#pragma once // NO_LINT
 #include <iostream>
 #include <memory>
+#include <jsoncpp/json/json.h>
 #include "postgresserver.hpp"
 #include "repositories.hpp"
 #include "data.hpp"
 
-
-// using time_ =  td::chrono::time_point<std::chrono::system_clock>;
-// using DataRequestPtr = std::unique_ptr<DataRequest>;
-// using DataResponsePtr = std::unique_ptr<DataResponse>;
+using namespace repository;
+using namespace database;
 
 enum TypeRequest {
     GET_REQUEST,
-    POST_REQUEST, 
-    UPDATE_REQUEST
+    POST_REQUEST
 };
 
 enum TypeData {
-    CLIENT_DATA,
-    TIMESERIES_DATA
+    AUTHORIZATION,
+    REGISTRATION,
+    CHANGE_USER_SETTINGS,
+    TIMESERIES_REQUEST
 };
 
-// Запрос от сервера
-template <typename Data>
-struct DBRequestProtocol {
-    TypeRequest type_request;
-//    TypeData type_data;
-    std::unique_ptr<Data> data;
-};
+namespace dbcontroller {
+    class IDataBaseController {
+    public:
+        virtual Json::Value DataRequest(const Json::Value& request) = 0;
+        virtual bool ConnectToDatabase() = 0;
+        virtual void SetDatabaseConfig(const std::string&  addr, const std::string&  port,
+            const std::string&  db_name, const std::string&  user, const std::string&  pass) = 0; 
 
-// Ответ от БД
-template <typename Data>
-struct DBResponseProtocol {
-    bool status;
-    std::unique_ptr<Data> data;
-};
-
-
-class IDataBaseController {
-public:
-    virtual DBResponseProtocol<ClientData> DataRequest(const DBRequestProtocol<ClientData>& request) = 0;
-    virtual DBResponseProtocol<TimeSeriesData> DataRequest(const DBRequestProtocol<TimeSeriesData>& request) = 0;
-    virtual DBResponseProtocol<AuthorizeData> DataRequest(const DBRequestProtocol<AuthorizeData>& request) = 0;
-    virtual DBResponseProtocol<TimeSeriesData> DataRequest(const DBRequestProtocol<TimeSeriesRequest>& request) = 0;
-protected:
-    // TimeSeries
-    virtual bool TimeSeriesPost(const std::unique_ptr<IDataRequest>& data) = 0;
-    virtual std::shared_ptr<IData> TimeSeriesGet(const std::string& name_stock, const std::string& len_lags) = 0;
-    // Client
-    virtual bool ClientRequestPost(const std::unique_ptr<ClientData>& data) = 0;
-    virtual std::shared_ptr<IData> ClientRequestGet(const std::string& key) = 0;
-    virtual bool ClientRequestUpdate(const std::unique_ptr<SubscriptionData> data) = 0;
-};
+    protected:
+        // TimeSeries
+        virtual Json::Value TimeSeriesPost(const Json::Value& data) = 0;
+        virtual Json::Value TimeSeriesGet(const std::string& name_stock, const std::string& len_lags) = 0;
+        // Client
+        virtual Json::Value ClientRequestPost(const Json::Value& data) = 0;
+        virtual Json::Value ClientRequestGet(const std::string& key) = 0;
+        virtual Json::Value ClientRequestUpdate(const Json::Value& data) = 0;
+    };
 
 
-// class DataBaseController: public IDataBaseController {
-// public:
-//     DataBaseController();
-//     DBResponseProtocol<ClientData> DataRequest(const DBRequestProtocol<ClientData>& request);
-//     DBResponseProtocol<TimeSeriesData> DataRequest(const DBRequestProtocol<TimeSeriesData>& request);
-//     DBResponseProtocol<TimeSeriesData> DataRequest(const DBRequestProtocol<TimeSeriesRequest>& request);
-//     DBResponseProtocol<AuthorizeData> DataRequest(const DBRequestProtocol<AuthorizeData>& request);
+    class DataBaseController: public IDataBaseController {
+    public:
+        DataBaseController();
+        DataBaseController(const std::shared_ptr<IClientRepository>& client_rep, 
+            const std::shared_ptr<ITimeSeriesRepository>& timeseries_rep, const std::shared_ptr<ISubscriptionRepository>& subscription_rep);
+        bool ConnectToDatabase() override;
+        void SetDatabaseConfig(const std::string&  addr, const std::string&  port,
+            const std::string&  db_name, const std::string&  user, const std::string&  pass) override; 
 
-// private:
-//     virtual bool TimeSeriesPost(const std::unique_ptr<IDataRequest>& data) = 0;
-//     virtual std::shared_ptr<IData> TimeSeriesGet(const std::string& name_stock, const std::string& len_lags) = 0;
-//     virtual bool ClientRequestPost(const std::unique_ptr<IData>& data) = 0;
-//     virtual std::shared_ptr<IData> ClientRequestGet(const std::string& key) = 0;
-//     virtual bool ClientRequestUpdate(const std::unique_ptr<IData> data) = 0;
+        Json::Value DataRequest(const Json::Value& request) override;
 
-//     static std::string host_addr_;
-//     static std::string port_;
-//     static std::string db_name_;
-//     static std::string user_;
-//     static std::string password_;
-//     std::shared_ptr<IDataBase> database_;
-//     std::shared_ptr<ISubscriptionRepository> subscription_rep_;
-//     std::shared_ptr<ITimeSeriesRepository> timeseries_rep_;
-//     std::shared_ptr<IClientRepository> clien_rep_;
-// }
+    private:
+        // TimeSeries
+        Json::Value TimeSeriesPost(const Json::Value& data) override;
+        Json::Value TimeSeriesGet(const std::string& name_stock, const std::string& len_lags) override;
+        // Client
+        Json::Value ClientRequestPost(const Json::Value& data) override;
+        Json::Value ClientRequestGet(const std::string& key) override;
+        Json::Value ClientRequestUpdate(const Json::Value& data) override;
+
+        std::string host_addr_ = "127.0.0.1";
+        std::string port_ = "5432";
+        std::string db_name_ = "marketmentor";
+        std::string user_ = "marketmentor_server";
+        std::string password_ = "marketmentor_password";
+        std::shared_ptr<IDataBase> database_;
+        std::shared_ptr<ISubscriptionRepository> subscription_rep_;
+        std::shared_ptr<ITimeSeriesRepository> timeseries_rep_;
+        std::shared_ptr<IClientRepository> clien_rep_;
+    };
+
+}

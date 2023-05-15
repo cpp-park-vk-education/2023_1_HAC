@@ -1,3 +1,245 @@
+#include "handlers.h"
+#include "handler_exception.h"
+
+#include <vector>
+#include <sstream>
+
+const std::string HANDLERS_PREDICT = "predict";
+const std::string HANDLERS_PLOT = "plot";
+const std::string HANDLERS_REGISTRATION = "registration";
+const std::string HANDLERS_AUTHORIZATION = "authorization";
+
+const std::string METHOD = "method";
+const std::string ACTIONS = "actions";
+
+const int BAD_REQUEST = 400;
+const int NOT_FOUND = 404;
+const int INTERNAL_SERVER_ERROR = 500;
+
+const char SEPARATOR_URL = '&';
+const char SEPARATOR_BODY = '/';
+const std::string SEPARATOR_TOKEN_URL = "=";
+
+const uint SIZE_URL_GET_PREDICT_PLOT = 4;
+const uint SIZE_BODY_POST_REGISTRATION = 4;
+const uint SIZE_BODY_POST_AUTHORIZATION = 3;
+const uint SIZE_BODY_POST_USER_SETTINGS = 4;
+
+const uint NAME_STOCK_ORDER = 0;
+const uint LEN_LAGS_ORDER = 2;
+const uint WINDOW_SIZE_ORDER = 3;
+
+const uint LOGIN_ORDER = 0;
+const uint PASSWORD_ORDER = 1;
+const uint EMAIL_ORDER = 2;
+
+
+namespace handlers {
+
+std::vector<std::string> splitMessage(const std::string& message, char separator) {
+    std::vector<std::string> tokens;
+    std::stringstream streamBuffer(message);
+    std::string tmpBuffer;
+    while (std::getline(streamBuffer, tmpBuffer, separator)) {
+        tokens.push_back(tmpBuffer);
+    }
+    return tokens;
+}
+
+void cutUrlTokens(std::vector<std::string>& tokens, const std::string& error_mess) {
+    for (size_t i; i < tokens.size(); ++i) {
+        size_t equally_lit = tokens[i].find(SEPARATOR_TOKEN_URL);
+        if (equally_lit == std::string::npos) {
+            throw market_mentor::InvalidHttpRequestError(error_mess);
+        }
+        tokens[i] = tokens[i].substr(equally_lit);
+    }
+}
+
+// class PredictHandler
+PredictHandler::PredictHandler(ptrToPredictController controller)
+    : controller_(controller) {};
+
+void PredictHandler::handle(IHTTPRequest_ request, IHTTPResponse_ response) {   
+    // url / getUrl
+    try {
+        Json::Value request_json = parseInputHttpRequest(request->getURL());
+        Json::Value response_json = controller_->makePredict(request_json);
+        makeResponse(response, response_json);
+
+    } catch (market_mentor::InvalidHttpRequestError &e) {
+        response->setStatus(BAD_REQUEST);
+        response->setBody(e.what());
+    } catch (market_mentor::MarketMentorException &e) {
+        response->setStatus(INTERNAL_SERVER_ERROR);
+        response->setBody(e.what());
+    } catch (std::exception &e) {
+        response->setStatus(INTERNAL_SERVER_ERROR);
+        response->setBody(e.what());
+    }
+}
+
+Json::Value PredictHandler::parseInputHttpRequest(const std::string& message) {
+    // /?name=apple&graph=predict&lag=8&window_size=8
+    Json::Value result;
+    std::vector<std::string> tokens = splitMessage(message, SEPARATOR_URL);
+
+    if (tokens.size() != SIZE_URL_GET_PREDICT_PLOT) {
+        throw market_mentor::InvalidHttpRequestError(HANDLERS_PREDICT);
+    }
+
+    cutUrlTokens(tokens, HANDLERS_PREDICT);
+    
+    result["name_stock"] = tokens[NAME_STOCK_ORDER];
+    result["len_lags"] = tokens[LEN_LAGS_ORDER];
+    result["window_size"] = tokens[WINDOW_SIZE_ORDER];
+    
+    return result;
+}
+
+void PredictHandler::makeResponse(IHTTPResponse_ response, const Json::Value& response_json) {
+    // response->setStatus();
+    // response->setHeader();
+    // response->setBody();
+}
+
+
+// class ShowPlotHandler
+ShowPlotHandler::ShowPlotHandler(ptrToShowPlotController controller)
+    : controller_(controller) {}
+
+void ShowPlotHandler::handle(IHTTPRequest_ request, IHTTPResponse_ response) {
+    // get / url
+    try {
+        Json::Value request_json = parseInputHttpRequest(request->getURL());
+        Json::Value response_json = controller_->createPlotData(request_json);
+        makeResponse(response, response_json);
+
+    } catch (market_mentor::InvalidHttpRequestError &e) {
+        response->setStatus(BAD_REQUEST);
+        response->setBody(e.what());
+    } catch (market_mentor::MarketMentorException &e) {
+        response->setStatus(INTERNAL_SERVER_ERROR);
+        response->setBody(e.what());
+    } catch (std::exception &e) {
+        response->setStatus(INTERNAL_SERVER_ERROR);
+        response->setBody(e.what());
+    }
+}
+
+Json::Value ShowPlotHandler::parseInputHttpRequest(const std::string& message) {
+    // /?name=apple&graph=predict&lag=8&window_size=8
+    Json::Value result;
+    std::vector<std::string> tokens = splitMessage(message, SEPARATOR_URL);
+
+    if (tokens.size() != SIZE_URL_GET_PREDICT_PLOT) {
+        throw market_mentor::InvalidHttpRequestError(HANDLERS_PLOT);
+    }
+    cutUrlTokens(tokens, HANDLERS_PLOT);
+    
+    result["name_stock"] = tokens[NAME_STOCK_ORDER];
+    result["len_lags"] = tokens[LEN_LAGS_ORDER];
+    
+    return result;
+}
+
+void ShowPlotHandler::makeResponse(IHTTPResponse_ response, const Json::Value& response_json) {
+
+}
+
+// class RegisterHandler
+RegisterHandler::RegisterHandler(ptrToRegisterController controller)
+    : controller_(controller) {}
+void RegisterHandler::handle(IHTTPRequest_ request, IHTTPResponse_ response) {
+    // post / body
+    try {
+        Json::Value request_json = parseInputHttpRequest(request->getBoby());
+        Json::Value response_json = controller_->registration(request_json);
+        makeResponse(response, response_json);
+
+    } catch (market_mentor::InvalidHttpRequestError &e) {
+        response->setStatus(BAD_REQUEST);
+        response->setBody(e.what());
+    } catch (market_mentor::MarketMentorException &e) {
+        response->setStatus(INTERNAL_SERVER_ERROR);
+        response->setBody(e.what());
+    } catch (std::exception &e) {
+        response->setStatus(INTERNAL_SERVER_ERROR);
+        response->setBody(e.what());
+    }
+}
+
+Json::Value RegisterHandler::parseInputHttpRequest(const std::string& message) {
+    // real_login/real_password/real_email/
+    Json::Value result;
+    std::vector<std::string> tokens = splitMessage(message, SEPARATOR_BODY);
+
+    if (tokens.size() != SIZE_URL_GET_PREDICT_PLOT) {
+        throw market_mentor::InvalidHttpRequestError(HANDLERS_REGISTRATION);
+    }
+
+    result["login"] = tokens[LOGIN_ORDER];
+    result["email"] = tokens[EMAIL_ORDER];
+    result["password"] = tokens[PASSWORD_ORDER];
+ 
+    return result;
+}
+
+void RegisterHandler::makeResponse(IHTTPResponse_ response, const Json::Value& response_json) {
+
+}
+
+
+// class AuthorizeHandler
+AuthorizeHandler::AuthorizeHandler(ptrToAuthorizeController controller)
+    : controller_(controller) {} 
+void AuthorizeHandler::handle(IHTTPRequest_ request, IHTTPResponse_ response) {
+    // post / body
+    try {
+        Json::Value request_json = parseInputHttpRequest(request->getBoby());
+        Json::Value response_json = controller_->authorization(request_json);
+        makeResponse(response, response_json);
+
+    } catch (market_mentor::InvalidHttpRequestError &e) {
+        response->setStatus(BAD_REQUEST);
+        response->setBody(e.what());
+    } catch (market_mentor::MarketMentorException &e) {
+        response->setStatus(INTERNAL_SERVER_ERROR);
+        response->setBody(e.what());
+    } catch (std::exception &e) {
+        response->setStatus(INTERNAL_SERVER_ERROR);
+        response->setBody(e.what());
+    }
+}
+
+Json::Value AuthorizeHandler::parseInputHttpRequest(const std::string& message) {
+    //  real_login/real_password/
+    Json::Value result;
+    std::vector<std::string> tokens = splitMessage(message, SEPARATOR_BODY);
+
+    if (tokens.size() != SIZE_URL_GET_PREDICT_PLOT) {
+        throw market_mentor::InvalidHttpRequestError(HANDLERS_AUTHORIZATION);
+    }
+
+    result["login"] = tokens[LOGIN_ORDER];
+    result["password"] = tokens[PASSWORD_ORDER];
+ 
+    return result;
+}
+
+void AuthorizeHandler::makeResponse(IHTTPResponse_ response, const Json::Value& response_json) {
+
+}
+
+// class Router
+Router::Router(const std::map<std::string, IHandler*>& handlers)
+    : handlers_(handlers) {}
+void Router::handle(IHTTPRequest_ request, IHTTPResponse_ response) {
+    auto header = response->getHeaders();
+    std::string key = header[METHOD] + ":" + header[ACTIONS];
+    handlers_[key]->handle(request, response);
+}
 
 
 
+} // namespace handlers 

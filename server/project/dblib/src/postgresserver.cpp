@@ -1,54 +1,59 @@
 #include "postgresserver.hpp"
 
+using namespace database;
+
 PostgresServer::PostgresServer(): host_addr_("127.0.0.1"), port_("5432"), db_name_("marketmentor"),
-     user_("marketmentor_server"), password_("marketmentor_password"){
+     user_("marketmentor_server"), password_("marketmentor_password") {
         Connect();
 }
 
-PostgresServer::PostgresServer(std::string addr, std::string port, std::string db_name, std::string user, std::string pass): host_addr_(addr),
-    port_(port), db_name_(db_name), user_(user), password_(pass){
+PostgresServer::PostgresServer(const std::string&  addr, const std::string&  port,
+         const std::string&  db_name, const std::string&  user, const std::string&  pass): host_addr_(addr),
+        port_(port), db_name_(db_name), user_(user), password_(pass) {
     Connect();
 }
+
 
 bool PostgresServer::IsOpen() {
     return conn_->is_open();
 }
 
-std::vector<std::vector<std::string>> PostgresServer::GetData(const std::string& query) {
-    pqxx::nontransaction tx{*conn_};
-    pqxx::result table;
-    
+
+void PostgresServer::Connect() {
+    std::string connecting_string = "dbname = " + db_name_+ " user = " + user_ + " password = " + password_ +
+        " hostaddr = " + host_addr_ + " port = " + port_;
     try {
-        table = tx.exec(query);
+        conn_ = std::make_shared<pqxx::connection>(connecting_string);
+    } catch (pqxx::failure const &e) {
+        std::cerr << e.what() << std::endl;
+    }
+}
+
+
+bool PostgresServer::SendQuery(const std::string& query) {
+pqxx::work transaction{*conn_};
+    try{
+        transaction.exec(query);
+        transaction.commit();
+    }
+    catch (pqxx::transaction_rollback const &e) {
+        std::cerr << e.what() << std::endl;
+        return false;
+
     }
     catch (pqxx::sql_error const &e) {
         std::cerr << e.what() << std::endl;
-        throw SqlError("Bad query: " + query);
+        return false;
     }   
     catch (pqxx::failure const &e) {
         std::cerr << e.what() << std::endl;
-        throw ConnectError("Broken connection to database");
-    }   
-
-    std::vector<std::vector<std::string>> result;
-    std::vector<std::string> row_buffer;
-    for (auto row = table.begin(); row != table.end(); row++){
-        for (auto field = row.begin(); field != row.end(); field++){
-            if (!field.is_null()){
-                row_buffer.push_back(field.as<std::string>());
-            }
-            else{
-                row_buffer.push_back("NULL");
-            }
-        }
-        result.push_back(row_buffer);
-        row_buffer.clear();
+        return false;
     }
-    
-    return result;
+
+    return true;   
 }
 
-std::vector<std::string> PostgresServer::GetRow(const std::string& query) {
+Json::Value PostgresServer::GetRow(const std::string& query) {
     pqxx::nontransaction tx{*conn_};
     pqxx::row row;
     try {
@@ -61,53 +66,69 @@ std::vector<std::string> PostgresServer::GetRow(const std::string& query) {
     catch (pqxx::failure const &e) {
         std::cerr << e.what() << std::endl;
         throw ConnectError("Broken connection to database");
-    }   
+    }
+    catch (pqxx::unexpected_rows const &e) {
+        std::cerr << e.what() << std::endl;
+        throw ElementNotExist("Bad query: " + query);
+    }
 
-    std::vector<std::string> buffer;    
+    Json::Value result;
+    int field_number = 0;
     for (auto field = row.begin(); field != row.end(); field++){
         if (!field.is_null()){
-            buffer.push_back(field.as<std::string>());
+            result[field_number++] = field.as<std::string>();
         }
         else{
-            buffer.push_back("NULL");
+            result[field_number++] = "NULL";
         }
     }
-    return buffer;
+
+    return result;
 }
 
-bool PostgresServer::SendQuery(const std::string& query) {
-    pqxx::work transaction{*conn_};
-    try{
-        transaction.exec(query);
-        transaction.commit();
+Json::Value PostgresServer::GetData(const std::string& query) {
+    pqxx::nontransaction tx{*conn_};
+    pqxx::result table;
+    
+    try {
+        table = tx.exec(query);
     }
-    catch (pqxx::transaction_rollback const &e) {
+    catch (pqxx::plpgsql_no_data_found const &e) {
         std::cerr << e.what() << std::endl;
-    //    throw TransactionError("Failed transaction: " + query);
-        return false;
-
+        throw ElementNotExist("Element doesn't exist in database");
     }
+    catch (pqxx::unexpected_rows const &e) {
+        std::cerr << e.what() << std::endl;
+        throw ElementNotExist("Bad query: " + query);
+    }   
     catch (pqxx::sql_error const &e) {
         std::cerr << e.what() << std::endl;
-   //     throw SqlError("Bad query: " + query);
-        return false;
+        throw SqlError("Bad query: " + query);
     }   
     catch (pqxx::failure const &e) {
         std::cerr << e.what() << std::endl;
-    //    throw ConnectError("Broken connection to database");
-        return false;
-    }
-    return true;   
-}
+        throw ConnectError("Broken connection to database");
+    }   
 
-void PostgresServer::Connect() {
-    std::string connecting_string = "dbname = " + db_name_+ " user = " + user_ + " password = " + password_ +
-        " hostaddr = " + host_addr_ + " port = " + port_;
-    try {
-        conn_ = std::make_shared<pqxx::connection>(connecting_string);
-    } catch (pqxx::failure const &e) {
-        std::cerr << e.what() << std::endl;
-        throw ConnectError("Failed connect to database " + db_name_);
+    Json::Value result;
+    Json::Value row_buffer;
+    int row_number = 0;
+    int field_number = 0;
+
+    for (auto row = table.begin(); row != table.end(); row++){
+        for (auto field = row.begin(); field != row.end(); field++){
+            if (!field.is_null()) {
+                row_buffer[field_number++] = field.as<std::string>();
+
+            }
+            else {
+                row_buffer[field_number++] = "NULL";
+            }
+        }
+        result[row_number++] = row_buffer;
+        field_number = 0;
     }
+    
+    return result;
 }
 

@@ -1,3 +1,3 @@
 #pragma once // NO_LINT
 
-void printDB();
+#include <gtest/gtest.h>

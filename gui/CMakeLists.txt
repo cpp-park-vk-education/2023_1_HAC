@@ -1,10 +1,9 @@
-PROJECT(market_mentor_gui)
-CMAKE_MINIMUM_REQUIRED(VERSION 3.10.0)
+cmake_minimum_required(VERSION 3.5)
 
-SET(CMAKE_CXX_STANDARD 17)
-SET(CMAKE_CXX_STANDARD_REQUIRED ON)
+project(test_vk_project VERSION 0.1 LANGUAGES CXX)
 
-#SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Werror")
+set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-ENABLE_TESTING()
-ADD_SUBDIRECTORY(project)
+enable_testing()
+add_subdirectory(project)

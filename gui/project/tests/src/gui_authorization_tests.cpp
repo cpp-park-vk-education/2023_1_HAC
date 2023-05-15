@@ -32,7 +32,7 @@ public:
     }
     void GetRequest(const std::string& url, const MainData& body,
                             std::function<void(
-                                    const std::istream& network_output,
+                                    std::istream& network_output,
                                     const Error& error_state)> callback) {}
     virtual void setConfig(const std::string& host) { }
     std::string url_;
@@ -67,7 +67,7 @@ public:
     ptr_to_iauthorization_window getAuthorizationWindow() override {}
     void authHandler(const std::string &login, const std::string &password)
     override {}
-    void passToMain() override {}
+    void passToMain(const std::string& user) override {}
     void sendError(const Error &error_message) override {
         error_type = error_message.type;
     }

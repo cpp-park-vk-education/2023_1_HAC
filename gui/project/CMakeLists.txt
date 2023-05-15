@@ -8,13 +8,18 @@ set(CMAKE_AUTORCC ON)
 
 
 find_package(QT NAMES Qt6 Qt5 COMPONENTS Widgets REQUIRED)
+find_package(Qt5 REQUIRED COMPONENTS Network)
 find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Widgets REQUIRED)
+find_package(Qt5 REQUIRED COMPONENTS PrintSupport)
 
 set(PROJECT_SOURCES
         src/main.cpp
+        qcustomplot.h
+        qcustomplot.cpp
 
         src/guicontroller.cpp
         src/authorizationwindow.cpp
+        src/usecase_authorizationwindow.cpp
         src/mainwindow.cpp
         src/registrationwindow.cpp
         src/usersettingswindow.cpp
@@ -76,7 +81,9 @@ else()
     endif()
 endif()
 
-target_link_libraries(test_vk_project PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
+target_link_libraries(test_vk_project PRIVATE Qt${QT_VERSION_MAJOR}::Widgets
+    Qt${QT_VERSION_MAJOR}::Network
+    Qt${QT_VERSION_MAJOR}::PrintSupport)
 
 set_target_properties(test_vk_project PROPERTIES
         MACOSX_BUNDLE_GUI_IDENTIFIER my.example.com

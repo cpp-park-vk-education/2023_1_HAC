@@ -29,7 +29,7 @@ public:
             ptr_to_iauthorization_network auth_network_ptr) = 0;
     virtual void authHandler(const std::string& login,
                              const std::string& password) = 0;
-    virtual void passToMain() = 0;
+    virtual void passToMain(const std::string& user) = 0;
     virtual void sendError(const Error& error_message) = 0;
     virtual void setUser(const std::string& user) = 0;
     virtual std::string getUrl() = 0;

@@ -1,10 +1,15 @@
 #ifndef AUTHORIZATIONWINDOW_H
 #define AUTHORIZATIONWINDOW_H
 
+#include <iostream>
+
 #include <string>
 #include <memory>
 #include "../include/authorizationwindow_interface.h"
 #include <QWidget>
+#include <QPushButton>
+#include <QDebug>
+#include <QErrorMessage>
 
 namespace Ui {
 class AuthorizationWindow;
@@ -17,16 +22,35 @@ public:
     explicit AuthorizationWindow(QWidget *parent = nullptr);
     ~AuthorizationWindow();
     void setAuthorizationWindowHandler(
-            ptr_to_authorization_handler auth_handler_ptr) override {}
-    void showErrorMessage() override {}
-    void createErrorMessage(const Error& error_message) override {}
-    std::string getLogin() override {return {};}
-    std::string getPassword() override {return {};}
+            ptr_to_authorization_handler auth_handler_ptr) override;
+    void showErrorMessage() override {
+        errorMes = new QErrorMessage(this);
+        errorMes->showMessage(*error_type_ + "! " + *error_message_);
+        qDebug() << *error_type_ << ' ' << *error_message_;
+        std::cout << "error shown"<<std::endl;
+    }
+    void createErrorMessage(const Error& error_message) override {
+        error_type_ = new QString(error_message.type.c_str());
+        error_message_ = new QString(error_message.message.c_str());
+        std::cout << "created error message"<<std::endl;
+    }
+    std::string getLogin() override;
+    std::string getPassword() override;
 
+    QPushButton* get_enter_btn();
+public slots:
+    //void authHandler();
+    void start_auth();
 private:
     Ui::AuthorizationWindow *ui;
-    std::shared_ptr<IONetworkInterface> network_ptr;
     ptr_to_authorization_handler authorization_handler_ptr;
+    std::string login;
+    std::string password;
+    QPushButton* btn_enter;
+
+    QString* error_message_;
+    QString* error_type_;
+    QErrorMessage* errorMes;
 };
 
 #endif // AUTHORIZATIONWINDOW_H

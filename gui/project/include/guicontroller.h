@@ -2,6 +2,7 @@
 #define GUICONTROLLER_H
 
 #include <QMainWindow>
+#include <QStackedWidget>
 
 #include "../include/guicontroller_interface.h"
 
@@ -52,16 +53,30 @@ public:
     GUIController(QWidget *parent = nullptr);
     ~GUIController();
 
-    void openMainWindow() override {};
-    void openAuthorizationWindow() override {};
-    void openRegistrationWindow() override {};
-    void openUserSettingsWindow() override {};
-    virtual std::string getUser() override {};
+    void openMainWindow() override {
+        pages->setCurrentIndex(1);
+    };
+    void openAuthorizationWindow() override {
+        pages->setCurrentIndex(0);
+    };
+    void openRegistrationWindow() override {
+        pages->setCurrentIndex(2);
+    };
+    void openUserSettingsWindow() override {
+        pages->setCurrentIndex(3);
+    };
+    virtual std::string getUser() override {
+        return user_;
+    };
     virtual std::string getUrl() override {};
-    virtual void setUser(const std::string user) override {};
+    virtual void setUser(const std::string user) override {
+        user_ = user;
+    };
 
 private:
     Ui::GUIController *ui;
+    QStackedWidget* pages;
+
     AuthorizationWindow* auth_window;
     MainWindow* main_window;
     RegistrationWindow* reg_window;
@@ -82,6 +97,10 @@ private:
     ptr_to_settings_handler user_settings_handler_ptr;
 
     ptr_to_iwindow_manager window_manager_ptr;
+
+    std::string user_;
+    std::string url_;
+
     //созданние usecase and network_inner as well
 };
 #endif // GUICONTROLLER_H

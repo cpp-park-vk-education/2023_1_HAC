@@ -44,7 +44,7 @@ public:
                      std::function<void(const Error &error_state)>
                      callback) override {}
     void GetRequest(const std::string &url, const MainData &body,
-                    std::function<void(const std::istream &network_output,
+                    std::function<void(std::istream &network_output,
                                        const Error &error_state)> callback)
     override {
         url_ = url;
@@ -59,7 +59,7 @@ public:
                      std::function<void(const Error &error_state)>
                      callback) override {}
     void GetRequest(const std::string &url, const MainData &body,
-                    std::function<void(const std::istream &network_output,
+                    std::function<void(std::istream &network_output,
                                        const Error &error_state)> callback)
     override {
         url_ = url;

@@ -9,11 +9,20 @@ const std::string HANDLERS_PLOT = "plot";
 const std::string HANDLERS_REGISTRATION = "registration";
 const std::string HANDLERS_AUTHORIZATION = "authorization";
 
+const std::string ERROR_MESSAGE = "Error-Message";
+const std::string PREDICT_DATA = "Predict-Data";
+const std::string PLOT_DATA = "Plot-Data";
+const std::string REGISTRATION_STATUS = "Registration-Status";
+const std::string AUTHORIZATION_STATUS = "Authorization-Status";
+
+
 const std::string METHOD = "method";
 const std::string ACTIONS = "actions";
 
+const int OK = 200;
 const int BAD_REQUEST = 400;
 const int NOT_FOUND = 404;
+const int UNAUTHORIZED = 401;
 const int INTERNAL_SERVER_ERROR = 500;
 
 const char SEPARATOR_URL = '&';
@@ -98,9 +107,17 @@ Json::Value PredictHandler::parseInputHttpRequest(const std::string& message) {
 }
 
 void PredictHandler::makeResponse(IHTTPResponse_ response, const Json::Value& response_json) {
-    // response->setStatus();
-    // response->setHeader();
-    // response->setBody();
+    if (!response_json["status"].asBool()) {
+        response->setStatus(INTERNAL_SERVER_ERROR);
+        response->setHeader(ERROR_MESSAGE, ERROR_MESSAGE);
+        response->setBody(response_json["error"].asString());
+        return;
+    }
+    std::string plot_data = response_json["data"].toStyledString();
+    response->setStatus(OK);
+    response->setHeader(PREDICT_DATA, PREDICT_DATA);
+    response->setBody(plot_data);
+
 }
 
 
@@ -144,7 +161,18 @@ Json::Value ShowPlotHandler::parseInputHttpRequest(const std::string& message) {
 }
 
 void ShowPlotHandler::makeResponse(IHTTPResponse_ response, const Json::Value& response_json) {
+    if (!response_json["status"].asBool()) {
+        response->setStatus(INTERNAL_SERVER_ERROR);
+        response->setHeader(ERROR_MESSAGE, ERROR_MESSAGE);
+        response->setBody(response_json["error"].asString());
+        return;
+    }
 
+    std::string plot_data_ = response_json["data"].toStyledString();
+
+    response->setStatus(OK);
+    response->setHeader(PLOT_DATA, PLOT_DATA);
+    response->setBody(plot_data_);
 }
 
 // class RegisterHandler
@@ -186,7 +214,11 @@ Json::Value RegisterHandler::parseInputHttpRequest(const std::string& message) {
 }
 
 void RegisterHandler::makeResponse(IHTTPResponse_ response, const Json::Value& response_json) {
-
+    if (!response_json["status"].asBool()) {
+        response->setStatus(UNAUTHORIZED);
+        return;
+    }
+    response->setStatus(OK);
 }
 
 
@@ -228,15 +260,25 @@ Json::Value AuthorizeHandler::parseInputHttpRequest(const std::string& message) 
 }
 
 void AuthorizeHandler::makeResponse(IHTTPResponse_ response, const Json::Value& response_json) {
-
+    if (!response_json["status"].asBool()) {
+        response->setStatus(UNAUTHORIZED);
+        return;
+    }
+    response->setStatus(OK);
 }
 
 // class Router
 Router::Router(const std::map<std::string, IHandler*>& handlers)
     : handlers_(handlers) {}
 void Router::handle(IHTTPRequest_ request, IHTTPResponse_ response) {
-    auto header = response->getHeaders();
+    auto header = request->getHeaders();
     std::string key = header[METHOD] + ":" + header[ACTIONS];
+    if (handlers_.find(key) == handlers_.end()) {
+        response->setStatus(BAD_REQUEST);
+        response->setHeader(ERROR_MESSAGE, ERROR_MESSAGE);
+        response->setBody(ERROR_MESSAGE);
+        return;
+    }
     handlers_[key]->handle(request, response);
 }
 

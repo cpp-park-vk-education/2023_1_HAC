@@ -52,10 +52,7 @@ Json::Value PredictController::makePredict(const Json::Value& request) {
     } catch (std::exception &e) {
         return makeJsonError(e.what());
     }
-
 }
-
-
 
 std::vector<double> PredictController::parseDBProtocol(const Json::Value& response) {
     if (!response["status"]) {

@@ -21,7 +21,7 @@ TEST(PredictHandlerTest, HandleThrowsOnInvalidHttpRequest) {
     HTTPRequestToBoostAdapter request;
     request.setUrl("/predict");
     request.setHeader("Content-Type", "application/json");
-    request.setBody(std::vector<char>());
+    request.setBody(std::string());
 
     HTTPResponseToBoostAdapter response;
 
@@ -38,7 +38,7 @@ TEST(ShowPlotHandlerTest, HandleThrowsOnInvalidHttpRequest) {
     HTTPRequestToBoostAdapter request;
     request.setUrl("/showplot");
     request.setHeader("Content-Type", "application/json");
-    request.setBody(std::vector<char>());
+    request.setBody(std::string());
 
     HTTPResponseToBoostAdapter response;
 
@@ -56,7 +56,7 @@ TEST(RegisterHandlerTest, HandleThrowsOnInvalidHttpRequest) {
     HTTPRequestToBoostAdapter request;
     request.setUrl("/register");
     request.setHeader("Content-Type", "application/json");
-    request.setBody(std::vector<char>());
+    request.setBody(std::string());
 
     HTTPResponseToBoostAdapter response;
 
@@ -73,7 +73,7 @@ TEST(AuthorizeHandlerTest, HandleThrowsOnInvalidHttpRequest) {
     HTTPRequestToBoostAdapter request;
     request.setUrl("/authorize");
     request.setHeader("Content-Type", "application/json");
-    request.setBody(std::vector<char>());
+    request.setBody(std::string());
 
     HTTPResponseToBoostAdapter response;
 

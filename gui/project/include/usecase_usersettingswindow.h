@@ -21,7 +21,10 @@ public:
     void sendError(const Error& error_message) override {}
     void passToMain() override {}
     void ConfirmHandler(const std::string& old_password,
-                                 const std::string& new_password) override {}
+                                 const std::string& new_password) override {
+
+        //user
+    }
     std::string getUser() override {}
     std::string getUrl() override {}
     void setUrl(const std::string& url) override {}

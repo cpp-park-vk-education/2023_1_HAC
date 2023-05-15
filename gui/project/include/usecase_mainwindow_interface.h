@@ -27,6 +27,7 @@ public:
     virtual void sendError(const Error& error_message) = 0;
     virtual std::string getUrl() = 0;
     virtual void setUrl(const std::string& url) = 0;
+    virtual void openUserSettings() = 0;
 };
 
 #endif // USECASE_MAINWINDOW_INTERFACE_H

@@ -16,6 +16,10 @@
 #include "../include/usecase_mainwindow.h"
 #include "../include/mainwindow_network.h"
 
+#include "../include/usersettingswindow.h"
+#include "../include/usecase_usersettingswindow.h"
+#include "../include/usersettingswindow_network.h"
+
 #include "../include/ionetwork.h"
 
 GUIController::GUIController(QWidget *parent)
@@ -55,7 +59,17 @@ GUIController::GUIController(QWidget *parent)
     main_network_ptr->setMainHandler(main_handler_ptr);
     main_network_ptr->setMainNetwork(network_ptr);
 
-
+    user_settings_window = new UserSettingsWindow(this);
+    pages->addWidget(user_settings_window);
+    user_settings_handler_ptr = std::make_shared<UseCaseUserSettingsWindow>();
+    user_settings_window->setUserSettingsWindowHandler(user_settings_handler_ptr);
+    user_settings_handler_ptr->setUserSettingsWindow(std::shared_ptr<UserSettingsWindow>(user_settings_window));
+    user_settings_handler_ptr->setWindowManager(window_manager_ptr);
+    user_settings_network_ptr = std::make_shared<NetworkUserSettingsWindow>();
+    user_settings_handler_ptr->setUserSettingsNetwork(user_settings_network_ptr);
+    user_settings_network_ptr->setUrl("http://25.21.238.202:8081/");
+    user_settings_network_ptr->setUserSettingsHandler(user_settings_handler_ptr);
+    user_settings_network_ptr->setUserSettingsNetwork(network_ptr);
 
 
     setCentralWidget(pages);

@@ -88,6 +88,7 @@ public:
     void sendError(const Error &error_message) override {}
     std::string getUrl() override {}
     void setUrl(const std::string& url) override {}
+    void openUserSettings() override {}
     std::string out;
 };
 
@@ -105,6 +106,7 @@ public:
     }
     std::string getUrl() override {}
     void setUrl(const std::string& url) override {}
+    void openUserSettings() override {}
     std::string error_type;
 };
 

@@ -28,16 +28,19 @@ public:
 
     QPushButton* get_apple_btn();
     QPushButton* get_predict_btn();
+    QPushButton* get_user_set_btn();
 
 public slots:
     void start_apple_plot();
     void start_predict();
+    void open_user_set();
 private:
     Ui::MainWindow *ui;
     ptr_to_main_handler main_handler_ptr;
 
     QPushButton* btn_apple;
     QPushButton* btn_predict;
+    QPushButton* btn_user_set;
 
     std::string stock_name;
 

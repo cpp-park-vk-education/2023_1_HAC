@@ -7,6 +7,10 @@
 
 namespace handlers {
 
+void cutUrlTokens(std::vector<std::string>& tokens, const std::string& error_mess);
+std::vector<std::string> splitMessage(const std::string& message, char separator);
+
+
 using ptrToPredictController = controllers::IPredictController*;
 using ptrToShowPlotController = controllers::IShowPlotController*;
 using ptrToRegisterController = controllers::IRegisterController*;
@@ -19,9 +23,9 @@ class PredictHandler : public IHandler {
    explicit PredictHandler(ptrToPredictController controller);
    void handle(IHTTPRequest_ request, IHTTPResponse_ response) override;
  private:
-   Json::Value parseInputHttpRequest(const IHTTPRequest_ request) override;
-   
-    ptrToPredictController controller_;
+   Json::Value parseInputHttpRequest(const std::string& message) override;
+   void makeResponse(IHTTPResponse_ response, const Json::Value& response_json) override;
+   ptrToPredictController controller_;
 };
 
 
@@ -30,7 +34,8 @@ class ShowPlotHandler : public IHandler {
    explicit ShowPlotHandler(ptrToShowPlotController controller);
    void handle(IHTTPRequest_ request, IHTTPResponse_ response) override;
  private:
-   Json::Value parseInputHttpRequest(const IHTTPRequest_ request) override;
+   Json::Value parseInputHttpRequest(const std::string& message) override;
+   void makeResponse(IHTTPResponse_ response, const Json::Value& response_json) override;
 
    ptrToShowPlotController controller_;  
 };
@@ -40,7 +45,9 @@ class RegisterHandler : public IHandler {
    explicit RegisterHandler(ptrToRegisterController controller);
    void handle(IHTTPRequest_ request, IHTTPResponse_ response) override;
  private:
-   Json::Value parseInputHttpRequest(const IHTTPRequest_ request) override;
+   Json::Value parseInputHttpRequest(const std::string& message) override;
+   void makeResponse(IHTTPResponse_ response, const Json::Value& response_json) override;
+
    ptrToRegisterController controller_;  
 };
 
@@ -51,7 +58,8 @@ class AuthorizeHandler : public IHandler {
    void handle(IHTTPRequest_ request, IHTTPResponse_ response) override;
  private:
 
-   Json::Value parseInputHttpRequest(const IHTTPRequest_ request) override;
+   Json::Value parseInputHttpRequest(const std::string& message) override;
+   void makeResponse(IHTTPResponse_ response, const Json::Value& response_json) override;
    ptrToAuthorizeController controller_; 
 };
 

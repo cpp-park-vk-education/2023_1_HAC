@@ -30,7 +30,7 @@ class APIModelRequest : public IAPIModelRequest{
     Json::Value getData(const controllers::TimeSeriesPredicts& samples_data) override;
  private:
     void doConnect(std::string path);
-    IHTTPResponse* onConnect(ssl::stream<tcp::socket> stream);   
+    IHTTPResponse* onConnect(ssl::stream<tcp::socket> stream);
 };
 
 } // namespace api_model

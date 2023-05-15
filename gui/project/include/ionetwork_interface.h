@@ -11,6 +11,8 @@ struct Error {
 struct MainData {
     std::string operation_title;
     std::string stock_name;
+    int lag;
+    int window_size;
 };
 
 class IONetworkInterface {
@@ -20,7 +22,7 @@ public:
                                      const Error& error_state)> callback) = 0;
     virtual void GetRequest(const std::string& url, const MainData& body,
                             std::function<void(
-                                    const std::istream& network_output,
+                                    std::istream& network_output,
                                     const Error& error_state)> callback) = 0;
     virtual void setConfig(const std::string& host) = 0;
 };

@@ -27,7 +27,7 @@ public:
     }
     void GetRequest(const std::string& url, const MainData& body,
                     std::function<void(
-                            const std::istream& network_output,
+                            std::istream& network_output,
                             const Error& error_state)> callback) {}
     virtual void setConfig(const std::string& host) { }
     std::string url_;

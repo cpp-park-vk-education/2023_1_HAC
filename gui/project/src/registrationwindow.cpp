@@ -29,13 +29,13 @@ std::string RegistrationWindow::getPassword() {
 }
 
 std::string RegistrationWindow::getPasswordConfirm() {
-    password = ui->lePassCpnfirm->text().toStdString();
-    return password;
+    pass_confirm = ui->lePassConfirm->text().toStdString();
+    return pass_confirm;
 }
 
 std::string RegistrationWindow::getEmail() {
     email= ui->leEmail->text().toStdString();
-    return password;
+    return email;
 }
 
 QPushButton* RegistrationWindow::get_enter_btn() {

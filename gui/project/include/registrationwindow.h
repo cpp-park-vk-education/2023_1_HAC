@@ -54,6 +54,7 @@ private:
 
     std::string login;
     std::string password;
+    std::string pass_confirm;
     std::string email;
 
     QString* error_message_;

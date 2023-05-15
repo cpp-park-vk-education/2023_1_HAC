@@ -59,7 +59,7 @@ GUIController::GUIController(QWidget *parent)
     main_handler_ptr->setMainWindow(std::shared_ptr<MainWindow>(main_window));
     main_handler_ptr->setWindowManager(window_manager_ptr);
     main_network_ptr = std::make_shared<NetworkMainWindow>();
-    main_network_ptr->setUrl("http://25.21.238.202:8081/");
+    main_network_ptr->setUrl("http://25.21.238.202:9988/");
     main_handler_ptr->setMainNetwork(main_network_ptr);
     main_network_ptr->setMainHandler(main_handler_ptr);
     main_network_ptr->setMainNetwork(network_ptr);
@@ -72,7 +72,7 @@ GUIController::GUIController(QWidget *parent)
     user_settings_handler_ptr->setWindowManager(window_manager_ptr);
     user_settings_network_ptr = std::make_shared<NetworkUserSettingsWindow>();
     user_settings_handler_ptr->setUserSettingsNetwork(user_settings_network_ptr);
-    user_settings_network_ptr->setUrl("http://25.21.238.202:8081/");
+    user_settings_network_ptr->setUrl("http://25.21.238.202:9988/");
     user_settings_network_ptr->setUserSettingsHandler(user_settings_handler_ptr);
     user_settings_network_ptr->setUserSettingsNetwork(network_ptr);
 
@@ -83,7 +83,7 @@ GUIController::GUIController(QWidget *parent)
     registration_handler_ptr->setRegistrationWindow(std::shared_ptr<RegistrationWindow>(reg_window));
     registration_handler_ptr->setWindowManager(window_manager_ptr);
     registration_network_ptr = std::make_shared<NetworkRegistrationWindow>();
-    registration_network_ptr->setUrl("http://25.21.238.202:8081/");
+    registration_network_ptr->setUrl("http://25.21.238.202:9988/");
     registration_handler_ptr->setRegistrationNetwork(registration_network_ptr);
     registration_network_ptr->setRegistrationHandler(registration_handler_ptr);
     registration_network_ptr->setRegistrationNetwork(network_ptr);

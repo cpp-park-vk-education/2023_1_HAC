@@ -34,21 +34,25 @@ public:
                     Error error_message;
                     error_message.type = "EmptyInput";
                     error_message.message = "Email, login, password or confirmation password was not inputed!";
-                    registration_window_ptr->createErrorMessage(error_message);
-                    registration_window_ptr->showErrorMessage();
+                    //registration_window_ptr->createErrorMessage(error_message);
+                    //registration_window_ptr->showErrorMessage();
+                    sendError(error_message);
                     return;
         } else if (password != pass_confirm) {
                     std::cout<<"bad pass" <<std::endl;
                     Error error_message;
                     error_message.type = "NotEqualPasswords!";
                     error_message.message = "Password and confirmed password are different!";
-                    registration_window_ptr->createErrorMessage(error_message);
-                    registration_window_ptr->showErrorMessage();
+                    //registration_window_ptr->createErrorMessage(error_message);
+                    //registration_window_ptr->showErrorMessage();
+                    sendError(error_message);
+                    return;
         } else {
                 RegInput input;
                 input.email= email;
                 input.login = login;
                 input.password = password;
+                std::cout << input.email <<' ' <<input.login <<' ' <<input.password <<std::endl;
                 std::cout <<"here" <<std::endl;
                 registration_network_ptr->getRegistration(input);
         }

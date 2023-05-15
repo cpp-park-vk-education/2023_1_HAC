@@ -14,22 +14,22 @@ namespace beast = boost::beast;         // from <boost/beast.hpp>
 namespace net = boost::asio;            // from <boost/asio.hpp>
 using tcp = boost::asio::ip::tcp;       // from <boost/asio/ip/tcp.hpp>
 
-class IListener {
- public:
-    virtual void Run() = 0;
-};
+// class IListener {
+//  public:
+//     virtual void Run() = 0;
+// };
 
-class Listener : public IListener{
+class Listener : std::enable_shared_from_this<Listener>{
  public:
     Listener() = delete;
-    Listener(net::io_context& ioc, tcp::endpoint endpoints, IRouterAdapter* router);
-    void Run() override;
+    Listener(net::io_context& ioc, tcp::endpoint endpoints);
+    void Run();
     
- private:
+ //private:
     net::io_context& ioc_;
     tcp::acceptor acceptor_;
     RouterAdapter* router_adapter;
 
     void doAccept();
-    void onAccept();
+    void onAccept(beast::error_code ec, tcp::socket socket);
 };

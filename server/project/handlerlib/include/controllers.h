@@ -40,11 +40,11 @@ class PredictController : public IPredictController {
 // class ModelController
 class ModelController : public IModelController {
  public:
-  explicit ModelController(const ptrToAPIModel api_model);
+  explicit ModelController(api::IAPIModelRequest* api_model){};
   Json::Value callModelApi(const TimeSeriesPredicts& samples_data) override;
 
  private:
-  ptrToAPIModel api_model_;
+  api::IAPIModelRequest* api_model_;
 };
 
 // class ShowPlotController 

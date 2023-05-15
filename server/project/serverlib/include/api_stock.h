@@ -6,7 +6,9 @@
 #include <boost/asio/ip/tcp.hpp>
 #include <boost/asio/ssl/error.hpp>
 #include <boost/asio/ssl/stream.hpp>
+#include <jsoncpp/json/value.h>
 #include "http_protocol.h"
+#include "handlers.h"
 #include <map>
 #include <cstdlib>
 #include <iostream>
@@ -26,13 +28,13 @@ using ptrToAPIStock = IAPIStockRequest*;
 
 class IAPIStockRequest {
  public:
-    virtual IHTTPResponse* getData(std::string path) = 0; 
+    virtual Json::Value getData(const handlers::ProtocolAPI& protocol) = 0; 
 };
 
 class APIStockRequest : public IAPIStockRequest{
  public:
     APIStockRequest();
-    IHTTPResponse* getData(std::string path) override;
+    Json::Value getData(const handlers::ProtocolAPI& protocol) override;
  private:
     void doConnect(std::string path);
     IHTTPResponse* onConnect(ssl::stream<tcp::socket> stream);

@@ -80,8 +80,8 @@ TimeSeriesPredicts PredictController::makeTimeSeries(const std::vector<double>& 
 }
 
 // class ModelController
-ModelController::ModelController(const ptrToAPIModel api_model) 
-    : api_model_(api_model) {}
+// ModelController::ModelController(api::IAPIModelRequest* api_model) 
+//     : api_model_(api_model) {}
 
 Json::Value ModelController::callModelApi(const TimeSeriesPredicts& samples_data) {
     return api_model_->getData(samples_data);  
@@ -104,7 +104,7 @@ RegisterController::RegisterController(const ptrToDBController db_controller)
     : db_controller_(db_controller) {}
 
 Json::Value RegisterController::registration(const Json::Value& request) {
-    request["password"] = hashPassword(request["password"].asString());
+    //request["password"] = hashPassword(request["password"].asString());
     Json::Value request_to_db = makeDBProtocol(request);
     return db_controller_->DataRequest(request_to_db);
 }
@@ -128,7 +128,7 @@ AuthorizeController::AuthorizeController(const ptrToDBController db_controller)
 Json::Value AuthorizeController::authorization(const Json::Value& request) {
     Json::Value request_to_db = makeDBProtocol(request);
     Json::Value response_db = db_controller_->DataRequest(request_to_db);
-    request["password"] = hashPassword(request["password"].asString());
+    //request["password"] = hashPassword(request["password"].asString());
     return checkPassword(response_db, request);
     
 } 
@@ -156,7 +156,7 @@ bool UpdateDataController::updateData(const handlers::ProtocolAPI& protocol) {
     auto response_model = api_stock_->getData(protocol); // json
     Json::Value db_protocol = makeDBProtocol(response_model);
     Json::Value json_response_db = db_controller_->DataRequest(db_protocol);
-    return json_response_db["status"];
+    return json_response_db["status"] == "ok"; //???????????????????????????????????
 }
 
 Json::Value UpdateDataController::makeDBProtocol(const Json::Value& request) {

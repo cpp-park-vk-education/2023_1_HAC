@@ -29,18 +29,18 @@ using IDatabaseController = std::string;
 
 namespace net = boost::asio; // from <boost/asio.hpp>
 
+struct Config {
+    std::string address;
+    int port;
+    int threads;
+};
+
+
 class Server {
  public:
     Server() = delete;
     Server(const std::string& path_to_config_file);
     
-
-    struct Config {
-        std::string address;
-        int port;
-        int threads;
-    };
-
  private:  
     std::unique_ptr<IDatabaseController> database_controller;
     std::unique_ptr<controllers::IModelController> model_controller;
@@ -56,7 +56,7 @@ class Server {
     
     //std::unique_ptr<IRouterAdapter> router_adapter;
     //std::shared_ptr<IListener> lister;
-    //net::io_context ioc;
+    net::io_context ioc;
     std::map<std::string, handlers::IHandler*> handlers;
     std::vector<std::thread> listeners;
     Config config_;

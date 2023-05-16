@@ -40,27 +40,46 @@ Json::Value api::APIModelRequest::getData(const controllers::TimeSeriesPredicts&
     std::cerr << response_string;    
     std::map<std::string, std::string> headers;
 
-    // Разделение строки ответа на строки заголовков
-    // std::istringstream iss(response_string);
-    // std::string line;
-    // while (std::getline(iss, line) && line != "\r") {
-    //     // Разделение строки заголовка на имя и значение
-    //     std::size_t colonPos = line.find(":");
-    //     if (colonPos != std::string::npos) {
-    //         std::string headerName = line.substr(0, colonPos);
-    //         std::string headerValue = line.substr(colonPos + 2);  // +2 для пропуска ": " после имени заголовка
-    //         headers[headerName] = headerValue;
-    //     }
-    // }
+    std::istringstream iss(response_string);
+    std::string line;
+    while (std::getline(iss, line) && line != "\r") {
+        std::size_t colonPos = line.find(":");
+        if (colonPos != std::string::npos) {
+            std::string headerName = line.substr(0, colonPos);
+            std::string headerValue = line.substr(colonPos + 2);  // +2 для пропуска ": " после имени заголовка
+            headers[headerName] = headerValue;
+        }
+    }
 
-    // for (const auto& header : headers) {
-        // std::cout << header.first << ": " << header.second << std::endl;
-    // }
+    std::string data_string = headers["data"];
 
+    std::vector<double> parsed_data;
+    std::string now_value;
+    for (size_t i = 1; i < data_string.length()-1; ++i){
+        if(data_string[i] == '['){
+            now_value = "";
+        } else {
+            if (data_string[i] == ']'){
+                parsed_data.push_back(std::stod(now_value));
+            } else {
+                now_value += data_string[i]; 
+            }
+        }
+    }
 
+    for (auto i : parsed_data){
+        std::cout << i << " ";
+    }
 
-    Json::Value test;
-    return test;
+    Json::Value json_resp;
+    json_resp["status"] = true;
+    Json::Value json_param;
+    std::string number;
+    for (int i = 0; i < parsed_data.size(); i++) {  
+       json_param[i] = parsed_data[i];
+    };
+    json_resp["data"] = json_param;  
+    return json_resp;
 };
 
 void api::APIModelRequest::doConnect(std::string path){};

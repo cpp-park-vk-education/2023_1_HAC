@@ -36,14 +36,16 @@ void NetworkMainWindow::onGetPredictData(std::istream& network_output,
         while(std::getline(network_output, s)) {
             //char c;
             //network_output >> c;
-            output << s;
+            output << s <<'\n';
             //std::cout <<"1";
         }
-        std::cout<<std::endl;
+        //std::cout<<std::endl;
         std::string network_answer = "predict\n" + output.str();
-        output.clear();
-        output <<network_answer;
-        main_handler_ptr->drawPlotHandler(output);
+        //output.clear();
+        //output <<network_answer;
+        std::stringstream new_output;
+        new_output <<network_answer;
+        main_handler_ptr->drawPlotHandler(new_output);
     } else {
         main_handler_ptr->sendError(error_state);
     }

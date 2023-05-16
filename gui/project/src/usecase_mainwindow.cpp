@@ -38,14 +38,11 @@ void UseCaseMainWindow::drawPlotHandler(std::istream& network_output) {
         new_y.push_back(std::stod(s));
     }
     if (status == "predict") {
-    //merge two vectors
-    //new_y.insert(new_y.end(), y.begin(), y.end());
         y.insert(y.end(), new_y.begin(), new_y.end());
     } else {
-    //after parsed new_y
     y = new_y;
     }
-    main_window_ptr->createPlot(new_y);
+    main_window_ptr->createPlot(y);
     main_window_ptr->drawPlot();
     return;
 }

@@ -33,12 +33,10 @@ void UseCaseMainWindow::drawPlotHandler(std::istream& network_output) {
     std::getline(network_output, status);
     std::cout << "*" <<status <<"*" <<std::endl;
     while(std::getline(network_output, s, '\n')) {
-        std::string a ="100.1";
+        //std::string a ="100.1";
         std::cout << "^" <<std::stod(s)<<"^";
         new_y.push_back(std::stod(s));
     }
-    //std::cout <<"!"<<s <<"!";
-    //std::vector<std::string> str_output_vec = tokenize(s, '\n');
     if (status == "predict") {
     //merge two vectors
     //new_y.insert(new_y.end(), y.begin(), y.end());
@@ -64,19 +62,18 @@ void UseCaseMainWindow::stockSelectHandler(const std::string& stock_name) {
 }
 void UseCaseMainWindow::predictHandler(const std::string& stock_name) {
     std::cout << "In predict Handler: " <<stock_name<< std::endl;
-    //stock_name_ = stock_name;
-    stockSelectHandler(stock_name); // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    stockSelectHandler(stock_name);
     MainData stock_data;
     stock_data.operation_title = "predict";
     stock_data.stock_name = stock_name;
     stock_data.lag = 8;
-    stock_data.window_size = 0;
+    stock_data.window_size = 8;
     main_network_ptr->getPredictData(stock_data);
 }
 
 void UseCaseMainWindow::sendError(const Error& error_message) {
-main_window_ptr->createErrorMessage(error_message);
-main_window_ptr->showErrorMessage();
+    main_window_ptr->createErrorMessage(error_message);
+    main_window_ptr->showErrorMessage();
 }
 
 

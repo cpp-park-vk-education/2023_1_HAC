@@ -10,20 +10,8 @@
 #include <algorithm>
 #include <QNetworkReply>
 #include <QUrlQuery>
-//#include <functional>
 
 #include "../include/ionetwork_interface.h"
-
-static std::vector<std::string> tokenize(std::string const &str,
-                                  const char delim) {
-    std::vector<std::string> out;
-    std::stringstream ss(str); //строка как поток
-    std::string s;
-    while (std::getline(ss, s, delim)) {
-        out.push_back(s);
-    }
-    return out;
-}
 
 class IONetwork : public IONetworkInterface, QObject {
 public:

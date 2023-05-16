@@ -1,6 +1,17 @@
 #include "../include/ionetwork.h"
 #include <string>
 
+static std::vector<std::string> tokenize(std::string const &str,
+                                         const char delim) {
+    std::vector<std::string> out;
+    std::stringstream ss(str);
+    std::string s;
+    while (std::getline(ss, s, delim)) {
+        out.push_back(s);
+    }
+    return out;
+}
+
 void IONetwork::PostRequest(const std::string& url, const std::string& body,
                          std::function<void(const Error& error_state)>
                                  callback) {

@@ -22,12 +22,21 @@ public:
         std::string auth_line = reg_params.login + "\t" + reg_params.password
                 + "\t" + reg_params.email;
         std::cout<<"*" <<auth_line <<"*"<<std::endl;
+
+        network_ptr->setConfig("REGISTRATION");
+
         network_ptr->PostRequest(url_, auth_line,
                                  [this](const Error& error_state)
                                  {onGetRegistrationResponse(error_state);});
     }
     void onGetRegistrationResponse(const Error& error_state) override {
         std::cout << "In response" <<std::endl;
+        std::cout << error_state.type << ' ' <<error_state.message << std::endl;
+                if (error_state.type == "0") {
+                     registration_handler_ptr->passToMain(error_state.message);
+                } else {
+                    registration_handler_ptr->sendError(error_state);
+                }
     };
     void setUser(const std::string user) override {};
     std::string getUrl() override {};

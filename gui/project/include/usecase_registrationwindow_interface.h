@@ -28,7 +28,7 @@ public:
                             const std::string& login,
                             const std::string& password,
                             const std::string& pass_confirm) = 0;
-    virtual void passToMain() = 0;
+    virtual void passToMain(const std::string& user) = 0;
     virtual void sendError(const Error& error_message) = 0;
     virtual void setUser(const std::string& user) = 0;
     virtual std::string getUrl() = 0;

@@ -12,6 +12,7 @@ void NetworkUserSettingsWindow::getUserSettings(const ConfirmEdit& confirm_passw
     std::cout << "here I am in UserSetting" << std::endl;
     std::string setting_line = confirm_passwords.user_name + "\t" + confirm_passwords.old_password + 
                 "\t" + confirm_passwords.new_password;
+    network_ptr->setConfig("CHANGE_USER_SETTINGS");
     network_ptr->PostRequest(url_, setting_line,
                                 [this](const Error& error_state)
                                 {onGetUserSettingsResponse

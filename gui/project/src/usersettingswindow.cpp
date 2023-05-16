@@ -3,6 +3,8 @@
 
 #include "../include/guicontroller.h"
 #include <memory>
+#include <iostream>
+#include <string>
 
 UserSettingsWindow::UserSettingsWindow(QWidget *parent) :
     QWidget(parent),

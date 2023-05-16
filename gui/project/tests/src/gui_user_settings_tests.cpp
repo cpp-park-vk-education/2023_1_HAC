@@ -42,6 +42,7 @@ public:
     void createErrorMessage(const Error& error_message) override {}
     std::string getOldPassword() override {return {};}
     std::string getNewPassword() override {return {};}
+    std::string getRepeatPassword() override {return {};}
     Error error_message_;
 };
 
@@ -58,11 +59,10 @@ public:
         error_type = error_message.type;
     }
     void passToMain() override {}
-    void ConfirmHandler(const std::string &old_password,
-                        const std::string &new_password) override {}
+    void ConfirmHandler(const std::string& old_password,
+                        const std::string& new_password,
+                        const std::string&  repeat_password) override {}
     std::string getUser() override {}
-    std::string getUrl() override {}
-    void setUrl(const std::string &url) override {}
     void setUser(const std::string &user) override {}
     std::string error_type;
 };
@@ -75,7 +75,7 @@ TEST(UserSetQtLogicTest, TestUserSettingsHandler) {
             std::make_shared<MNetworkUserSettingsWindow>(net_user_set);
     handler_user_set.setUserSettingsNetwork(ptr_to_net);
     handler_user_set.setUser("user");
-    handler_user_set.ConfirmHandler("old", "new");
+    handler_user_set.ConfirmHandler("old", "new", "new");
     std::string expected = "old";
     EXPECT_EQ(ptr_to_net->confirm_params.old_password, expected);
 }
@@ -106,8 +106,10 @@ TEST(UserSetQtLogicTest, TestUserSettingsEmptyInput) {
     handler_user_set.setUserSettingsWindow(ptr_to_user_set_window);
     handler_user_set.ConfirmHandler(handler_user_set
                                      .getUserSettingsWindow()->getOldPassword(),
-                                     handler_user_set
-                                     .getUserSettingsWindow()->getNewPassword());
+                                    handler_user_set
+                                     .getUserSettingsWindow()->getNewPassword(),
+                                    handler_user_set
+                                     .getUserSettingsWindow()->getRepeatPassword());
     std::string expected = "EmptyInput";
     EXPECT_EQ(user_set_window.error_message_.type, expected);
 }

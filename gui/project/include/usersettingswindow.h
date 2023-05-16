@@ -2,11 +2,6 @@
 #define USERSETTINGSWINDOW_H
 
 #include <QWidget>
-
-
-#include <iostream>
-#include <string>
-#include <memory>
 #include <QErrorMessage>
 #include <QDebug>
 
@@ -23,7 +18,6 @@ public:
     explicit UserSettingsWindow(QWidget *parent = nullptr);
     ~UserSettingsWindow();
     void setUserSettingsWindowHandler(
-
             ptr_to_settings_handler set_handler_ptr) override;
     void showErrorMessage() override;
     void createErrorMessage(const Error& error_message) override;

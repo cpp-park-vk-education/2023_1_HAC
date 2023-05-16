@@ -4,6 +4,7 @@
 #include "../include/guicontroller.h"
 #include <memory>
 #include <iostream>
+#include <string>
 
 MainWindow::MainWindow(QWidget *parent) :
     QWidget(parent),
@@ -55,7 +56,6 @@ QPushButton* MainWindow::get_user_set_btn() {
 }
 
 void MainWindow::drawPlot() {
-    //ui->widgetGraph
     ui->widget->clearGraphs();
     QVector<double> x;
     double max_element =*std::max_element(y.begin(), y.end());
@@ -70,3 +70,25 @@ void MainWindow::drawPlot() {
     y.clear();
     std::cout << "Graphic is drawn" << std::endl;
 }
+
+void MainWindow::setMainWindowHandler(ptr_to_main_handler handler_main_ptr) {
+main_handler_ptr = handler_main_ptr;
+}
+
+void MainWindow::createPlot(const std::vector<double>& y_plot_data) {
+    y = QVector<double>(y_plot_data.begin(), y_plot_data.end());
+}
+
+void MainWindow::showErrorMessage() {
+    errorMes = new QErrorMessage(this);
+    errorMes->showMessage(*error_type_ + "! " + *error_message_);
+    qDebug() << *error_type_ << ' ' << *error_message_;
+    std::cout << "error shown"<<std::endl;
+}
+
+void MainWindow::createErrorMessage(const Error& error_message) {
+    error_type_ = new QString(error_message.type.c_str());
+    error_message_ = new QString(error_message.message.c_str());
+    std::cout << "created error message"<<std::endl;
+}
+

@@ -7,6 +7,7 @@
 #include <string>
 #include <iostream>
 #include <sstream>
+#include <algorithm>
 #include <QNetworkReply>
 #include <QUrlQuery>
 //#include <functional>
@@ -35,41 +36,37 @@ public:
         QString url_text = url.c_str();
         QUrl q_url(url_text);
         qDebug() <<q_url <<'\n';
-        //QUrlQuery query;
         QByteArray data;
         std::vector<std::string> body_args = tokenize(body, '\t');
-        //QByteArray data;
         std::string user = body_args[0];
         for (size_t i = 0; i < body_args.size(); ++i) {
             data.append((body_args[i] + "/").c_str());
 
             std::cout <<"&"<< body_args[i] <<"&"<<std::endl;
         }
-        /*data.append("username/");
-        data.append("test_user//");
-        data.append("password/");
-        data.append("test_pass");*/
-
         QNetworkRequest requesti(q_url);
         std::cout <<"#" <<0 <<"#"<<std::endl;
-        requesti.setHeader(QNetworkRequest::ContentTypeHeader,QVariant("application/x-www-form-urlencoded"));
+        requesti.setHeader(QNetworkRequest::ContentDispositionHeader, QVariant(action_name_.c_str()));
+        requesti.setHeader(QNetworkRequest::ContentTypeHeader, QVariant("POST"));
         std::cout <<"#" <<1 <<"#"<<std::endl;
         requesti.setHeader(QNetworkRequest::ContentLengthHeader, data.count());
         std::cout <<"#" <<1.5 <<"#"<<std::endl;
-        //network_manager.post(requesti, data);
         auto reply = network_manager.post(requesti, data);
         std::cout <<"#" <<2 <<"#"<<std::endl;
         /* Устанавливаем callback который вызовется после получения ответа */
         connect(reply, &QNetworkReply::finished, [this, reply, user, callback]() {
-               onFinished(reply, user, callback);
+               onFinishedPost(reply, user, callback);
            });
     }
 
-    void onFinished(QNetworkReply* reply, std::string user,
+    void onFinishedPost(QNetworkReply* reply, std::string user,
                      std::function<void(const Error& error_state)> callback) {
+        QVariant status_code = reply->attribute(QNetworkRequest::HttpStatusCodeAttribute);
+        QString status = status_code.toString(); // or status_code.toInt();
+        std::cout<<"&&"<< status.toStdString() <<"&&";
         Error error_state;
-        if ( reply->error() == QNetworkReply::NoError ) {
-            QString data = QString::fromUtf8( reply->readAll() );
+        /*if (reply->error() == QNetworkReply::NoError) {
+            QString data = QString::fromUtf8(reply->readAll());
             std::cout <<"@" <<data.toStdString() <<"@"<<std::endl;
             if (data.toStdString() != "error") {//might me other phrase
                 error_state.type = "0";
@@ -80,9 +77,21 @@ public:
             }
 
         } else {
-            //ui->lbStatus->setText( reply->errorString() );
             std::cout <<"@" <<"server error" <<"@"<<std::endl;
-            //SEND error with parameters server error
+            error_state.type = "Server Error!";
+            error_state.message = "Server did not response.";
+        }*/
+
+        if (reply->error() == QNetworkReply::NoError) {
+            QString data = QString::fromUtf8(reply->readAll());
+            std::cout <<"@" <<data.toStdString() <<"@"<<std::endl;
+            error_state.type = "0";
+            error_state.message = user;
+        } else if (status.toStdString() == "401") {
+            error_state.type = "401";
+            error_state.message = "Incorrect input!";
+        } else {
+            std::cout <<"@" <<"server error" <<"@"<<std::endl;
             error_state.type = "Server Error!";
             error_state.message = "Server did not response.";
         }
@@ -101,7 +110,7 @@ public:
         std::cout << body.stock_name <<std::endl;
         QString url_text = url.c_str();
         QUrl q_url(url_text);
-        qDebug() <<q_url <<'\n';
+        qDebug() << q_url <<'\n';
 
         QUrlQuery query;
         query.addQueryItem("name", body.stock_name.c_str());
@@ -111,11 +120,7 @@ public:
 
         q_url.setQuery(query.query());
         QNetworkRequest request( q_url);
-        //requesti.setRawHeader("ngrok-skip-browser-warning", "69420");
-        //m_manager.get( QNetworkRequest( QUrl( urlText ) ) );
-        //std::string status = body.operation_title;
         if (body.operation_title == "plot") {
-        //request.setHeader(QNetworkRequest::ContentDispositionHeader, QVariant("TIMESERIES_REQUEST"));
             request.setHeader(QNetworkRequest::ContentDispositionHeader, QVariant("PLOT"));
         } else {
             request.setHeader(QNetworkRequest::ContentDispositionHeader, QVariant("PREDICT"));
@@ -132,20 +137,24 @@ public:
                                const Error& error_state)> callback) {
         Error error_state;
         std::string answer;
-        if ( reply->error() == QNetworkReply::NoError ) {
-            QString data = QString::fromUtf8( reply->readAll() );
+
+        QVariant status_code = reply->attribute(QNetworkRequest::HttpStatusCodeAttribute);
+                // Print or catch the status code
+        QString status = status_code.toString(); // or status_code.toInt();
+        std::cout<<"&&"<< status.toStdString() <<"&&";
+
+        //std::cout << reply->value
+        /*if (reply->error() == QNetworkReply::NoError) {
+            QString data = QString::fromUtf8(reply->readAll());
             std::cout <<"@" <<data.toStdString() <<"@"<<std::endl;
-            if (data.toStdString() != "error") {//might me other phrase
+            //if (data.toStdString() != "error") {//might me other phrase
+            //std::vector<int>::iterator it;
+            //it = find (error_values.begin(), error_values.end(), data.toStdString());
+            if (std::find(error_values.begin(), error_values.end(), data.toStdString()) == error_values.end()) {
                 error_state.type = "0";
                 error_state.message = "";
-                //answer = status + "\n" + data.toStdString();
                 answer = data.toStdString();
                 std::cout <<"^" <<answer <<"^"<<std::endl;
-                //std::istringstream iss(data.toStdString());
-                //std::istream& server_answer(iss);
-
-                //std::istringstream iss(data.toStdString());
-                //std::istream& input(iss);
 
             } else {
                 error_state.type = data.toStdString();
@@ -153,27 +162,41 @@ public:
             }
 
         } else {
-            //ui->lbStatus->setText( reply->errorString() );
             std::cout <<"@" <<"server error" <<"@"<<std::endl;
-            //SEND error with parameters server error
+            error_state.type = "Server Error!";
+            error_state.message = "Server did not response.";
+        }*/
+
+        if (reply->error() == QNetworkReply::NoError) {
+            QString data = QString::fromUtf8(reply->readAll());
+            std::cout <<"@" <<data.toStdString() <<"@"<<std::endl;
+            error_state.type = "0";
+            error_state.message = "";
+        } else {
+            std::cout <<"@" <<"server error" <<"@"<<std::endl;
             error_state.type = "Server Error!";
             error_state.message = "Server did not response.";
         }
 
         std::istringstream iss(answer);
-        //std::istream& server_answer(iss);
-
-        // Мы сами должны освободить память для reply
-        // Однако делать это через delete нельзя
         reply->deleteLater();
-        //std::stringstream out(answer);
         callback(iss, error_state);
     }
 
-    void setConfig(const std::string& host) override {}
+    void setConfig(const std::string& action_name) override {
+        action_name_ = action_name;
+    }
+    /*void set_error_values() {
+        //error_values.push_back("200");
+        error_values.push_back("400");
+        error_values.push_back("401");
+        error_values.push_back("404");
+        error_values.push_back("500");
+    }*/
 private:
     QNetworkAccessManager network_manager;
-    std::string host_;
+    std::string action_name_;
+    //std::vector<std::string> error_values;
 };
 
 #endif //TEST_VK_PROJECT_IONETWORK_H

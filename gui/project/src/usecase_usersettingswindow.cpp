@@ -39,7 +39,8 @@ void UseCaseUserSettingsWindow::ConfirmHandler(const std::string& old_password,
         settings_window_ptr->createErrorMessage(error_message);
         settings_window_ptr->showErrorMessage();
         return;
-    }                   
+    }       
+
     if (new_password != repeat_password) {
         std::cout << "bad" << std::endl;
         Error error_message;
@@ -49,6 +50,7 @@ void UseCaseUserSettingsWindow::ConfirmHandler(const std::string& old_password,
         settings_window_ptr->showErrorMessage();
         return;
     }
+
     if (new_password == "") {
         std::cout << "bad" << std::endl;
         Error error_message;

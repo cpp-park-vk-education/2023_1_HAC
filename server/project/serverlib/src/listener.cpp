@@ -5,10 +5,10 @@
 Listener::Listener(
         net::io_context& ioc,
         tcp::endpoint endpoint,
-        std::shared_ptr<std::string const> const& doc_root)
+        IRouterAdapter* router_adapter)
         : ioc_(ioc)
-        , acceptor_(net::make_strand(ioc))
-        , doc_root_(doc_root)
+        , acceptor_(net::make_strand(ioc)),
+        router_adapter_(router_adapter)
     {
         beast::error_code ec;
 
@@ -48,8 +48,7 @@ Listener::Listener(
 
             // Create the session and run it
             std::make_shared<Session>(
-                std::move(socket),
-                doc_root_)->run();
+                std::move(socket), router_adapter_)->run();
 
         // Accept another connection
         do_accept();

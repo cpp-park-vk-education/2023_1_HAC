@@ -10,7 +10,6 @@
 #include "session.h"
 #include "routers.h"
 
-
 namespace beast = boost::beast;         // from <boost/beast.hpp>
 namespace net = boost::asio;            // from <boost/asio.hpp>
 using tcp = boost::asio::ip::tcp;       // from <boost/asio/ip/tcp.hpp>
@@ -28,7 +27,8 @@ public:
     Listener(
         net::io_context& ioc,
         tcp::endpoint endpoint,
-        std::shared_ptr<std::string const> const& doc_root);
+        IRouterAdapter* router_adapter
+        );
     void run();
 
 private:
@@ -37,5 +37,5 @@ private:
     
     net::io_context& ioc_;
     tcp::acceptor acceptor_;
-    std::shared_ptr<std::string const> doc_root_;
+    IRouterAdapter* router_adapter_;
 };

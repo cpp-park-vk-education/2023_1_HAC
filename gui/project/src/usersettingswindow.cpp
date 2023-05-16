@@ -12,7 +12,10 @@ UserSettingsWindow::UserSettingsWindow(QWidget *parent) :
 {
     ui->setupUi(this);
     btn_enter = ui->btnEnter;
-    connect(btn_enter,SIGNAL(clicked(bool)),this, SLOT(send_setting()));
+    btn_return = ui->btnReturn;
+    connect(btn_enter,SIGNAL(clicked(bool)),this, SLOT(sendSetting()));
+    connect(btn_return,SIGNAL(clicked(bool)),this, SLOT(returnToMain()));
+
 }
 UserSettingsWindow::~UserSettingsWindow()
 {
@@ -39,10 +42,13 @@ void UserSettingsWindow::createErrorMessage(const Error& error_message) {
     std::cout << "created error message"<<std::endl;
 }
 
-void UserSettingsWindow::send_setting() {
+void UserSettingsWindow::sendSetting() {
     settings_handler_ptr->ConfirmHandler(getOldPassword(), getNewPassword(), getRepeatPassword());
 }
 
+void UserSettingsWindow::returnToMain() {
+    settings_handler_ptr->passToMain();
+}
 
 std::string UserSettingsWindow::getOldPassword() {
     old_password = ui->leOldPassword_2->text().toStdString();

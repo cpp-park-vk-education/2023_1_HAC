@@ -1,7 +1,6 @@
 #ifndef USERSETTINGSWINDOW_INTERFACE_H
 #define USERSETTINGSWINDOW_INTERFACE_H
 
-
 #include <memory>
 #include "../include/usecase_usersettingswindow_interface.h"
 #include "../include/ionetwork_interface.h"
@@ -18,7 +17,6 @@ public:
     virtual void createErrorMessage(const Error& error_message) = 0;
     virtual std::string getOldPassword() = 0;
     virtual std::string getNewPassword() = 0;
-
     virtual std::string getRepeatPassword() = 0;
 
 };

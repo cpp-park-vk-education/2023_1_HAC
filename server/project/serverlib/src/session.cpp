@@ -8,26 +8,24 @@ handle_request(
     http::response<http::string_body> res;
     router_adapter->handle(req, res);
 
-    std::unique_ptr<IHTTPRequest> req_ = std::make_unique<HTTPRequestToBoostAdapter>(req);
-    std::cerr << "body: "<< req_->getBoby() << std::endl;
+    //std::unique_ptr<IHTTPRequest> req_ = std::make_unique<HTTPRequestToBoostAdapter>(req);
+    //std::cerr << "body: "<< req_->getBoby() << std::endl;
     
+
     const auto& base = req.base();
     //std::cerr << "method: "<< boost::beast::http::to_string(base.method()) << std::endl;
-    auto headers = req_->getHeaders();
-    for (const auto& pair : headers)
-    {
-        std::cerr << "headers " << pair.first << " :: " << pair.second << std::endl;
-    }
+    //auto headers = req_->getHeaders();
+    // for (const auto& pair : headers)
+    // {
+    //     std::cerr << "headers " << pair.first << " :: " << pair.second << std::endl;
+    // }
 
 
-    http::response<http::string_body> ress;
-    ress.result(http::status::ok);
-    ress.set(http::field::server, "my_server");
-    ress.set(http::field::content_type, "text/plain");
-    ress.set(http::field::content_length, std::to_string(strlen("Romann")));
-    ress.body() = "Romann";
-    ress.keep_alive(false);
-    return ress;
+    res.set(http::field::content_length, std::to_string(res.body().size()));
+    std::cerr << "Status Response: " << res.result_int() << std::endl;
+    std::cerr << "Header: " << res.result_int() << std::endl;
+    std::cerr << "Body: " << res.body() << std::endl;
+    return res;
 }
 
 //------------------------------------------------------------------------------

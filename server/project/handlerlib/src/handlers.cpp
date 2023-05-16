@@ -31,8 +31,8 @@ const char SEPARATOR_BODY = '/';
 const std::string SEPARATOR_TOKEN_URL = "=";
 
 const uint SIZE_URL_GET_PREDICT_PLOT = 4;
-const uint SIZE_BODY_POST_REGISTRATION = 4;
-const uint SIZE_BODY_POST_AUTHORIZATION = 3;
+const uint SIZE_BODY_POST_REGISTRATION = 3;
+const uint SIZE_BODY_POST_AUTHORIZATION = 2;
 const uint SIZE_BODY_POST_USER_SETTINGS = 4;
 
 const uint NAME_STOCK_ORDER = 0;
@@ -57,12 +57,12 @@ std::vector<std::string> splitMessage(const std::string& message, char separator
 }
 
 void cutUrlTokens(std::vector<std::string>& tokens, const std::string& error_mess) {
-    for (size_t i; i < tokens.size(); ++i) {
+    for (size_t i = 0; i < tokens.size(); ++i) {
         size_t equally_lit = tokens[i].find(SEPARATOR_TOKEN_URL);
         if (equally_lit == std::string::npos) {
             throw market_mentor::InvalidHttpRequestError(error_mess);
         }
-        tokens[i] = tokens[i].substr(equally_lit);
+        tokens[i] = tokens[i].substr(equally_lit + 1);
     }
 }
 
@@ -92,17 +92,16 @@ void PredictHandler::handle(IHTTPRequest_ request, IHTTPResponse_ response) {
 Json::Value PredictHandler::parseInputHttpRequest(const std::string& message) {
     // /?name=apple&graph=predict&lag=8&window_size=8
     Json::Value result;
-    std::vector<std::string> tokens = splitMessage(message, SEPARATOR_URL);
+    auto tokens = splitMessage(message, SEPARATOR_URL);
 
     if (tokens.size() != SIZE_URL_GET_PREDICT_PLOT) {
         throw market_mentor::InvalidHttpRequestError(HANDLERS_PREDICT);
     }
-
     cutUrlTokens(tokens, HANDLERS_PREDICT);
     
     result["name_stock"] = tokens[NAME_STOCK_ORDER];
-    result["len_lags"] = tokens[LEN_LAGS_ORDER];
-    result["window_size"] = tokens[WINDOW_SIZE_ORDER];
+    result["len_lags"] = std::stoi(tokens[LEN_LAGS_ORDER]);
+    result["window_size"] = std::stoi(tokens[WINDOW_SIZE_ORDER]);
     
     return result;
 }
@@ -129,9 +128,9 @@ ShowPlotHandler::ShowPlotHandler(ptrToShowPlotController controller)
 void ShowPlotHandler::handle(IHTTPRequest_ request, IHTTPResponse_ response) {
     // get / url
     try {
-        std::cerr << "aa";
         Json::Value request_json = parseInputHttpRequest(request->getURL());
         Json::Value response_json = controller_->createPlotData(request_json);
+        
         makeResponse(response, response_json);
 
     } catch (market_mentor::InvalidHttpRequestError &e) {
@@ -156,8 +155,11 @@ Json::Value ShowPlotHandler::parseInputHttpRequest(const std::string& message) {
     }
     cutUrlTokens(tokens, HANDLERS_PLOT);
     
+    //std::cout << "len log: " << tokens[LEN_LAGS_ORDER] << std::endl;
+    // std::cout << "len log: " << tokens[NAME_STOCK_ORDER] << std::endl;
+
     result["name_stock"] = tokens[NAME_STOCK_ORDER];
-    result["len_lags"] = tokens[LEN_LAGS_ORDER];
+    result["len_lags"] = std::stoi(tokens[LEN_LAGS_ORDER]);
     
     return result;
 }
@@ -169,7 +171,6 @@ void ShowPlotHandler::makeResponse(IHTTPResponse_ response, const Json::Value& r
         response->setBody(response_json["error"].asString());
         return;
     }
-
     std::string plot_data_ = response_json["data"].toStyledString();
 
     response->setStatus(OK);
@@ -204,7 +205,7 @@ Json::Value RegisterHandler::parseInputHttpRequest(const std::string& message) {
     Json::Value result;
     std::vector<std::string> tokens = splitMessage(message, SEPARATOR_BODY);
 
-    if (tokens.size() != SIZE_URL_GET_PREDICT_PLOT) {
+    if (tokens.size() != SIZE_BODY_POST_REGISTRATION) {
         throw market_mentor::InvalidHttpRequestError(HANDLERS_REGISTRATION);
     }
 
@@ -251,7 +252,7 @@ Json::Value AuthorizeHandler::parseInputHttpRequest(const std::string& message) 
     Json::Value result;
     std::vector<std::string> tokens = splitMessage(message, SEPARATOR_BODY);
 
-    if (tokens.size() != SIZE_URL_GET_PREDICT_PLOT) {
+    if (tokens.size() != SIZE_BODY_POST_AUTHORIZATION) {
         throw market_mentor::InvalidHttpRequestError(HANDLERS_AUTHORIZATION);
     }
 
@@ -277,6 +278,7 @@ void Router::handle(IHTTPRequest_ request, IHTTPResponse_ response) {
     auto header = request->getHeaders();
     std::string key = header[METHOD] + ":" + header[ACTIONS];
     if (handlers_.find(key) == handlers_.end()) {
+        std::cerr << "\nNot found key: \"" << key << "\"" << std::endl;
         response->setStatus(BAD_REQUEST);
         response->setHeader(ERROR_MESSAGE, ERROR_MESSAGE);
         response->setBody(ERROR_MESSAGE);

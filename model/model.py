@@ -17,24 +17,43 @@ from tensorflow.keras.losses import MeanSquaredError
 from tensorflow.keras.metrics import RootMeanSquaredError
 from tensorflow.keras.optimizers import Adam
 
+
+def stock_to_X(stock, window_size=8):
+    #stock_as_np = stock.to_numpy()
+    X = []
+    #y = []
+    for i in range(len(stock)+1-window_size):
+        row = [[a] for a in stock[i:i+window_size]]
+        X.append(row)
+        # label = stock_as_np[i+window_size]
+        # y.append(label)
+    return np.array(X)
+
+
+def parse_http_to_pandas(json):
+    window_size = int(json["window_size"])
+    json_data = json["data"]
+    X = []
+    for i in json_data.split():
+        X.append(float(i))
+    X = np.array(X)
+    X = stock_to_X(X)
+    #print(X.shape)
+    return np.array([[90.0],[100.0],[120.0],[90.0],[100.0],[120.0],[90.0],[90.0]])
+
+
+
+
+
 class Model:
     def __init__(self):
         pass
 #       self.download_model()
 
     def predict(self, X):
-        print(self.model.predict(X))
+        return self.model.predict(X)
 
-    def stock_to_X_y(stock, window_size=5):
-        stock_as_np = stock.to_numpy()
-        X = []
-        y = []
-        for i in range(len(stock_as_np)-window_size):
-            row = [[a] for a in stock_as_np[i:i+window_size]]
-            X.append(row)
-            label = stock_as_np[i+window_size]
-            y.append(label)
-        return np.array(X), np.array(y)
+   
 
     def fit(self, X_train, y_train, X_val, y_val, window_size):
         model = Sequential()
@@ -54,9 +73,6 @@ class Model:
     def download_model(self):
         self.model = load_model('model/')
 
-        
-
-
 
 if __name__ == '__main__':
     X = pd.read_csv('data.csv')
@@ -66,7 +82,7 @@ if __name__ == '__main__':
     X_test, y_test = X[3000:], y[3000:]
 
     model = Model()
-    model.fit(X_train=X_train, y_train=y_train, X_val=X_val, y_val=y_val, window_size=8)
+    ##model.fit(X_train=X_train, y_train=y_train, X_val=X_val, y_val=y_val, window_size=8)
     model.download_model()
-    model.predict(X_test)
+    print(model.predict(X_test))
 

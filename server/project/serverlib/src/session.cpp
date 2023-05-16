@@ -3,56 +3,31 @@
 template <class Body, class Allocator>
 http::message_generator
 handle_request(
-    beast::string_view doc_root,
-    http::request<Body, http::basic_fields<Allocator>>&& req)
+    http::request<Body, http::basic_fields<Allocator>>&& req, IRouterAdapter* router_adapter)
 {
-    // Returns a bad request response
-    auto const bad_request =
-    [&req](beast::string_view why)
-    {
-        http::response<http::string_body> res{http::status::bad_request, req.version()};
-        res.set(http::field::server, BOOST_BEAST_VERSION_STRING);
-        res.set(http::field::content_type, "text/html");
-        res.keep_alive(req.keep_alive());
-        res.body() = std::string(why);
-        res.prepare_payload();
-        return res;
-    };
-
-    // Returns a not found response
-    auto const not_found =
-    [&req](beast::string_view target)
-    {
-        http::response<http::string_body> res{http::status::not_found, req.version()};
-        res.set(http::field::server, BOOST_BEAST_VERSION_STRING);
-        res.set(http::field::content_type, "text/html");
-        res.keep_alive(req.keep_alive());
-        res.body() = "The resource '" + std::string(target) + "' was not found.";
-        res.prepare_payload();
-        return res;
-    };
-
-    // Returns a server error response
-    auto const server_error =
-    [&req](beast::string_view what)
-    {
-        http::response<http::string_body> res{http::status::internal_server_error, req.version()};
-        res.set(http::field::server, BOOST_BEAST_VERSION_STRING);
-        res.set(http::field::content_type, "text/html");
-        res.keep_alive(req.keep_alive());
-        res.body() = "An error occurred: '" + std::string(what) + "'";
-        res.prepare_payload();
-        return res;
-    };
-    
     http::response<http::string_body> res;
-    res.result(http::status::ok);
-    res.set(http::field::server, "my_server");
-    res.set(http::field::content_type, "text/plain");
-    res.set(http::field::content_length, std::to_string(strlen("Roma lox")));
-    res.body() = "Romann";
-    res.keep_alive(false);
-    return res;
+    router_adapter->handle(req, res);
+
+    std::unique_ptr<IHTTPRequest> req_ = std::make_unique<HTTPRequestToBoostAdapter>(req);
+    std::cerr << "body: "<< req_->getBoby() << std::endl;
+    
+    const auto& base = req.base();
+    //std::cerr << "method: "<< boost::beast::http::to_string(base.method()) << std::endl;
+    auto headers = req_->getHeaders();
+    for (const auto& pair : headers)
+    {
+        std::cerr << "headers " << pair.first << " :: " << pair.second << std::endl;
+    }
+
+
+    http::response<http::string_body> ress;
+    ress.result(http::status::ok);
+    ress.set(http::field::server, "my_server");
+    ress.set(http::field::content_type, "text/plain");
+    ress.set(http::field::content_length, std::to_string(strlen("Romann")));
+    ress.body() = "Romann";
+    ress.keep_alive(false);
+    return ress;
 }
 
 //------------------------------------------------------------------------------
@@ -61,9 +36,9 @@ handle_request(
 
     Session::Session(
         tcp::socket&& socket,
-        std::shared_ptr<std::string const> const& doc_root)
-        : stream_(std::move(socket))
-        , doc_root_(doc_root)
+        IRouterAdapter* router_adapter)
+        : stream_(std::move(socket)),
+        router_adapter_(router_adapter)
     {
     }
 
@@ -110,19 +85,14 @@ handle_request(
             return do_close();
 
         // Send the response
+        std::cout << "-----------------req start----------" << std::endl;
         std::cout << req_ << std::endl;
+        std::cout << "-----------------req end----------" << std::endl;
 
-        std::cout << "Method: " << req_.method_string() << std::endl;
-        std::cout << "Target: " << req_.target() << std::endl;
-
-        for (const auto& h : req_.base())
-        {
-            std::cout << h.name_string() << ": " << h.value() << std::endl;
-        }
             
         //std::cout << req_.body()<< std::endl;
         send_response(
-        handle_request(*doc_root_, std::move(req_)));
+        handle_request(std::move(req_), router_adapter_));
         
     }
 

@@ -5,6 +5,8 @@
 #include <boost/asio/dispatch.hpp>
 #include <boost/asio/strand.hpp>
 #include <boost/config.hpp>
+#include "routers.h"
+#include "http_protocol.h"
 #include <algorithm>
 #include <cstdlib>
 #include <functional>
@@ -28,7 +30,6 @@ using tcp = boost::asio::ip::tcp;       // from <boost/asio/ip/tcp.hpp>
 template <class Body, class Allocator>
 http::message_generator
 handle_request(
-    beast::string_view doc_root,
     http::request<Body, http::basic_fields<Allocator>>&& req);
 
 //------------------------------------------------------------------------------
@@ -37,16 +38,10 @@ handle_request(
 // Handles an HTTP server connection
 class Session : public std::enable_shared_from_this<Session>
 {
-    beast::tcp_stream stream_;
-    beast::flat_buffer buffer_;
-    std::shared_ptr<std::string const> doc_root_;
-    http::request<http::string_body> req_;
-
 public:
     // Take ownership of the stream
     Session(
-        tcp::socket&& socket,
-        std::shared_ptr<std::string const> const& doc_root);
+        tcp::socket&& socket, IRouterAdapter* router_adapter);
 
 
     // Start the asynchronous operation
@@ -72,4 +67,10 @@ public:
 
     void
     do_close();
+
+private:
+    IRouterAdapter* router_adapter_;
+    beast::tcp_stream stream_;
+    beast::flat_buffer buffer_;
+    http::request<http::string_body> req_;
 };

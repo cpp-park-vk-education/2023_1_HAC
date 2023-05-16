@@ -69,6 +69,8 @@ class Router : public IHandler {
    void handle(IHTTPRequest_ request, IHTTPResponse_ response) override;
 
  private:
+   Json::Value parseInputHttpRequest(const std::string& message) override;
+   void makeResponse(IHTTPResponse_ response, const Json::Value& response_json) override;
    std::map<std::string, IHandler*> handlers_;
 };
 

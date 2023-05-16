@@ -52,11 +52,12 @@ class Server : public std::enable_shared_from_this<Server>{
     prtToIHandler predict_handler;
     prtToIHandler register_handler;
     prtToIHandler authorize_handler;
-    prtToIHandler router;
+    prtToIHandler show_plot_handler;
+    prtToIHandler global_router;
     
     //std::unique_ptr<IRouterAdapter> router_adapter;
     //std::shared_ptr<IListener> lister;
-    std::map<std::string, handlers::IHandler*> handlers;
+    std::map<std::string, handlers::IHandler*> handlers_;
     std::vector<std::thread> listeners;
     Config config_;
     handlers::ProtocolAPI protocol_API;

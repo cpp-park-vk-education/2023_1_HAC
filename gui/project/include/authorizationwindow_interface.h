@@ -1,7 +1,6 @@
 #ifndef AUTHORIZATIONWINDOW_INTERFACE_H
 #define AUTHORIZATIONWINDOW_INTERFACE_H
 
-//#include <memory>
 #include "../include/usecase_authorizationwindow_interface.h"
 
 class IHandlerAuthorizationWindow;

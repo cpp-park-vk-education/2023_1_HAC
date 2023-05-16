@@ -32,9 +32,11 @@ public:
     std::string getEmail() override;
 
     QPushButton* get_enter_btn();
+    QPushButton* get_back_btn();
 
 public slots:
     void start_reg();
+    void open_auth_window();
 private:
     Ui::RegistrationWindow *ui;
     ptr_to_registration_handler registration_handler_ptr;
@@ -49,6 +51,7 @@ private:
     QErrorMessage* errorMes;
 
     QPushButton* btn_enter;
+    QPushButton* btn_back;
 };
 
 #endif // REGISTRATIONWINDOW_H

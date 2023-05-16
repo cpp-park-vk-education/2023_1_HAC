@@ -2,6 +2,7 @@
 #define MAINWINDOW_INTERFACE_H
 
 #include "../include/usecase_mainwindow_interface.h"
+#include "../include/ionetwork_interface.h"
 
 class IHandlerMainWindow;
 using ptr_to_main_handler = std::shared_ptr<IHandlerMainWindow>;

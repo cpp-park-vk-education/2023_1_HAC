@@ -1,12 +1,5 @@
 #include "../include/guicontroller.h"
 #include "ui_guicontroller.h"
-//#include "../include/guicontroller_interface.h"
-/*
-#include "../include/authorizationwindow.h"
-#include "../include/mainwindow.h"
-#include "../include/registrationwindow.h"
-#include "../include/usersettingswindow.h"
-#include "project/include/ionetwork.h"*/
 
 #include "../include/authorizationwindow.h"
 #include "../include/usecase_authorizationwindow.h"
@@ -94,11 +87,13 @@ GUIController::GUIController(QWidget *parent)
 
 
     setCentralWidget(pages);
-    pages->setCurrentIndex(0);
+    //pages->setCurrentIndex(0);
+    pages->setCurrentIndex(1);
 }
 
 GUIController::~GUIController()
 {
+    delete pages;
     delete ui;
     delete auth_window;
     delete main_window;

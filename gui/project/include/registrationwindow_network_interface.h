@@ -2,6 +2,7 @@
 #define REGISTRATIONWINDOW_NETWORK_INTERFACE_H
 
 #include <memory>
+#include <string>
 
 struct RegInput {
     std::string email;

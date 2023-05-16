@@ -58,7 +58,17 @@ void UseCaseUserSettingsWindow::ConfirmHandler(const std::string& old_password,
         error_message.message = "Password is null!";
         settings_window_ptr->createErrorMessage(error_message);
         settings_window_ptr->showErrorMessage();
-        return;        
+        return;
+    }
+
+    if (old_password.empty()) {
+        std::cout << "bad" << std::endl;
+        Error error_message;
+        error_message.type = "BadOldPassword";
+        error_message.message = "Password is null!";
+        settings_window_ptr->createErrorMessage(error_message);
+        settings_window_ptr->showErrorMessage();
+        return;
     }
 
     ConfirmEdit user;

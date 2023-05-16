@@ -27,11 +27,17 @@ MainWindow::MainWindow(QWidget *parent) :
 MainWindow::~MainWindow()
 {
     delete ui;
+    delete btn_apple;
+    delete btn_predict;
+    delete btn_user_set;
+    delete errorMes;
+    delete error_message_;
+    delete error_type_;
 }
 
 void MainWindow::start_apple_plot() {
-    stock_name = "Apple";
-    main_handler_ptr->stockSelectHandler("Apple");
+    stock_name = "apple";
+    main_handler_ptr->stockSelectHandler("apple");
 }
 
 void MainWindow::start_predict() {

@@ -25,6 +25,9 @@ AuthorizationWindow::~AuthorizationWindow()
     delete ui;
     delete error_message_;
     delete error_type_;
+    delete errorMes;
+    delete btn_enter;
+    delete btn_reg;
 }
 
 void AuthorizationWindow::setAuthorizationWindowHandler(

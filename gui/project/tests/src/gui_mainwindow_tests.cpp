@@ -76,10 +76,14 @@ public:
     void setMainNetwork(ptr_to_imain_network main_net_ptr) override {}
     void drawPlotHandler(std::istream &network_output) override {
         std::stringstream output;
-        while (network_output) {
+        /*while (network_output) {
             char c;
             network_output >> c;
             output << c;
+        }*/
+        std::string s;
+        while (std::getline(network_output, s)) {
+            output << s;
         }
         out = output.str();
     }

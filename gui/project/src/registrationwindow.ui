@@ -98,14 +98,32 @@
   <widget class="QPushButton" name="btnBack">
    <property name="geometry">
     <rect>
-     <x>40</x>
-     <y>540</y>
-     <width>89</width>
-     <height>25</height>
+     <x>50</x>
+     <y>520</y>
+     <width>131</width>
+     <height>31</height>
     </rect>
    </property>
    <property name="text">
     <string>Назад</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="Settings">
+   <property name="geometry">
+    <rect>
+     <x>310</x>
+     <y>100</y>
+     <width>131</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>14</pointsize>
+    </font>
+   </property>
+   <property name="text">
+    <string>Регистрация</string>
    </property>
   </widget>
  </widget>

@@ -32,12 +32,12 @@ public:
     std::string getRepeatPassword() override;
 
 public slots:
-    void send_setting();
+    void sendSetting();
+    void returnToMain();
 
 private:
     Ui::UserSettingsWindow *ui;
     ptr_to_settings_handler settings_handler_ptr;
-
 
     std::string old_password;
     std::string new_password;

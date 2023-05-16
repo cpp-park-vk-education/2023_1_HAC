@@ -27,8 +27,8 @@ class NeuralHTTP(BaseHTTPRequestHandler):
         self.send_header("Content-type", "text/html")
         self.send_header("Connection", "close") # добавить заголовок Connection
         self.send_header("Content-Length", str(len(str(take_predict(handles)))))
-        self.send_header("data", str(take_predict(handles)))
-        
+        self.send_header("data", str(take_predict(handles)).replace("\n", ""))
+
         self.end_headers()
         self.wfile.write(bytes("OK", "utf-8")) 
 

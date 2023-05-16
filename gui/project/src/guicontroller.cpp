@@ -87,8 +87,8 @@ GUIController::GUIController(QWidget *parent)
 
 
     setCentralWidget(pages);
-    //pages->setCurrentIndex(0);
-    pages->setCurrentIndex(1);
+    pages->setCurrentIndex(0);
+    //pages->setCurrentIndex(1);
 }
 
 GUIController::~GUIController()

@@ -26,6 +26,8 @@ set(PROJECT_SOURCES
         src/ionetwork.cpp
         src/usersettingswindow_network.cpp
         src/usecase_usersettingswindow.cpp
+        src/authorizationwindow_network.cpp
+        src/usecase_authorization_window.cpp
 
         src/guicontroller.ui
         src/authorizationwindow.ui

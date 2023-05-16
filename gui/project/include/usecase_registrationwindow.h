@@ -58,7 +58,13 @@ public:
         }
 
     }
-    void passToMain() override {}
+    void passToMain(const std::string& user) override {
+        std::cout << "In pass to main" <<' ' << user <<std::endl;
+        window_manager_ptr->setUser(user);
+        std::cout << window_manager_ptr->getUser() <<std::endl;
+        //go to mainwindow
+        window_manager_ptr->openMainWindow();
+    }
     void sendError(const Error& error_message) override {
         registration_window_ptr->createErrorMessage(error_message);
         registration_window_ptr->showErrorMessage();

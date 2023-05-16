@@ -70,7 +70,7 @@ public:
                     const std::string& login,
                     const std::string& password,
                     const std::string& pass_confirm) override {}
-    void passToMain() override {}
+    void passToMain(const std::string& user) override {}
     void sendError(const Error &error_message) override {
         error_type = error_message.type;
     }

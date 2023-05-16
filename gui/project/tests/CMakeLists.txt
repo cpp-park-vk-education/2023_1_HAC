@@ -2,14 +2,22 @@ FIND_PACKAGE(GTest REQUIRED)
 FIND_PACKAGE(Threads REQUIRED)
 
 INCLUDE_DIRECTORIES(include ../include ${GTEST_INCLUDE_DIRS})
+#FILE(GLOB GUI_LIB ../../project/src/*)
 
 ADD_EXECUTABLE(
         tests
         src/main.cpp
         src/gui_authorization_tests.cpp
         src/gui_registration_tests.cpp
-      #  src/gui_user_settings_tests.cpp
-        src/gui_mainwindow_tests.cpp)
+        src/gui_user_settings_tests.cpp
+        src/gui_mainwindow_tests.cpp
+
+        ../src/authorizationwindow_network.cpp
+        ../src/usecase_authorization_window.cpp
+
+        ../src/usersettingswindow_network.cpp
+        ../src/usecase_usersettingswindow.cpp
+)
 TARGET_LINK_LIBRARIES(tests ${GTEST_BOTH_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT}  -lstdc++fs)
 
 SET(memcheck_command)

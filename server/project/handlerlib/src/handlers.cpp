@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <sstream>
+#include <iostream>
 
 const std::string HANDLERS_PREDICT = "predict";
 const std::string HANDLERS_PLOT = "plot";
@@ -231,13 +232,22 @@ void AuthorizeHandler::makeResponse(IHTTPResponse_ response, const Json::Value& 
 
 }
 
+
 // class Router
 Router::Router(const std::map<std::string, IHandler*>& handlers)
     : handlers_(handlers) {}
 void Router::handle(IHTTPRequest_ request, IHTTPResponse_ response) {
-    auto header = response->getHeaders();
+    auto header = request->getHeaders();
     std::string key = header[METHOD] + ":" + header[ACTIONS];
     handlers_[key]->handle(request, response);
+}
+
+
+Json::Value Router::parseInputHttpRequest(const std::string& message) {
+}
+
+void Router::makeResponse(IHTTPResponse_ response, const Json::Value& response_json) {
+
 }
 
 

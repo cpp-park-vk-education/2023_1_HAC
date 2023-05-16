@@ -43,8 +43,13 @@ void UserSettingsWindow::showErrorMessage() {
 }
 
 void UserSettingsWindow::createErrorMessage(const Error& error_message) {
-    error_type_ = new QString(error_message.type.c_str());
-    error_message_ = new QString(error_message.message.c_str());
+    if (error_message.type == "401") {
+        error_type_ = new QString("IncorectInput");
+        error_message_ = new QString("Incorrect old password was inputed!");
+    } else {
+        error_type_ = new QString(error_message.type.c_str());
+        error_message_ = new QString(error_message.message.c_str());
+    }
     std::cout << "created error message"<<std::endl;
 }
 

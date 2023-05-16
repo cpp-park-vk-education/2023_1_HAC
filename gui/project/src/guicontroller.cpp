@@ -29,17 +29,14 @@ GUIController::GUIController(QWidget *parent)
 
     ui->setupUi(this);
     pages = new QStackedWidget(this);
+
     auth_window = new AuthorizationWindow(this);
-    //setCentralWidget(auth_window);
     pages->addWidget(auth_window);
     authorization_handler_ptr = std::make_shared<UseCaseAuthorizationWindow>();
     auth_window->setAuthorizationWindowHandler(authorization_handler_ptr);
     authorization_handler_ptr->setAuthorizationWindow
     (std::shared_ptr<AuthorizationWindow>(auth_window));
-
-    window_manager_ptr = std::shared_ptr<GUIController>(this); //???might be not the best idea
-
-    //authorization_handler_ptr->setWindowManager(std::shared_ptr<GUIController>(this));
+    window_manager_ptr = std::shared_ptr<GUIController>(this);
     authorization_handler_ptr->setWindowManager(window_manager_ptr);
     authorization_network_ptr = std::make_shared<NetworkAuthorizationWindow>();
     authorization_handler_ptr->setAuthorizationNetwork(authorization_network_ptr);
@@ -83,8 +80,6 @@ GUIController::GUIController(QWidget *parent)
     registration_handler_ptr->setRegistrationNetwork(registration_network_ptr);
     registration_network_ptr->setRegistrationHandler(registration_handler_ptr);
     registration_network_ptr->setRegistrationNetwork(network_ptr);
-
-
 
     setCentralWidget(pages);
     pages->setCurrentIndex(0);

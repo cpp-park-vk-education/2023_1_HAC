@@ -31,20 +31,20 @@ RegistrationWindow::~RegistrationWindow()
 
 void RegistrationWindow::setRegistrationWindowHandler(
         ptr_to_registration_handler reg_handler_ptr) {
-registration_handler_ptr = reg_handler_ptr;
+    registration_handler_ptr = reg_handler_ptr;
 }
 
 void RegistrationWindow::showErrorMessage() {
-errorMes = new QErrorMessage(this);
-errorMes->showMessage(*error_type_ + "! " + *error_message_);
-qDebug() << *error_type_ << ' ' << *error_message_;
-std::cout << "error shown"<<std::endl;
+    errorMes = new QErrorMessage(this);
+    errorMes->showMessage(*error_type_ + "! " + *error_message_);
+    qDebug() << *error_type_ << ' ' << *error_message_;
+    std::cout << "error shown"<<std::endl;
 }
 
 void RegistrationWindow::createErrorMessage(const Error& error_message) {
-error_type_ = new QString(error_message.type.c_str());
-error_message_ = new QString(error_message.message.c_str());
-std::cout << "created error message"<<std::endl;
+    error_type_ = new QString(error_message.type.c_str());
+    error_message_ = new QString(error_message.message.c_str());
+    std::cout << "created error message"<<std::endl;
 }
 
 std::string RegistrationWindow::getLogin() {

@@ -4,8 +4,6 @@
 
 #include "../include/guicontroller_interface.h"
 
-//#include <memory>
-
 AuthorizationWindow::AuthorizationWindow(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::AuthorizationWindow)
@@ -55,9 +53,6 @@ QPushButton* AuthorizationWindow::get_reg_btn() {
 
 
 void AuthorizationWindow::start_auth() {
-    //std::string str_log = getLogin();
-    //std::cout << getLogin()<<" " <<getPassword()<<std::endl;
-    //qDebug() << "1" <<getLogin().c_str() <<"2";
     authorization_handler_ptr->authHandler(getLogin(), getPassword());
 }
 
@@ -73,7 +68,12 @@ void AuthorizationWindow::showErrorMessage() {
 }
 
 void AuthorizationWindow::createErrorMessage(const Error& error_message) {
-    error_type_ = new QString(error_message.type.c_str());
-    error_message_ = new QString(error_message.message.c_str());
+    if (error_message.type == "401") {
+        error_type_ = new QString("IncorectInput");
+        error_message_ = new QString("Incorrect login or password!");
+    } else {
+        error_type_ = new QString(error_message.type.c_str());
+        error_message_ = new QString(error_message.message.c_str());
+    }
     std::cout << "created error message"<<std::endl;
 }

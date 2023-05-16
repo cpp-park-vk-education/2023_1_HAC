@@ -1,4 +1,5 @@
 #include "http_protocol.h"
+#include <iostream>
 
 HTTPResponseToBoostAdapter::HTTPResponseToBoostAdapter(httpResponse response):response_(response){}
 

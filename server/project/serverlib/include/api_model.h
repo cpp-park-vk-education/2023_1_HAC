@@ -7,6 +7,7 @@
 #include <boost/asio/ssl/error.hpp>
 #include <boost/asio/ssl/stream.hpp>
 #include <jsoncpp/json/value.h>
+#include <boost/asio.hpp>
 #include "http_protocol.h"
 #include "icontrollers.h"
 

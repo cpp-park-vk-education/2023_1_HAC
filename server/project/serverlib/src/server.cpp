@@ -16,6 +16,10 @@ Server::Server(const std::string& path_to_config_file) {
     std::unique_ptr<api::IAPIModelRequest> api_model 
                   = std::make_unique<api::APIModelRequest>();
 
+    //controllers::TimeSeriesPredicts ts;
+    //std::cout << api_model->getData(ts).toStyledString();    
+             
+
     std::unique_ptr<dbcontroller::IDataBaseController> database_controller 
                    = std::make_unique<dbcontroller::DataBaseController>();
     std::unique_ptr<controllers::IShowPlotController> show_plot_controller 
@@ -34,6 +38,7 @@ Server::Server(const std::string& path_to_config_file) {
     prtToIHandler authorize_handler = std::make_unique<handlers::AuthorizeHandler>(aurhorize_controller.get());
     prtToIHandler show_plot_handler = std::make_unique<handlers::ShowPlotHandler>(show_plot_controller.get());
     
+
     // Переделать с чтением из конфига
     handlers_.insert(std::pair<std::string, handlers::IHandler*>("POST:AUTHORIZATION", authorize_handler.get()));
     handlers_.insert(std::pair<std::string, handlers::IHandler*>("POST:REGISTRATION", register_handler.get()));

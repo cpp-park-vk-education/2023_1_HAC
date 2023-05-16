@@ -112,6 +112,7 @@ ShowPlotHandler::ShowPlotHandler(ptrToShowPlotController controller)
 void ShowPlotHandler::handle(IHTTPRequest_ request, IHTTPResponse_ response) {
     // get / url
     try {
+        std::cerr << "aa";
         Json::Value request_json = parseInputHttpRequest(request->getURL());
         Json::Value response_json = controller_->createPlotData(request_json);
         makeResponse(response, response_json);

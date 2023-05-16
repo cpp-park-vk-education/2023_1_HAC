@@ -60,8 +60,8 @@ namespace dbcontroller {
         Json::Value ClientRequestGet(const std::string& key) override;
         Json::Value ClientRequestUpdate(const Json::Value& data) override;
 
-        std::string host_addr_ = "127.0.0.1";
-        std::string port_ = "5432";
+        std::string host_addr_ = "25.21.238.202";
+        std::string port_ = "5433";
         std::string db_name_ = "marketmentor";
         std::string user_ = "marketmentor_server";
         std::string password_ = "marketmentor_password";

@@ -1,0 +1,20 @@
+version: '3'
+
+# To start: 
+# - docker-compose up
+# To finish:
+# - docker-compose down
+
+services:
+
+  db:
+    image: postgres:14.4
+    restart: always
+    environment:
+      POSTGRES_DB: marketmentor
+      POSTGRES_USER: marketmentor_server
+      POSTGRES_PASSWORD: marketmentor_password
+    ports:
+      - 5432:5432
+    volumes:
+      - ./_sql/:/docker-entrypoint-initdb.d

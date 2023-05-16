@@ -7,6 +7,7 @@ Json::Value api::APIStockRequest::getData(const handlers::ProtocolAPI& protocol)
         auto const host = "finnhub.io" ;
         auto const port = "443";
         auto const target = "/api/v1/stock/candle?symbol=AAPL&resolution=1&from=1679476980&to=1679649780&token=cgjamq1r01qoenkm782gcgjamq1r01qoenkm7830";
+        
         int version =  11;
 
         boost::asio::io_context ioc;

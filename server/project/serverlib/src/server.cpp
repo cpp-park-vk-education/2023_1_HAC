@@ -15,13 +15,19 @@ Config Server::parseConfigFhomFile(const std::string& path_to_config_file) {
 Server::Server(const std::string& path_to_config_file) {
     std::unique_ptr<api::IAPIModelRequest> api_model 
                   = std::make_unique<api::APIModelRequest>();
-
-    //controllers::TimeSeriesPredicts ts;
-    //std::cout << api_model->getData(ts).toStyledString();    
-             
+            
+    controllers::TimeSeriesPredicts samples;
+    //api_model->getData(samples);
+    
 
     std::unique_ptr<dbcontroller::IDataBaseController> database_controller 
                    = std::make_unique<dbcontroller::DataBaseController>();
+
+    if(!database_controller->ConnectToDatabase()) {
+        std::cerr << "DB is not open" << std::endl;
+        exit(1);
+    }
+                
     std::unique_ptr<controllers::IShowPlotController> show_plot_controller 
                     = std::make_unique<controllers::ShowPlotController>(database_controller.get());
     std::unique_ptr<controllers::IRegisterController> register_contoller

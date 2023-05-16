@@ -5,9 +5,7 @@
 #include <iostream>
 #include <vector>
 
-
 namespace controllers {
-
 
 Json::Value makeJsonError(const std::string& error_mes) {
   Json::Value response;
@@ -20,8 +18,10 @@ Json::Value makeDBProtocolGetTS(const Json::Value& request) {
     Json::Value db_protocol;
     db_protocol["Type"] = TypeRequest::GET_REQUEST;
     db_protocol["TypeData"] = TypeData::TIMESERIES_REQUEST;
-    db_protocol["name_stock"] = request["name_stock"];
-    db_protocol["len_lags"] = request["lags"];
+    // std::cout << "В мейк дб протокол " << request["name_stock"].asString() << std::endl;
+    db_protocol["name_stock"] = request["name_stock"].asString();
+    // std::cout << "В мейк дб протокол " << request["len_lags"].asInt() << std::endl;
+    db_protocol["len_lags"] = request["len_lags"].asInt();
     return db_protocol;
 }
 
@@ -43,7 +43,7 @@ Json::Value PredictController::makePredict(const Json::Value& request) {
     Json::Value response_db = db_controller_->DataRequest(request_to_db);
     try {
         std::vector<double> timeseries_vector = parseDBProtocol(response_db);        
-        auto time_series = makeTimeSeries(timeseries_vector, std::stol(request["window_size"].asString()));
+        auto time_series = makeTimeSeries(timeseries_vector, std::stoi(request["window_size"].asString()));
 
         return model_controller_->callModelApi(time_series);
 
@@ -55,7 +55,7 @@ Json::Value PredictController::makePredict(const Json::Value& request) {
 }
 
 std::vector<double> PredictController::parseDBProtocol(const Json::Value& response) {
-    if (!response["status"]) {
+    if (!response["status"].asBool()) {
         throw market_mentor::ErrorInGetDataFromDB("timeseries");
     }
     std::vector<double> timeseries_vector;
@@ -111,9 +111,9 @@ Json::Value RegisterController::makeDBProtocol(const Json::Value& request) {
     Json::Value db_protocol;
     db_protocol["Type"] = TypeRequest::POST_REQUEST;
     db_protocol["TypeData"] = TypeData::REGISTRATION;
-    db_protocol["login"] = request["login"];
-    db_protocol["email"] = request["email"];
-    db_protocol["password"] = request["password"];
+    db_protocol["login"] = request["login"].asString();
+    db_protocol["email"] = request["email"].asString();
+    db_protocol["password"] = request["password"].asString();
     return db_protocol;
 }
 
@@ -134,13 +134,13 @@ Json::Value AuthorizeController::makeDBProtocol(const Json::Value& request) {
     Json::Value db_protocol;
     db_protocol["Type"] = TypeRequest::POST_REQUEST;
     db_protocol["TypeData"] = TypeData::AUTHORIZATION;
-    db_protocol["login"] = request["login"];
+    db_protocol["login"] = request["login"].asString();
     return db_protocol;
 }
 
 Json::Value AuthorizeController::checkPassword(const Json::Value& db_response, const Json::Value& request) {
     Json::Value result_response;
-    result_response["status"] = (db_response["password"] == request["password"]);
+    result_response["status"] = (db_response["password"].asString() == request["password"].asString());
     return result_response;
 }   
 
@@ -160,9 +160,9 @@ Json::Value UpdateDataController::makeDBProtocol(const Json::Value& request) {
     Json::Value db_protocol;
     db_protocol["Type"] = TypeRequest::POST_REQUEST;
     db_protocol["TypeData"] = TypeData::TIMESERIES_REQUEST;
-    db_protocol["name_stock"] = request["name_stock"];
-    db_protocol["date"] = request["date"];
-    db_protocol["data"] = request["data"];
+    db_protocol["name_stock"] = request["name_stock"].asString();
+    db_protocol["date"] = request["date"].asString();
+    db_protocol["data"] = request["data"].asString();
     return db_protocol;
 }
 

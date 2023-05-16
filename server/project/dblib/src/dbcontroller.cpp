@@ -1,5 +1,7 @@
 #include "dbcontroller.hpp"
 
+#include <iostream>
+
 using namespace dbcontroller;
 
 DataBaseController::DataBaseController() {
@@ -34,15 +36,24 @@ void DataBaseController::SetDatabaseConfig(const std::string&  addr, const std::
 
 Json::Value DataBaseController::DataRequest(const Json::Value& request) {
     Json::Value response;
-    if (!database_->IsOpen()) {   
+    
+    if (!database_.get()) {
+        response["DatabaseIsOpen"] = false;
+        response["status"] = false;
+        return response;
+    }
+
+    if (!database_->IsOpen()) {  
         response["DatabaseIsOpen"] = false;
         response["status"] = false;
         return response;
     }
 
     if (request["Type"] == GET_REQUEST) {
+
         // Получить таймсерии
         if (request["TypeData"] == TIMESERIES_REQUEST) {
+
             response = TimeSeriesGet(request["name_stock"].asString(), request["len_lags"].asString());
         }        
     }

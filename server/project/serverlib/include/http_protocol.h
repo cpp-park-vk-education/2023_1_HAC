@@ -34,7 +34,7 @@ class IHTTPRequest{
 
 class HTTPResponseToBoostAdapter : public IHTTPResponse{
  public:
-    HTTPResponseToBoostAdapter(httpResponse response);
+    HTTPResponseToBoostAdapter(httpResponse &response);
     httpResponse toBoost();
 
     void setStatus(int status_code) override;
@@ -47,12 +47,12 @@ class HTTPResponseToBoostAdapter : public IHTTPResponse{
     std::string getBoby() override;
 
  private:
-    httpResponse response_;
+    httpResponse* response_;
 };
 
 class HTTPRequestToBoostAdapter : public IHTTPRequest{
  public:
-   HTTPRequestToBoostAdapter(httpRequest request);
+   HTTPRequestToBoostAdapter(httpRequest &request);
    HTTPRequestToBoostAdapter(const std::string &url, const std::string &headers, const std::string &body);
    HTTPRequestToBoostAdapter(const std::string &url, const std::string &headers, std::string body);
      
@@ -68,5 +68,5 @@ class HTTPRequestToBoostAdapter : public IHTTPRequest{
    void toIRequest(httpRequest);
 
  private:
-   httpRequest request_;
+   httpRequest* request_;
 };

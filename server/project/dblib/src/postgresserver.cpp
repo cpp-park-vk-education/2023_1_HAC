@@ -4,13 +4,11 @@ using namespace database;
 
 PostgresServer::PostgresServer(): host_addr_("25.21.238.202"), port_("5433"), db_name_("marketmentor"),
      user_("marketmentor_server"), password_("marketmentor_password") {
-        Connect();
 }
 
 PostgresServer::PostgresServer(const std::string&  addr, const std::string&  port,
          const std::string&  db_name, const std::string&  user, const std::string&  pass): host_addr_(addr),
         port_(port), db_name_(db_name), user_(user), password_(pass) {
-    Connect();
 }
 
 
@@ -19,7 +17,7 @@ bool PostgresServer::IsOpen() {
 }
 
 
-void PostgresServer::Connect() {
+bool PostgresServer::Connect() {
     std::string connecting_string = "dbname = " + db_name_+ " user = " + user_ + " password = " + password_ +
         " hostaddr = " + host_addr_ + " port = " + port_;
     try {

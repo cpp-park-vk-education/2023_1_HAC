@@ -2,7 +2,8 @@
 
 using namespace dbcontroller;
 
-DataBaseController::DataBaseController() {
+DataBaseController::DataBaseController(): database_ (std::make_shared<PostgresServer>(host_addr_, port_, 
+                                    db_name_, user_, password_)) {
 }
 
 DataBaseController::DataBaseController(const std::shared_ptr<IClientRepository>& client_rep, 
@@ -11,8 +12,7 @@ DataBaseController::DataBaseController(const std::shared_ptr<IClientRepository>&
 }
 
 bool DataBaseController::ConnectToDatabase() {
-    database_ = std::make_shared<PostgresServer>(host_addr_, port_, db_name_, user_, password_);
-    if (!database_->IsOpen()) {
+    if (!database_->Connect()) {
         return false;
     }
 

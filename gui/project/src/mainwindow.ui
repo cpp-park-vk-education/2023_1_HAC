@@ -17,9 +17,9 @@
    <property name="geometry">
     <rect>
      <x>20</x>
-     <y>100</y>
+     <y>140</y>
      <width>201</width>
-     <height>451</height>
+     <height>431</height>
     </rect>
    </property>
    <layout class="QVBoxLayout" name="verticalLayout">
@@ -68,9 +68,9 @@
    <property name="geometry">
     <rect>
      <x>260</x>
-     <y>100</y>
+     <y>110</y>
      <width>501</width>
-     <height>451</height>
+     <height>461</height>
     </rect>
    </property>
    <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -89,8 +89,8 @@
   <widget class="QPushButton" name="btnUserSet">
    <property name="geometry">
     <rect>
-     <x>70</x>
-     <y>20</y>
+     <x>650</x>
+     <y>10</y>
      <width>111</width>
      <height>51</height>
     </rect>
@@ -98,6 +98,24 @@
    <property name="text">
     <string>Настройки
 пользователя </string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_2">
+   <property name="geometry">
+    <rect>
+     <x>60</x>
+     <y>110</y>
+     <width>141</width>
+     <height>17</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>14</pointsize>
+    </font>
+   </property>
+   <property name="text">
+    <string>Список акций</string>
    </property>
   </widget>
  </widget>

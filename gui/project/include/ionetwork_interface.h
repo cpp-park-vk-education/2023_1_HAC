@@ -2,6 +2,9 @@
 #define TEST_VK_PROJECT_IONETWORK_INTERFACE_H
 
 #include <functional>
+#include <string>
+#include <vector>
+
 
 struct Error {
     std::string type;

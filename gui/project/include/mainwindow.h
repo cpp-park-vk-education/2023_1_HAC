@@ -6,6 +6,7 @@
 #include <QVector>
 #include <QErrorMessage>
 #include <QDebug>
+#include <vector>
 
 #include "../include/mainwindow_interface.h"
 

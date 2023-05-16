@@ -29,6 +29,12 @@ set(PROJECT_SOURCES
         src/authorizationwindow_network.cpp
         src/usecase_authorization_window.cpp
 
+        src/registrationwindow_network.cpp
+        src/usecase_registrationwindow.cpp
+
+        src/mainwindow_network.cpp
+        src/usecase_mainwindow.cpp
+
         src/guicontroller.ui
         src/authorizationwindow.ui
         src/mainwindow.ui

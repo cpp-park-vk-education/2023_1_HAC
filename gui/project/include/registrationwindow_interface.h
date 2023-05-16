@@ -2,6 +2,7 @@
 #define REGISTRATIONWINDOW_INTERFACE_H
 
 #include "../include/usecase_registrationwindow_interface.h"
+#include "../include/ionetwork_interface.h"
 
 class IHandlerRegistrationWindow;
 using ptr_to_registration_handler = std::shared_ptr<IHandlerRegistrationWindow>;

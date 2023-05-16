@@ -79,6 +79,7 @@ public:
     }
     std::string getUrl() override {}
     void setUrl(const std::string &url) override {}
+    void openAuthorizationWindow() override {}
     std::string error_type;
     std::string user_;
 };

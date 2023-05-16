@@ -5,6 +5,7 @@
 #include "../include/mainwindow_interface.h"
 #include "../include/mainwindow_network_interface.h"
 #include "../include/guicontroller_interface.h"
+//#include "../include/ionetwork_interface.h"
 
 //class IWindowManager;
 using ptr_to_iwindow_manager = std::shared_ptr<IWindowManager>;

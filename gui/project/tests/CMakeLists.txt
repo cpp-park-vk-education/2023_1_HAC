@@ -15,6 +15,12 @@ ADD_EXECUTABLE(
         ../src/authorizationwindow_network.cpp
         ../src/usecase_authorization_window.cpp
 
+        ../src/registrationwindow_network.cpp
+        ../src/usecase_registrationwindow.cpp
+
+        ../src/mainwindow_network.cpp
+        ../src/usecase_mainwindow.cpp
+
         ../src/usersettingswindow_network.cpp
         ../src/usecase_usersettingswindow.cpp
 )

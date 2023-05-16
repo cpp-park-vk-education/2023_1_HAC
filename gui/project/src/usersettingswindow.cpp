@@ -11,6 +11,9 @@ UserSettingsWindow::UserSettingsWindow(QWidget *parent) :
     ui(new Ui::UserSettingsWindow)
 {
     ui->setupUi(this);
+    ui->leOldPassword_2->setEchoMode(QLineEdit::Password);
+    ui->leNewPassword_2->setEchoMode(QLineEdit::Password);
+    ui->leRepeatPassword_2->setEchoMode(QLineEdit::Password);
     btn_enter = ui->btnEnter;
     btn_return = ui->btnReturn;
     connect(btn_enter,SIGNAL(clicked(bool)),this, SLOT(sendSetting()));
@@ -22,6 +25,9 @@ UserSettingsWindow::~UserSettingsWindow()
     delete ui;
     delete error_message_;
     delete error_type_;
+    delete btn_enter;
+    delete btn_return;
+    delete errorMes;
 }
 
 

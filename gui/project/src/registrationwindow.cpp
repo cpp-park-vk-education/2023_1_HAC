@@ -13,13 +13,20 @@ RegistrationWindow::RegistrationWindow(QWidget *parent) :
     ui->lePassword->setEchoMode(QLineEdit::Password);
     ui->lePassConfirm->setEchoMode(QLineEdit::Password);
     btn_enter = ui->btnEnter;
-    connect(this->get_enter_btn(),SIGNAL(clicked(bool)),this, SLOT(start_reg()));
+    btn_back = ui->btnBack;
 
+    connect(this->get_enter_btn(),SIGNAL(clicked(bool)),this, SLOT(start_reg()));
+    connect(this->get_back_btn(),SIGNAL(clicked(bool)),this, SLOT(open_auth_window()));
 }
 
 RegistrationWindow::~RegistrationWindow()
 {
     delete ui;
+    delete error_message_;
+    delete error_type_;
+    delete errorMes;
+    delete btn_enter;
+    delete btn_back;
 }
 
 void RegistrationWindow::setRegistrationWindowHandler(
@@ -64,8 +71,17 @@ QPushButton* RegistrationWindow::get_enter_btn() {
     return btn_enter;
 }
 
+QPushButton* RegistrationWindow::get_back_btn() {
+    return btn_back;
+}
+
 void RegistrationWindow::start_reg() {
     std::cout << "In start reg" <<std::endl;
     registration_handler_ptr->regHandler(getEmail(), getLogin(), getPassword(), getPasswordConfirm());
+}
+
+void RegistrationWindow::open_auth_window() {
+    std::cout << "In start reg" <<std::endl;
+    registration_handler_ptr->openAuthorizationWindow();
 }
 

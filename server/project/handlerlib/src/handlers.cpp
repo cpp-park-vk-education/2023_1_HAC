@@ -169,9 +169,6 @@ Json::Value ShowPlotHandler::parseInputHttpRequest(const std::string& message) {
     }
     cutUrlTokens(tokens, HANDLERS_PLOT);
     
-    //std::cout << "len log: " << tokens[LEN_LAGS_ORDER] << std::endl;
-    // std::cout << "len log: " << tokens[NAME_STOCK_ORDER] << std::endl;
-
     result[HEADER_JSON_NAME_STOCK] = tokens[NAME_STOCK_ORDER];
     result[HEADER_JSON_LEN_LAGS] = std::stoi(tokens[LEN_LAGS_ORDER]);
     
@@ -308,7 +305,5 @@ Json::Value Router::parseInputHttpRequest(const std::string& message) {
 void Router::makeResponse(IHTTPResponse_ response, const Json::Value& response_json) {
 
 }
-
-
 
 } // namespace handlers 

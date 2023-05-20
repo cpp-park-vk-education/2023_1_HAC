@@ -4,7 +4,6 @@
 #include <iostream>
 #include <vector>
 
-
 const std::string HEADER_JSON_ERROR = "error";
 const std::string HEADER_JSON_TYPE = "Type";
 const std::string HEADER_JSON_TYPEDATA = "TypeData";
@@ -41,7 +40,6 @@ hash_ hashPassword(const std::string& password) {
     return password;
 }
 
-
 // class PredictController
 PredictController::PredictController
     (const ptrToDBController db_controller, const ptrToModelController model_controller) :
@@ -77,7 +75,6 @@ std::vector<double> PredictController::parseDBProtocol(const Json::Value& respon
     return timeseries_vector;
 }
 
-
 TimeSeriesPredicts PredictController::makeTimeSeries(const std::vector<double>& samples_data, size_t window_size) {
     TimeSeriesPredicts ts;
     ts.window_size = window_size;
@@ -96,8 +93,6 @@ Json::Value ModelController::callModelApi(const TimeSeriesPredicts& samples_data
     return api_model_->getData(samples_data);  
 }
 
-
-
 // class ShowPlotController
 ShowPlotController::ShowPlotController(const ptrToDBController db_controller) 
     : db_controller_(db_controller) {}
@@ -113,11 +108,10 @@ RegisterController::RegisterController(const ptrToDBController db_controller)
     : db_controller_(db_controller) {}
 
 Json::Value RegisterController::registration(Json::Value& request) {
-    request["password"] = hashPassword(request["password"].asString());
+    request[HEADER_JSON_PASSWORD] = hashPassword(request[HEADER_JSON_PASSWORD].asString());
     Json::Value request_to_db = makeDBProtocol(request);
     return db_controller_->DataRequest(request_to_db);
 }
-
 
 Json::Value RegisterController::makeDBProtocol(const Json::Value& request) {
     Json::Value db_protocol;

@@ -30,19 +30,14 @@ def stock_to_X(stock, window_size=8):
     return np.array(X)
 
 
-def parse_http_to_pandas(json):
+def parse_http_to_seq(json):
     window_size = int(json["window_size"])
     json_data = json["data"]
     X = []
     for i in json_data.split():
         X.append(float(i))
-    X = np.array(X)
-    X = stock_to_X(X)
-    #print(X.shape)
-    return np.array([[90.0],[100.0],[120.0],[90.0],[100.0],[120.0],[90.0],[90.0]])
-
-
-
+    X = np.array(X).reshape(-1, window_size)
+    return X
 
 
 class Model:
@@ -51,9 +46,17 @@ class Model:
 #       self.download_model()
 
     def predict(self, X):
-        return self.model.predict(X)
+        X_data = X.copy()
+        X_data = X_data[0]
 
-   
+        for i in range(X.shape[1]):
+            X_data = np.append(X_data, self.model.predict((X_data[i:]).reshape(X.shape[1], -1))[0][0])
+
+        return X_data[X.shape[1]:]
+        
+
+    def simple_predict(self, X):
+        return self.model.predict(X)
 
     def fit(self, X_train, y_train, X_val, y_val, window_size):
         model = Sequential()
@@ -75,14 +78,20 @@ class Model:
 
 
 if __name__ == '__main__':
-    X = pd.read_csv('data.csv')
-    y = pd.read_csv('labales.csv')
-    X_train, y_train = X[:2000], y[:2000]
-    X_val, y_val = X[2000:3000], y[2000:3000]
-    X_test, y_test = X[3000:], y[3000:]
+    #X = pd.read_csv('data.csv')
+    #y = pd.read_csv('labales.csv')
+    #X_train, y_train = X[:2000], y[:2000]
+    #X_val, y_val = X[2000:3000], y[2000:3000]
+    #X_test, y_test = X[3000:], y[3000:]
 
     model = Model()
-    ##model.fit(X_train=X_train, y_train=y_train, X_val=X_val, y_val=y_val, window_size=8)
+    #model.fit(X_train=X_train, y_train=y_train, X_val=X_val, y_val=y_val, window_size=8)
     model.download_model()
-    print(model.predict(X_test))
+    
+    result = parse_http_to_seq({"window_size": '8', 'data': '1 2 3 4 5 6 7 8'})
+    #print(result.shape)
+    
+    print(model.predict(result))
+
+    #print(model.predict(X_test))
 

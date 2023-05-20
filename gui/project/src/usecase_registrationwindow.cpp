@@ -54,7 +54,7 @@ void UseCaseRegistrationWindow::regHandler(const std::string& email,
         sendError(error_message);
         return;
     }
-
+    std::cout <<"goooog" <<std::endl;
     RegInput input;
     input.email= email;
     input.login = login;

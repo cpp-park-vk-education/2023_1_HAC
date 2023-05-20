@@ -19,19 +19,22 @@ public:
                      const std::string& password) override;
     void passToMain(const std::string& user) override;
     void sendError(const Error& error_message) override;
-    void setUser(const std::string& user) override {}
-    std::string getUrl() override {
-        return url_;
+    void setUser(const std::string& user) override {
+        user_ = user;
     }
-    void setUrl(const std::string& url) override {
+    std::string getUser() override {
+        return user_;
+    }
+    /*void setUrl(const std::string& url) override {
         url_ = url;
-    }
+    }*/
     void openRegistrationWindow() override;
 private:
     ptr_to_iauthorization_network authorization_network_ptr;
     ptr_to_iauthorization_window authorization_window_ptr;
     ptr_to_iwindow_manager window_manager_ptr;
-    std::string url_;
+    //std::string url_;
+    std::string user_;
 };
 
 #endif // USECASE_AUTHORIZATIONWINDOW_H

@@ -39,10 +39,57 @@ public:
     void setUserSettingsWindowHandler(
             ptr_to_settings_handler handler_user_set_ptr) override {}
     void showErrorMessage() override {}
-    void createErrorMessage(const Error& error_message) override {}
+    void createErrorMessage(const Error& error_message) override {
+        error_message_ = error_message;
+    }
     std::string getOldPassword() override {return {};}
     std::string getNewPassword() override {return {};}
     std::string getRepeatPassword() override {return {};}
+    Error error_message_;
+};
+
+class StubMUserSettingsWindow : public IUserSettingsWindow {
+public:
+    ~StubMUserSettingsWindow() {}
+    void setUserSettingsWindowHandler(
+            ptr_to_settings_handler handler_user_set_ptr) override {}
+    void showErrorMessage() override {}
+    void createErrorMessage(const Error& error_message) override {
+        error_message_ = error_message;
+    }
+    std::string getOldPassword() override {return "old";}
+    std::string getNewPassword() override {return "new";}
+    std::string getRepeatPassword() override {return "repeated";}
+    Error error_message_;
+};
+
+class NewPasSMUserSettingsWindow : public IUserSettingsWindow {
+public:
+    ~NewPasSMUserSettingsWindow() {}
+    void setUserSettingsWindowHandler(
+            ptr_to_settings_handler handler_user_set_ptr) override {}
+    void showErrorMessage() override {}
+    void createErrorMessage(const Error& error_message) override {
+        error_message_ = error_message;
+    }
+    std::string getOldPassword() override {return "old";}
+    std::string getNewPassword() override {return "";}
+    std::string getRepeatPassword() override {return "";}
+    Error error_message_;
+};
+
+class OldPasSMUserSettingsWindow : public IUserSettingsWindow {
+public:
+    ~OldPasSMUserSettingsWindow() {}
+    void setUserSettingsWindowHandler(
+            ptr_to_settings_handler handler_user_set_ptr) override {}
+    void showErrorMessage() override {}
+    void createErrorMessage(const Error& error_message) override {
+        error_message_ = error_message;
+    }
+    std::string getOldPassword() override {return "";}
+    std::string getNewPassword() override {return "new";}
+    std::string getRepeatPassword() override {return "new";}
     Error error_message_;
 };
 
@@ -77,12 +124,12 @@ TEST(UserSetQtLogicTest, TestUserSettingsHandler) {
     handler_user_set.setUser("user");
     handler_user_set.ConfirmHandler("old", "new", "new");
     std::string expected = "old";
-    EXPECT_EQ(ptr_to_net->confirm_params.old_password, expected);
+    EXPECT_EQ(expected, ptr_to_net->confirm_params.old_password);
 }
 
 //check that PostRequest is called from getEditUserSettings
 TEST(UserSetQtLogicTest, TestUserSettingsNet) {
-    MNetworkUserSettingsWindow net_user_set;
+    NetworkUserSettingsWindow net_user_set;
     MIONetworkInterface net;
     std::shared_ptr<MIONetworkInterface> ptr_to_net =
             std::make_shared<MIONetworkInterface>(net);
@@ -91,14 +138,15 @@ TEST(UserSetQtLogicTest, TestUserSettingsNet) {
     ConfirmEdit confirm_input;
     confirm_input.old_password = "old";
     confirm_input.new_password = "new";
-    confirm_input.new_password = "user";
+    confirm_input.user_name= "user";
     net_user_set.getUserSettings(confirm_input);
     std::string expected = "url";
-    EXPECT_EQ(ptr_to_net->url_, expected);
+    EXPECT_EQ(expected, ptr_to_net->url_);
 }
 
-//check if old password or new passwords are not set
-TEST(UserSetQtLogicTest, TestUserSettingsEmptyInput) {
+//check if old password or new passwords are not set (new password and old
+// are equal (""))
+TEST(UserSetQtLogicTest, TestUserSettingsOldIsNew) {
     UseCaseUserSettingsWindow handler_user_set;
     SMUserSettingsWindow  user_set_window;
     std::shared_ptr<SMUserSettingsWindow> ptr_to_user_set_window =
@@ -110,8 +158,59 @@ TEST(UserSetQtLogicTest, TestUserSettingsEmptyInput) {
                                      .getUserSettingsWindow()->getNewPassword(),
                                     handler_user_set
                                      .getUserSettingsWindow()->getRepeatPassword());
-    std::string expected = "EmptyInput";
-    EXPECT_EQ(user_set_window.error_message_.type, expected);
+    std::string expected = "BadNewPassword";
+    EXPECT_EQ(expected, ptr_to_user_set_window->error_message_.type);
+}
+
+//check if repeated password or new passwords are not equal
+TEST(UserSetQtLogicTest, TestUserSettingsNewNotConfirmed) {
+    UseCaseUserSettingsWindow handler_user_set;
+    StubMUserSettingsWindow  user_set_window;
+    std::shared_ptr<StubMUserSettingsWindow> ptr_to_user_set_window =
+            std::make_shared<StubMUserSettingsWindow>(user_set_window);
+    handler_user_set.setUserSettingsWindow(ptr_to_user_set_window);
+    handler_user_set.ConfirmHandler(handler_user_set
+                                            .getUserSettingsWindow()->getOldPassword(),
+                                    handler_user_set
+                                            .getUserSettingsWindow()->getNewPassword(),
+                                    handler_user_set
+                                            .getUserSettingsWindow()->getRepeatPassword());
+    std::string expected = "BadNewPassword";
+    EXPECT_EQ(expected, ptr_to_user_set_window->error_message_.type);
+}
+
+//check if new password is empty
+TEST(UserSetQtLogicTest, TestUserSettingsNewIsEmpty) {
+    UseCaseUserSettingsWindow handler_user_set;
+    NewPasSMUserSettingsWindow  user_set_window;
+    std::shared_ptr<NewPasSMUserSettingsWindow> ptr_to_user_set_window =
+            std::make_shared<NewPasSMUserSettingsWindow>(user_set_window);
+    handler_user_set.setUserSettingsWindow(ptr_to_user_set_window);
+    handler_user_set.ConfirmHandler(handler_user_set
+                                            .getUserSettingsWindow()->getOldPassword(),
+                                    handler_user_set
+                                            .getUserSettingsWindow()->getNewPassword(),
+                                    handler_user_set
+                                            .getUserSettingsWindow()->getRepeatPassword());
+    std::string expected = "BadNewPassword";
+    EXPECT_EQ(expected, ptr_to_user_set_window->error_message_.type);
+}
+
+//check if old password is empty
+TEST(UserSetQtLogicTest, TestUserSettingsOldIsEmpty) {
+    UseCaseUserSettingsWindow handler_user_set;
+    OldPasSMUserSettingsWindow  user_set_window;
+    std::shared_ptr<OldPasSMUserSettingsWindow> ptr_to_user_set_window =
+            std::make_shared<OldPasSMUserSettingsWindow>(user_set_window);
+    handler_user_set.setUserSettingsWindow(ptr_to_user_set_window);
+    handler_user_set.ConfirmHandler(handler_user_set
+                                            .getUserSettingsWindow()->getOldPassword(),
+                                    handler_user_set
+                                            .getUserSettingsWindow()->getNewPassword(),
+                                    handler_user_set
+                                            .getUserSettingsWindow()->getRepeatPassword());
+    std::string expected = "BadOldPassword";
+    EXPECT_EQ(expected, ptr_to_user_set_window->error_message_.type);
 }
 
 TEST(UserSetQtLogicTest, TestUserSettingsErrorRespose) {
@@ -125,5 +224,5 @@ TEST(UserSetQtLogicTest, TestUserSettingsErrorRespose) {
     error.message = "Incorrect password was inputted";
     net_user_set.onGetUserSettingsResponse(error);
     std::string expected = "InvalidPassword";
-    EXPECT_EQ(handler_user_set.error_type, expected);
+    EXPECT_EQ(expected, ptr_to_user_set_handler->error_type);
 }

@@ -22,10 +22,10 @@ public:
     ~MainWindow();
     void setMainWindowHandler(ptr_to_main_handler handler_main_ptr) override;
     void drawPlot() override;
-    void createPlot(const std::vector<double>& y_plot_data) override;
+    void createPlot(const std::vector<double>& y_plot_data,
+                    const std::vector<double>& y_predict_data) override;
     void showErrorMessage() override;
     void createErrorMessage(const Error& error_message) override;
-
 
     QPushButton* get_apple_btn();
     QPushButton* get_predict_btn();
@@ -44,6 +44,7 @@ private:
     QPushButton* btn_user_set;
     QErrorMessage* errorMes;
     QVector<double> y;
+    QVector<double> y_new;
     QString* error_message_;
     QString* error_type_;
 

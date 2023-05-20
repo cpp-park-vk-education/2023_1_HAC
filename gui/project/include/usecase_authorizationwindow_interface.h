@@ -32,8 +32,9 @@ public:
     virtual void passToMain(const std::string& user) = 0;
     virtual void sendError(const Error& error_message) = 0;
     virtual void setUser(const std::string& user) = 0;
-    virtual std::string getUrl() = 0;
-    virtual void setUrl(const std::string& url) = 0;
+    virtual std::string getUser() = 0;
+    //virtual std::string getUrl() = 0;
+    //virtual void setUrl(const std::string& url) = 0;
     virtual void openRegistrationWindow() = 0;
 };
 

@@ -27,7 +27,9 @@ namespace repository {
     public:
         virtual ~ITimeSeriesRepository() {};
         virtual bool Insert(const std::shared_ptr<TimeSeriesData>& data) = 0;
-        virtual std::shared_ptr<TimeSeriesData> GetByKey(const std::string& name_stock, const size_t& len_lags) = 0;
+        virtual std::shared_ptr<TimeSeriesData> GetByKey(const std::string& name_stock, const size_t& len_lags, 
+                                const std::string& date = "", const std::string& finish_date = "") = 0;
+        virtual std::shared_ptr<AllStocks> GetAllStocks() = 0;
     };
 
 
@@ -63,13 +65,17 @@ namespace repository {
         TimeSeriesRepository(const std::shared_ptr<IDataBase>& db);
 
         bool Insert(const std::shared_ptr<TimeSeriesData>& data) override;
-        std::shared_ptr<TimeSeriesData> GetByKey(const std::string& name_stock, const size_t& len_lags) override;
+        std::shared_ptr<TimeSeriesData> GetByKey(const std::string& name_stock, const size_t& len_lags, 
+                                const std::string& date = "", const std::string& finish_date = "") override;
+        std::shared_ptr<AllStocks> GetAllStocks() override;
 
     private:
-        std::shared_ptr<TimeSeriesData> DatabaseResponseParse(const Json::Value& db_response);
+        std::shared_ptr<TimeSeriesData> TimeSeriesResponseParse(const Json::Value& db_response);
+        std::shared_ptr<AllStocks> StocksResponseParse(const Json::Value& db_response);
 
         std::shared_ptr<IDataBase> database_; 
         std::shared_ptr<IRepositoryCache<std::string, TimeSeriesData>> timeseries_cache_;
+        std::shared_ptr<IRepositoryCache<std::string, AllStocks>> stocks_cache_;
     };
 
 

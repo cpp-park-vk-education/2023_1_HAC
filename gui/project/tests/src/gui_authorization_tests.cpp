@@ -48,10 +48,11 @@ public:
         error_message_ = error_message;
     }
     std::string getLogin() override {
+        error_message_.type = "";
         return {};
     }
     std::string getPassword() override {
-        return {};
+        return error_message_.type;
     }
     Error error_message_;
 };
@@ -67,15 +68,16 @@ public:
     ptr_to_iauthorization_window getAuthorizationWindow() override {}
     void authHandler(const std::string &login, const std::string &password)
     override {}
-    void passToMain(const std::string& user) override {}
+    void passToMain(const std::string& user) override {
+        setUser(user);
+    }
     void sendError(const Error &error_message) override {
         error_type = error_message.type;
     }
     void setUser(const std::string& user) override {
         user_ = user;
     }
-    std::string getUrl() override { return {}; }
-    void setUrl(const std::string& url) override {}
+    std::string getUser() override { return user_; }
     void openRegistrationWindow() override {}
     std::string error_type;
     std::string user_;
@@ -90,7 +92,7 @@ TEST(BaseQtLogicTest, TestAuthHandler) {
     check_handler_auth.setAuthorizationNetwork(ptr_to_net);
     check_handler_auth.authHandler("User", "Password");
     std::string expected = "User";
-    EXPECT_EQ(ptr_to_net->auth_params_.login, expected);
+    EXPECT_EQ(expected, ptr_to_net->auth_params_.login);
 }
 
 //check that PostRequest is called from getAuthorization
@@ -106,7 +108,7 @@ TEST(BaseQtLogicTest, TestAuthNet) {
     auth_input.password = "Password";
     check_net_auth.getAuthorization(auth_input);
     std::string expected = "url";
-    EXPECT_EQ(ptr_to_net->url_, expected);
+    EXPECT_EQ(expected, ptr_to_net->url_);
 }
 
 //check if password and login are not set
@@ -120,7 +122,9 @@ TEST(BaseQtLogicTest, TestAuthEmptyInput) {
     .getAuthorizationWindow()->getLogin(), handler_auth
             .getAuthorizationWindow()->getPassword());
     std::string expected = "EmptyInput";
-    EXPECT_EQ(auth_window.error_message_.type, expected);
+    std::cout << handler_auth
+            .getAuthorizationWindow()->getPassword()<<std::endl;
+    EXPECT_EQ(expected, ptr_to_auth_window->error_message_.type);
 }
 
 TEST(BaseQtLogicTest, TestAuthSuccessRespose) {
@@ -134,7 +138,7 @@ TEST(BaseQtLogicTest, TestAuthSuccessRespose) {
     error.message = "user";
     net_auth.onGetAuthorizationResponse(error);
     std::string expected = "user";
-    EXPECT_EQ(handler_auth.user_, expected);
+    EXPECT_EQ(expected, ptr_to_auth_handler->user_);
 }
 
 TEST(BaseQtLogicTest, TestAuthErrorRespose) {
@@ -148,6 +152,6 @@ TEST(BaseQtLogicTest, TestAuthErrorRespose) {
     error.message = "Incorrect password was inputted";
     net_auth.onGetAuthorizationResponse(error);
     std::string expected = "InvalidPassword";
-    EXPECT_EQ(handler_auth.error_type, expected);
+    EXPECT_EQ(expected, ptr_to_auth_handler->error_type);
 }
 

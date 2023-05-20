@@ -37,12 +37,22 @@ void UseCaseMainWindow::drawPlotHandler(std::istream& network_output) {
         std::cout << "^" <<std::stod(s)<<"^";
         new_y.push_back(std::stod(s));
     }
-    if (status == "predict") {
-        y.insert(y.end(), new_y.begin(), new_y.end());
+    /*if (status == "predict") {
+        //y.insert(y.end(), new_y.begin(), new_y.end());
     } else {
     y = new_y;
+    //new_y.clear();
+    new_y.erase(new_y.begin(), new_y.end());
+    }*/
+    if (status == "plot") {
+        y = new_y;
+        //new_y.clear();
+       // new_y.erase(new_y.begin(), new_y.end());
+        main_window_ptr->createPlot(y, std::vector<double>());
+    } else {
+        main_window_ptr->createPlot(y, new_y);
     }
-    main_window_ptr->createPlot(y);
+    //main_window_ptr->createPlot(y, new_y);
     main_window_ptr->drawPlot();
     return;
 }

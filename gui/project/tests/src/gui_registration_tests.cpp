@@ -8,7 +8,9 @@ class MNetworkRegistrationWindow : public INetworkRegistrationWindow {
 public:
     void setRegistrationHandler(ptr_to_registration_handler reg_handler_ptr) override {}
     void setRegistrationNetwork(ptr_to_inetwork net_ptr) override {}
-    void getRegistration(const RegInput& reg_params) override {}
+    void getRegistration(const RegInput& reg_params) override {
+        reg_params_ = reg_params;
+    }
     void onGetRegistrationResponse(const Error& error_state) override {}
     void setUser(const std::string user) override {}
     std::string getUrl() override {}
@@ -70,7 +72,9 @@ public:
                     const std::string& login,
                     const std::string& password,
                     const std::string& pass_confirm) override {}
-    void passToMain(const std::string& user) override {}
+    void passToMain(const std::string& user) override {
+        setUser(user);
+    }
     void sendError(const Error &error_message) override {
         error_type = error_message.type;
     }
@@ -84,6 +88,30 @@ public:
     std::string user_;
 };
 
+class StubMRegistrationWindow : public IRegistrationWindow {
+public:
+    ~StubMRegistrationWindow() {}
+    void setRegistrationWindowHandler(
+            ptr_to_registration_handler reg_handler_ptr) override {}
+    void showErrorMessage() override {}
+    void createErrorMessage(const Error& error_message) override {
+        error_message_ = error_message;
+    }
+    std::string getLogin() override {
+        return "ana";
+    }
+    std::string getPassword() override {
+        return "12345";
+    }
+    std::string getPasswordConfirm() override {
+        return "12";
+    }
+    std::string getEmail() override {
+        return "frog@mail.ru";
+    }
+    Error error_message_;
+};
+
 //check that getRegistration is called from regHandler
 TEST(RegistrationQtLogicTest, TestRegHandler) {
     UseCaseRegistrationWindow handler_reg;
@@ -93,7 +121,7 @@ TEST(RegistrationQtLogicTest, TestRegHandler) {
     handler_reg.setRegistrationNetwork(ptr_to_net);
     handler_reg.regHandler("Email","User", "Password", "Password");
     std::string expected = "User";
-    EXPECT_EQ(ptr_to_net->reg_params_.login, expected);
+    EXPECT_EQ(expected, ptr_to_net->reg_params_.login);
 }
 
 //check that PostRequest is called from getRegistration
@@ -128,33 +156,52 @@ TEST(RegistrationQtLogicTest, TestRegEmptyInput) {
                            handler_reg
                                      .getRegistrationWindow()->getPasswordConfirm());
     std::string expected = "EmptyInput";
-    EXPECT_EQ(reg_window.error_message_.type, expected);
+    EXPECT_EQ(expected, ptr_to_reg_window->error_message_.type);
 }
 
 TEST(RegistrationQtLogicTest, TestRegSuccessRespose) {
     NetworkRegistrationWindow net_reg;
     MockUseCaseRegistrationWindow handler_reg;
-    std::shared_ptr<MockUseCaseRegistrationWindow> ptr_to_auth_handler =
+    std::shared_ptr<MockUseCaseRegistrationWindow> ptr_to_reg_handler =
             std::make_shared<MockUseCaseRegistrationWindow>(handler_reg);
-    net_reg.setRegistrationHandler(ptr_to_auth_handler);
+    net_reg.setRegistrationHandler(ptr_to_reg_handler);
     Error error;
     error.type = "0";
     error.message = "user";
     net_reg.onGetRegistrationResponse(error);
     std::string expected = "user";
-    EXPECT_EQ(handler_reg.user_, expected);
+    EXPECT_EQ(expected, ptr_to_reg_handler->user_);
 }
 
 TEST(RegistrationQtLogicTest, TestRegErrorRespose) {
     NetworkRegistrationWindow net_reg;
     MockUseCaseRegistrationWindow handler_reg;
-    std::shared_ptr<MockUseCaseRegistrationWindow> ptr_to_auth_handler =
+    std::shared_ptr<MockUseCaseRegistrationWindow> ptr_to_reg_handler =
             std::make_shared<MockUseCaseRegistrationWindow>(handler_reg);
-    net_reg.setRegistrationHandler(ptr_to_auth_handler);
+    net_reg.setRegistrationHandler(ptr_to_reg_handler);
     Error error;
     error.type = "InvalidPassword";
     error.message = "Incorrect password was inputted";
     net_reg.onGetRegistrationResponse(error);
     std::string expected = "InvalidPassword";
-    EXPECT_EQ(handler_reg.error_type, expected);
+    EXPECT_EQ(expected, ptr_to_reg_handler->error_type);
+}
+
+//check if password and confirm_password are not equal
+TEST(RegistrationQtLogicTest, TestRegNotEqualPasswords) {
+    UseCaseRegistrationWindow handler_reg;
+    StubMRegistrationWindow reg_window;
+    std::shared_ptr<StubMRegistrationWindow> ptr_to_reg_window =
+            std::make_shared<StubMRegistrationWindow>(reg_window);
+    handler_reg.setRegistrationWindow(ptr_to_reg_window);
+    handler_reg.regHandler(handler_reg
+                                   .getRegistrationWindow()->getEmail(),
+                           handler_reg
+                                   .getRegistrationWindow()->getLogin(),
+                           handler_reg
+                                   .getRegistrationWindow()->getPassword(),
+                           handler_reg
+                                   .getRegistrationWindow()->getPasswordConfirm());
+    std::string expected = "NotEqualPasswords!";
+    EXPECT_EQ(expected, ptr_to_reg_window->error_message_.type);
 }

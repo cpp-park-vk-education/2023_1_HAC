@@ -124,7 +124,7 @@ TEST(MainQtLogicTest, TestMainHandler) {
     std::string input = "stock";
     check_handler_auth.stockSelectHandler(input);
     std::string expected = "stock";
-    EXPECT_EQ(ptr_to_net->stock_, expected);
+    EXPECT_EQ(expected, ptr_to_net->stock_);
 }
 
 //check that getPredictData is called from predictHandler
@@ -137,7 +137,7 @@ TEST(MainQtLogicTest, TestMainPredictHandler) {
     std::string input = "stock";
     check_handler_auth.predictHandler(input);
     std::string expected = "stock";
-    EXPECT_EQ(ptr_to_net->stock_, expected);
+    EXPECT_EQ(expected, ptr_to_net->stock_);
 }
 
 //check that GetRequest is called from getPlotData
@@ -153,7 +153,7 @@ TEST(MainQtLogicTest, TestMainNet) {
     main_input.stock_name = "stock";
     check_net_main.getPlotData(main_input);
     std::string expected = "url";
-    EXPECT_EQ(ptr_to_net->url_, expected);
+    EXPECT_EQ(expected, ptr_to_net->url_);
 }
 
 //check that GetRequest is called from getPredictData
@@ -169,7 +169,7 @@ TEST(MainQtLogicTest, TestMainPredictNet) {
     main_input.stock_name = "stock";
     check_net_main.getPredictData(main_input);
     std::string expected = "url";
-    EXPECT_EQ(ptr_to_net->url_, expected);
+    EXPECT_EQ(expected, ptr_to_net->url_);
 }
 
 TEST(MainQtLogicTest, TestMainSuccessRespose) {
@@ -183,8 +183,8 @@ TEST(MainQtLogicTest, TestMainSuccessRespose) {
     std::stringstream output;
     output << "123";
     net_main.onGetPlotData(output,error);
-    std::string expected = "123";
-    EXPECT_EQ(handler_main.out, expected);
+    std::string expected = "plot123";
+    EXPECT_EQ(expected, ptr_to_main_handler->out);
 }
 
 TEST(MainQtLogicTest, TestMainPredictSuccessRespose) {
@@ -198,8 +198,8 @@ TEST(MainQtLogicTest, TestMainPredictSuccessRespose) {
     std::stringstream output;
     output << "123";
     net_main.onGetPredictData(output,error);
-    std::string expected = "123";
-    EXPECT_EQ(handler_main.out, expected);
+    std::string expected = "predict123";
+    EXPECT_EQ(expected, ptr_to_main_handler->out);
 }
 
 TEST(MainQtLogicTest, TestMainErrorRespose) {
@@ -215,7 +215,7 @@ TEST(MainQtLogicTest, TestMainErrorRespose) {
     output << "adf1";
     net_main.onGetPlotData(output,error);
     std::string expected = "ErrorDataType";
-    EXPECT_EQ(handler_main.error_type, expected);
+    EXPECT_EQ(expected, ptr_to_main_handler->error_type);
 }
 
 TEST(MainQtLogicTest, TestMainPredictErrorRespose) {
@@ -231,5 +231,5 @@ TEST(MainQtLogicTest, TestMainPredictErrorRespose) {
     output << "adf1";
     net_main.onGetPredictData(output,error);
     std::string expected = "ErrorDataType";
-    EXPECT_EQ(handler_main.error_type, expected);
+    EXPECT_EQ(expected, ptr_to_main_handler->error_type);
 }

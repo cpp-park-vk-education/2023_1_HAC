@@ -25,7 +25,9 @@ void UseCaseAuthorizationWindow::authHandler(const std::string& login,
         Error error_message;
         error_message.type = "EmptyInput";
         error_message.message = "Login or password was not inputed!";
+        std::cout<<"before" <<std::endl;
         authorization_window_ptr->createErrorMessage(error_message);
+        std::cout<<"after" <<std::endl;
         authorization_window_ptr->showErrorMessage();
         return;
     } else {

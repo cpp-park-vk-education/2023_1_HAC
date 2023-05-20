@@ -4,16 +4,15 @@
 #include <iostream>
 #include <vector>
 
-const std::string STATUS_RESPONSE = "status";
-const std::string ERROR_RESPONSE = "error";
 
+const std::string HEADER_JSON_ERROR = "error";
 const std::string HEADER_JSON_TYPE = "Type";
 const std::string HEADER_JSON_TYPEDATA = "TypeData";
 const std::string HEADER_JSON_NAME_STOCK = "name_stock";
-const std::string HEADER_JSON_LEN_LAG = "name_stock";
+const std::string HEADER_JSON_LEN_LAGS = "len_lags";
 const std::string HEADER_JSON_WINDOW_SIZE = "window_size";
 const std::string HEADER_JSON_DATA = "data";
-const std::string HEADER_JSON_STATUS = "data";
+const std::string HEADER_JSON_STATUS = "status";
 
 const std::string HEADER_JSON_PASSWORD = "password";
 const std::string HEADER_JSON_EMAIL = "email";
@@ -24,8 +23,8 @@ namespace controllers {
 
 Json::Value makeJsonError(const std::string& error_mes) {
   Json::Value response;
-  response[STATUS_RESPONSE] = false;
-  response[ERROR_RESPONSE] = error_mes;
+  response[HEADER_JSON_STATUS] = false;
+  response[HEADER_JSON_ERROR] = error_mes;
   return response;
 }
 
@@ -34,7 +33,7 @@ Json::Value makeDBProtocolGetTS(const Json::Value& request) {
     db_protocol[HEADER_JSON_TYPE] = TypeRequest::GET_REQUEST;
     db_protocol[HEADER_JSON_TYPEDATA] = TypeData::TIMESERIES_REQUEST;
     db_protocol[HEADER_JSON_NAME_STOCK] = request[HEADER_JSON_NAME_STOCK].asString();
-    db_protocol[HEADER_JSON_LEN_LAG] = request[HEADER_JSON_LEN_LAG].asInt();
+    db_protocol[HEADER_JSON_LEN_LAGS] = request[HEADER_JSON_LEN_LAGS].asInt();
     return db_protocol;
 }
 

@@ -20,6 +20,20 @@ const std::string AUTHORIZATION_STATUS = "Authorization-Status";
 const std::string METHOD = "method";
 const std::string ACTIONS = "actions";
 
+
+const std::string HEADER_JSON_ERROR = "error";
+const std::string HEADER_JSON_NAME_STOCK = "name_stock";
+const std::string HEADER_JSON_LEN_LAGS = "len_lags";
+const std::string HEADER_JSON_WINDOW_SIZE = "window_size";
+const std::string HEADER_JSON_DATA = "data";
+const std::string HEADER_JSON_STATUS = "status";
+
+const std::string HEADER_JSON_PASSWORD = "password";
+const std::string HEADER_JSON_EMAIL = "email";
+const std::string HEADER_JSON_LOGIN = "login";
+
+
+
 const int OK = 200;
 const int BAD_REQUEST = 400;
 const int NOT_FOUND = 404;
@@ -99,21 +113,21 @@ Json::Value PredictHandler::parseInputHttpRequest(const std::string& message) {
     }
     cutUrlTokens(tokens, HANDLERS_PREDICT);
     
-    result["name_stock"] = tokens[NAME_STOCK_ORDER];
-    result["len_lags"] = std::stoi(tokens[LEN_LAGS_ORDER]);
-    result["window_size"] = std::stoi(tokens[WINDOW_SIZE_ORDER]);
+    result[HEADER_JSON_NAME_STOCK] = tokens[NAME_STOCK_ORDER];
+    result[HEADER_JSON_LEN_LAGS] = std::stoi(tokens[LEN_LAGS_ORDER]);
+    result[HEADER_JSON_WINDOW_SIZE] = std::stoi(tokens[WINDOW_SIZE_ORDER]);
     
     return result;
 }
 
 void PredictHandler::makeResponse(IHTTPResponse_ response, const Json::Value& response_json) {
-    if (!response_json["status"].asBool()) {
+    if (!response_json[HEADER_JSON_STATUS].asBool()) {
         response->setStatus(INTERNAL_SERVER_ERROR);
         response->setHeader(ERROR_MESSAGE, ERROR_MESSAGE);
-        response->setBody(response_json["error"].asString());
+        response->setBody(response_json[HEADER_JSON_ERROR].asString());
         return;
     }
-    std::string plot_data = response_json["data"].toStyledString();
+    std::string plot_data = response_json[HEADER_JSON_DATA].toStyledString();
     response->setStatus(OK);
     response->setHeader(PREDICT_DATA, PREDICT_DATA);
     response->setBody(plot_data);
@@ -158,20 +172,20 @@ Json::Value ShowPlotHandler::parseInputHttpRequest(const std::string& message) {
     //std::cout << "len log: " << tokens[LEN_LAGS_ORDER] << std::endl;
     // std::cout << "len log: " << tokens[NAME_STOCK_ORDER] << std::endl;
 
-    result["name_stock"] = tokens[NAME_STOCK_ORDER];
-    result["len_lags"] = std::stoi(tokens[LEN_LAGS_ORDER]);
+    result[HEADER_JSON_NAME_STOCK] = tokens[NAME_STOCK_ORDER];
+    result[HEADER_JSON_LEN_LAGS] = std::stoi(tokens[LEN_LAGS_ORDER]);
     
     return result;
 }
 
 void ShowPlotHandler::makeResponse(IHTTPResponse_ response, const Json::Value& response_json) {
-    if (!response_json["status"].asBool()) {
+    if (!response_json[HEADER_JSON_STATUS].asBool()) {
         response->setStatus(INTERNAL_SERVER_ERROR);
         response->setHeader(ERROR_MESSAGE, ERROR_MESSAGE);
-        response->setBody(response_json["error"].asString());
+        response->setBody(response_json[HEADER_JSON_ERROR].asString());
         return;
     }
-    std::string plot_data_ = response_json["data"].toStyledString();
+    std::string plot_data_ = response_json[HEADER_JSON_DATA].toStyledString();
 
     response->setStatus(OK);
     response->setHeader(PLOT_DATA, PLOT_DATA);
@@ -209,15 +223,15 @@ Json::Value RegisterHandler::parseInputHttpRequest(const std::string& message) {
         throw market_mentor::InvalidHttpRequestError(HANDLERS_REGISTRATION);
     }
 
-    result["login"] = tokens[LOGIN_ORDER];
-    result["email"] = tokens[EMAIL_ORDER];
-    result["password"] = tokens[PASSWORD_ORDER];
+    result[HEADER_JSON_LOGIN] = tokens[LOGIN_ORDER];
+    result[HEADER_JSON_EMAIL] = tokens[EMAIL_ORDER];
+    result[HEADER_JSON_PASSWORD] = tokens[PASSWORD_ORDER];
  
     return result;
 }
 
 void RegisterHandler::makeResponse(IHTTPResponse_ response, const Json::Value& response_json) {
-    if (!response_json["status"].asBool()) {
+    if (!response_json[HEADER_JSON_STATUS].asBool()) {
         response->setStatus(UNAUTHORIZED);
         return;
     }
@@ -256,14 +270,14 @@ Json::Value AuthorizeHandler::parseInputHttpRequest(const std::string& message) 
         throw market_mentor::InvalidHttpRequestError(HANDLERS_AUTHORIZATION);
     }
 
-    result["login"] = tokens[LOGIN_ORDER];
-    result["password"] = tokens[PASSWORD_ORDER];
+    result[HEADER_JSON_LOGIN] = tokens[LOGIN_ORDER];
+    result[HEADER_JSON_PASSWORD] = tokens[PASSWORD_ORDER];
  
     return result;
 }
 
 void AuthorizeHandler::makeResponse(IHTTPResponse_ response, const Json::Value& response_json) {
-    if (!response_json["status"].asBool()) {
+    if (!response_json[HEADER_JSON_STATUS].asBool()) {
         response->setStatus(UNAUTHORIZED);
         return;
     }

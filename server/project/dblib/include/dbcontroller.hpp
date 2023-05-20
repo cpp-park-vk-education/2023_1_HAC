@@ -18,7 +18,8 @@ enum TypeData {
     AUTHORIZATION,
     REGISTRATION,
     CHANGE_USER_SETTINGS,
-    TIMESERIES_REQUEST
+    TIMESERIES_REQUEST,
+    STOCKS_REQUEST
 };
 
 namespace dbcontroller {
@@ -32,7 +33,8 @@ namespace dbcontroller {
     protected:
         // TimeSeries
         virtual Json::Value TimeSeriesPost(const Json::Value& data) = 0;
-        virtual Json::Value TimeSeriesGet(const std::string& name_stock, const std::string& len_lags) = 0;
+        virtual Json::Value TimeSeriesGet(const Json::Value& data) = 0;
+        virtual Json::Value StocksGet() = 0;
         // Client
         virtual Json::Value ClientRequestPost(const Json::Value& data) = 0;
         virtual Json::Value ClientRequestGet(const std::string& key) = 0;
@@ -52,9 +54,15 @@ namespace dbcontroller {
         Json::Value DataRequest(const Json::Value& request) override;
 
     private:
+        // Route
+        void GetRequestRouter(const Json::Value& request, Json::Value& response);
+        void PostRequestRouter(const Json::Value& request, Json::Value& response);
+
         // TimeSeries
         Json::Value TimeSeriesPost(const Json::Value& data) override;
-        Json::Value TimeSeriesGet(const std::string& name_stock, const std::string& len_lags) override;
+        Json::Value TimeSeriesGet(const Json::Value& data) override;
+        virtual Json::Value StocksGet() override;
+        
         // Client
         Json::Value ClientRequestPost(const Json::Value& data) override;
         Json::Value ClientRequestGet(const std::string& key) override;

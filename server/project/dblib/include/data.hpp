@@ -17,6 +17,12 @@ struct TimeSeriesData {
 struct TimeSeriesRequest {
     std::string name_stock;
     size_t len_lags;
+    std::string start_date;
+    std::string finish_date;
+};
+
+struct AllStocks {
+    Json::Value list;    
 };
 
 struct SubscriptionData {
@@ -26,5 +32,5 @@ struct SubscriptionData {
 };
 
 struct AllSubscription {
-    std::vector<SubscriptionData> data;
+    Json::Value list;
 };

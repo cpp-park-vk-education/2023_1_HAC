@@ -22,9 +22,13 @@ bool PostgresServer::Connect() {
         " hostaddr = " + host_addr_ + " port = " + port_;
     try {
         conn_ = std::make_shared<pqxx::connection>(connecting_string);
-    } catch (pqxx::failure const &e) {
+    } 
+    catch (pqxx::failure const &e) {
         std::cerr << e.what() << std::endl;
+        return false;
     }
+
+    return true;
 }
 
 

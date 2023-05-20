@@ -30,6 +30,7 @@ bool ClientRepository::Insert(const std::shared_ptr<ClientData>& data) {
         client_cache_->Insert(data->login, *data);
     }    
     return result;
+
 }
 
 std::shared_ptr<ClientData> ClientRepository::DatabaseResponseParse(const Json::Value& db_response) {
@@ -122,7 +123,8 @@ TimeSeriesRepository::TimeSeriesRepository(): database_(nullptr),
 
 
 TimeSeriesRepository::TimeSeriesRepository(const std::shared_ptr<IDataBase>& db): database_(db),
-        timeseries_cache_(std::make_shared<RepositoryCache<std::string, TimeSeriesData>>(5)) {
+        timeseries_cache_(std::make_shared<RepositoryCache<std::string, TimeSeriesData>>(5)),
+        stocks_cache_(std::make_shared<RepositoryCache<std::string, AllStocks>>(1)) {
 }
 
 
@@ -139,11 +141,12 @@ bool TimeSeriesRepository::Insert(const std::shared_ptr<TimeSeriesData>& data){
     if (result) {
         timeseries_cache_->DeleteAll();
     }
+
     return result;    
 }
 
 
-std::shared_ptr<TimeSeriesData> TimeSeriesRepository::DatabaseResponseParse(const Json::Value& db_response) {
+std::shared_ptr<TimeSeriesData> TimeSeriesRepository::TimeSeriesResponseParse(const Json::Value& db_response) {
     const int kTimeSeriesId = 0;
     const int kNameId = 1;
     const int kParamId = 3;
@@ -167,7 +170,9 @@ std::shared_ptr<TimeSeriesData> TimeSeriesRepository::DatabaseResponseParse(cons
 }
 
 
-std::shared_ptr<TimeSeriesData> TimeSeriesRepository::GetByKey(const std::string& name_stock, const size_t& len_lags) {
+std::shared_ptr<TimeSeriesData> TimeSeriesRepository::GetByKey(const std::string& name_stock, const size_t& len_lags, 
+                                const std::string& start_date /* = "" */, const std::string& finish_date /* = "" */) {
+
     std::string key = name_stock + "::" + std::to_string(len_lags);
     if (timeseries_cache_->Has(key)) {
         auto result = std::make_shared<TimeSeriesData>(timeseries_cache_->Get(key));
@@ -178,8 +183,14 @@ std::shared_ptr<TimeSeriesData> TimeSeriesRepository::GetByKey(const std::string
         return nullptr;
     }
 
-    std::string query = "SELECT * from timeseries where name = '" + name_stock 
-            + "' ORDER by timeseries_id DESC LIMIT " + std::to_string(len_lags);
+    std::string query;
+    if (start_date == "" || finish_date == "")
+        query = "SELECT * FROM timeseries where name = '" + name_stock 
+                + "' ORDER by timeseries_id DESC LIMIT " + std::to_string(len_lags);
+    else {
+        query = " SELECT * FROM timeseries where name = '" + name_stock + "' and date > '" + start_date + "' and date < '" +
+                finish_date + "' ORDER by timeseries_id DESC LIMIT " + std::to_string(len_lags);       
+    }
 
     Json::Value buffer;
     try {
@@ -195,9 +206,62 @@ std::shared_ptr<TimeSeriesData> TimeSeriesRepository::GetByKey(const std::string
         return nullptr;
     }
 
-    auto result = DatabaseResponseParse(buffer);
+    auto result = TimeSeriesResponseParse(buffer);
     result->name_stock = name_stock;
+    key = name_stock + "::" + std::to_string(name_stock.size());
     timeseries_cache_->Insert(key, *result);
+    return result;
+}
+
+std::shared_ptr<AllStocks> TimeSeriesRepository::StocksResponseParse(const Json::Value& db_response) {
+    const int kTimeSeriesId = 0;
+    const int kNameId = 1;
+    const int kParamId = 3;
+    const int kDateId = 2;
+
+    auto result = std::make_shared<AllStocks>();
+
+    Json::Value json_param;
+    Json::Reader reader;
+    for (int i = 0; i < db_response.size(); i++) {  
+        if (db_response[i][kNameId] != Json::Value::null) {
+            json_param[i] = db_response[i][kNameId].asString();
+        }
+    };
+
+    result->list = json_param;
+    return result;
+}
+
+std::shared_ptr<AllStocks> TimeSeriesRepository::GetAllStocks() { 
+    std::string key = "list";
+    if (stocks_cache_->Has(key)) {
+        auto result = std::make_shared<AllStocks>(stocks_cache_->Get(key));
+        return result;    
+    }
+
+    if (!database_->IsOpen()) {
+        return nullptr;
+    }
+
+    std::string query = "SELECT DISTINCT name FROM timeseries";
+
+    Json::Value buffer;
+    try {
+        buffer = database_->GetData(query);
+    }
+    catch(ConnectError const &e) {
+        return nullptr;
+    }
+    catch(ElementNotExist const &e) {
+        return nullptr;
+    }
+    catch(SqlError const &e) {
+        return nullptr;
+    }
+
+    auto result = StocksResponseParse(buffer);
+    stocks_cache_->Insert(key, *result);
     return result;
 }
 
@@ -284,7 +348,9 @@ std::shared_ptr<AllSubscription> SubscriptionRepository::GetAll() {
     std::shared_ptr<AllSubscription> result;
     for (int i = 0; i < buffer.size(); i++) {
         row = DatabaseResponseParse(buffer[i]);
-        result->data.push_back(*row);
+        result->list[i]["name"] = row->name;
+        result->list[i]["count"] = row->count;
+        result->list[i]["cost"] = row->cost;
     };
 
     return result;    

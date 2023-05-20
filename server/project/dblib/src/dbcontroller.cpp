@@ -34,6 +34,7 @@ void DataBaseController::SetDatabaseConfig(const std::string&  addr, const std::
     password_ = pass;
 }
 
+
 Json::Value DataBaseController::DataRequest(const Json::Value& request) {
     Json::Value response;
     
@@ -50,34 +51,11 @@ Json::Value DataBaseController::DataRequest(const Json::Value& request) {
     }
 
     if (request["Type"] == GET_REQUEST) {
-
-        // Получить таймсерии
-        if (request["TypeData"] == TIMESERIES_REQUEST) {
-
-            response = TimeSeriesGet(request["name_stock"].asString(), request["len_lags"].asString());
-        }        
+        GetRequestRouter(request, response);
     }
 
     if (request["Type"] == POST_REQUEST) {
-        // Получить данные пользователя
-        if (request["TypeData"] == AUTHORIZATION) {
-            response = ClientRequestGet(request["login"].asString());
-        }
-
-        // Добавить пользователя
-        if (request["TypeData"] == REGISTRATION) {
-            response = ClientRequestPost(request);
-        }
-
-        // Добавить таймсерию 
-        if (request["TypeData"] == TIMESERIES_REQUEST) {
-            response = TimeSeriesPost(request);
-        }       
-        
-        // Обновить пользователя
-        if (request["TypeData"] == CHANGE_USER_SETTINGS) {
-            response = ClientRequestUpdate(request); 
-        }
+        PostRequestRouter(request, response);
     }
     
     response["DatabaseIsOpen"] = true;
@@ -85,6 +63,42 @@ Json::Value DataBaseController::DataRequest(const Json::Value& request) {
 }
 
 
+void DataBaseController::GetRequestRouter(const Json::Value& request, Json::Value& response) {
+    // Получить таймсерии
+    if (request["TypeData"] == TIMESERIES_REQUEST) {
+        response = TimeSeriesGet(request);
+    }
+
+    // Получить список акций
+    if (request["TypeData"] == STOCKS_REQUEST) {
+        response = StocksGet();
+    }            
+}
+
+
+void DataBaseController::PostRequestRouter(const Json::Value& request, Json::Value& response) {
+    // Получить данные пользователя
+    if (request["TypeData"] == AUTHORIZATION) {
+        response = ClientRequestGet(request["login"].asString());
+    }
+
+    // Добавить пользователя
+    if (request["TypeData"] == REGISTRATION) {
+        response = ClientRequestPost(request);
+    }
+
+    // Добавить таймсерию 
+    if (request["TypeData"] == TIMESERIES_REQUEST) {
+        response = TimeSeriesPost(request);
+    }       
+    
+    // Обновить пользователя
+    if (request["TypeData"] == CHANGE_USER_SETTINGS) {
+        response = ClientRequestUpdate(request); 
+    }    
+}
+
+// Таймсерии и акции 
 Json::Value DataBaseController::TimeSeriesPost(const Json::Value& data) {
     Json::Value response; 
 
@@ -98,21 +112,47 @@ Json::Value DataBaseController::TimeSeriesPost(const Json::Value& data) {
 }
 
 
-Json::Value DataBaseController::TimeSeriesGet(const std::string& name_stock, const std::string& len_lags) {
+Json::Value DataBaseController::TimeSeriesGet(const Json::Value& data) {
     Json::Value response;
-    auto data = timeseries_rep_->GetByKey(name_stock, std::stoi(len_lags));
-    if (data == nullptr || data->param.empty()) {
+    std::string name_stock = data["name_stock"].asString();
+    size_t len_lags = std::stoi(data["len_lags"].asString());
+    auto time_series = std::make_shared<TimeSeriesData>();
+
+    if (data["start_date"] == Json::Value::null || data["finish_date"] == Json::Value::null) {
+        time_series = timeseries_rep_->GetByKey(name_stock, len_lags);
+    }
+    else {
+        std::string start_date = data["start_date"].asString();
+        std::string finish_date = data["finish_date"].asString();
+        time_series = timeseries_rep_->GetByKey(name_stock, len_lags, start_date, finish_date);
+    }
+
+    if (time_series == nullptr || time_series->param.empty()) {
         response["status"] = false;
     }
     else {
-        response["data"] = data->param; 
+        response["data"] = time_series->param; 
         response["status"] = true;
     }
 
     return response;
 }
 
+Json::Value DataBaseController::StocksGet() {
+    Json::Value response;
+    auto data = timeseries_rep_->GetAllStocks();
+    if (data == nullptr) {
+        response["status"] = false;
+    }
+    else {
+        response["param"] = data->list;
+        response["status"] = true;
+    } 
 
+    return response;
+}
+
+// Клиент
 Json::Value DataBaseController::ClientRequestPost(const Json::Value& data) {
     Json::Value response;
 

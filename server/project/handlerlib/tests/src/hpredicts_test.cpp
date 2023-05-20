@@ -108,11 +108,18 @@ public:
 
 class PredictHandlerTest: public ::testing::Test {
 public:
-    PredictHandlerTest()
-        : ptr_db_controller(new MockDataBaseController),
-          ptr_predict_controller(new MockPredictController),
-          http_request(new MockHTTPRequest),
-          http_response(new MockHTTPResponse) {}
+    void SetUp() { 
+        ptr_db_controller = new MockDataBaseController;
+        ptr_predict_controller = new MockPredictController;
+        http_request = new MockHTTPRequest;
+        http_response = new MockHTTPResponse;
+    }
+    void TearDown() { 
+        delete ptr_db_controller;
+        delete ptr_predict_controller;
+        delete http_request;
+        delete http_response;
+    };
 protected:
     MockDataBaseController* ptr_db_controller;
     MockPredictController* ptr_predict_controller;
@@ -126,13 +133,24 @@ protected:
 TEST_F(PredictHandlerTest, BaseTest) {
     handlers::PredictHandler predict_handler(ptr_predict_controller);
 
-    
+    Json::Value data;
+    data["0"] = 1;
+    data["1"] = 2;
+    data["2"] = 3;
+    data["3"] = 4;
+    Json::Value expect_return;
+    expect_return["status"] = true;
+    expect_return["data"] = data;
 
-    EXPECT_CALL(ptr_predict_controller, makePredict()).WillOnce(
-        Return(Json::Value{{"status", true}, {"data", Json::Value{{"0", 1} {"1", 1} {"2", 1} {"3", 1}}}})
-    );
+    EXPECT_CALL(*ptr_predict_controller, makePredict(_)).WillOnce(Return(expect_return));
 
-    predict_handler.handle()
+    EXPECT_CALL(*http_request, getURL()).WillOnce(Return("/?name=test&graph=test&lag=8&window_size=8"));
+
+    EXPECT_CALL(*http_response, setStatus(200)).Times(1);
+    EXPECT_CALL(*http_response, setHeader("Predict-Data", "Predict-Data")).Times(1);
+    EXPECT_CALL(*http_response, setBody(data.toStyledString())).Times(1);
+
+    predict_handler.handle(http_request, http_response);
     EXPECT_EQ(1, 1);
 }
 

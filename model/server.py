@@ -1,7 +1,7 @@
 from http.server import HTTPServer, BaseHTTPRequestHandler
 
 from model import Model
-from model import parse_http_to_pandas
+from model import parse_http_to_seq
 
 HOST = "25.21.238.202"
 PORT = 9950
@@ -10,10 +10,10 @@ handles = {} # window_size, data
 
 
 def take_predict(json): # time solution
-    X_predict = parse_http_to_pandas(json)
+    X_predict = parse_http_to_seq(json)
     model = Model()
     model.download_model()
-    #print(X_predict)
+
     return model.predict(X_predict)
     
     
@@ -36,6 +36,7 @@ class NeuralHTTP(BaseHTTPRequestHandler):
 
 
 if __name__ == '__main__':
+    #print(take_predict({"window_size": '8', 'data': '1 2 3 4 5 6 7 8'}))
     server = HTTPServer((HOST, PORT), NeuralHTTP)
     server.serve_forever()
     server.server_close()

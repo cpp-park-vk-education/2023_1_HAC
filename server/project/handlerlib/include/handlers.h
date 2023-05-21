@@ -7,7 +7,7 @@
 
 namespace handlers {
 
-void cutUrlTokens(std::vector<std::string>& tokens, const std::string& error_mess);
+std::vector<std::string> cutUrlTokens(std::vector<std::string>& tokens, const std::string& error_mess);
 std::vector<std::string> splitMessage(const std::string& message, char separator);
 
 

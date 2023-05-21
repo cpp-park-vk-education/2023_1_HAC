@@ -13,7 +13,7 @@ Json::Value api::APIModelRequest::getData(const controllers::TimeSeriesPredicts&
     boost::asio::streambuf request;
     std::ostream request_stream(&request);
     request_stream << "GET / HTTP/1.1\r\n";
-    request_stream << "window_size: " + std::to_string(samples_data.window_size) + "\r\n";
+    request_stream << "lenpredict: " + std::to_string(samples_data.lenpredict) + "\r\n";
     //request_stream << "data: " + std::to_string(samples_data.body) + "\r\n\r\n";
     std::string samples_data_body; 
      for (auto i : samples_data.matrix_samples){

@@ -52,7 +52,7 @@ Json::Value api::APIStockRequest::getData(const handlers::ProtocolAPI& protocol)
         }
         if(ec)
             throw boost::system::system_error{ec};
-
+    
     Json::Value completeJsonData;
     Json::Reader reader;
     auto epoch_seconds = reader.parse(res.body(), completeJsonData);

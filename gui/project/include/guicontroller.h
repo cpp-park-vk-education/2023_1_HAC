@@ -9,7 +9,9 @@
 //#include "../include/authorizationwindow.h"
 #include "../include/mainwindow.h"
 #include "../include/registrationwindow.h"
-#include "../include/usersettingswindow.h"
+#include "../include/settings/usersettingswindow.h"
+#include "../include/settings/passwordsettingswindow.h"
+#include "../include/settings/emailsettingswindow.h"
 
 class AuthorizationWindow;
 
@@ -38,9 +40,17 @@ using ptr_to_iregistration_network =
         std::shared_ptr<INetworkRegistrationWindow>;
 
 class IHandlerUserSettingsWindow;
-using ptr_to_settings_handler = std::shared_ptr<IHandlerUserSettingsWindow>;
+using ptr_to_mainsettings_handler = std::shared_ptr<IHandlerUserSettingsWindow>;
+class IHandlerPasswordSettingsWindow;
+using ptr_to_passwordsettings_handler = std::shared_ptr<IHandlerPasswordSettingsWindow>;
+class IHandlerEmailSettingsWindow;
+using ptr_to_emailsettings_handler = std::shared_ptr<IHandlerEmailSettingsWindow>;
+class IHandlerUserSettingsWindow;
+using ptr_to_mainsettings_handler = std::shared_ptr<IHandlerUserSettingsWindow>;
 class INetworkUserSettingsWindow;
 using ptr_to_isettings_network = std::shared_ptr<INetworkUserSettingsWindow>;
+
+
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class GUIController; }
@@ -60,11 +70,20 @@ public:
         pages->setCurrentIndex(0);
     };
     void openRegistrationWindow() override {
-        pages->setCurrentIndex(3);
+        pages->setCurrentIndex(5);
     };
     void openUserSettingsWindow() override {
         pages->setCurrentIndex(2);
     };
+
+    void openPasswordSettingsWindow() override {
+        pages->setCurrentIndex(3);
+    }
+    void openEmailSettingsWindow() override {
+        pages->setCurrentIndex(4);
+    }
+
+
     virtual std::string getUser() override {
         return user_;
     };
@@ -81,6 +100,8 @@ private:
     MainWindow* main_window;
     RegistrationWindow* reg_window;
     UserSettingsWindow* user_settings_window;
+    PasswordSettingsWindow* password_settings_window;
+    EmailSettingsWindow* email_settings_window;
 
     ptr_to_inetwork network_ptr;
 
@@ -95,6 +116,8 @@ private:
 
     ptr_to_isettings_network user_settings_network_ptr;
     ptr_to_settings_handler user_settings_handler_ptr;
+    ptr_to_passwordsettings_handler password_settings_handler_ptr;
+    ptr_to_emailsettings_handler email_settings_handler_ptr;
 
     ptr_to_iwindow_manager window_manager_ptr;
 

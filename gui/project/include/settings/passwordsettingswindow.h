@@ -1,24 +1,24 @@
-#ifndef USERSETTINGSWINDOW_H
-#define USERSETTINGSWINDOW_H
+#ifndef PASSWORDSETTINGSWINDOW_H
+#define PASSWORDSETTINGSWINDOW_H
 
 #include <QWidget>
+#include <memory>
 #include <QErrorMessage>
 #include <QDebug>
 
-#include "../include/usersettingswindow_interface.h"
+#include "passwordsettingswindow_interface.h"
 
 namespace Ui {
-class UserSettingsWindow;
+    class PasswordSettingsWindow;
 }
 
-class UserSettingsWindow : public QWidget, public IUserSettingsWindow {
+class PasswordSettingsWindow : public QWidget, public IPasswordSettingsWindow {
     Q_OBJECT
 
 public:
-    explicit UserSettingsWindow(QWidget *parent = nullptr);
-    ~UserSettingsWindow();
-    void setUserSettingsWindowHandler(
-            ptr_to_settings_handler set_handler_ptr) override;
+    explicit PasswordSettingsWindow(QWidget *parent = nullptr);
+    ~PasswordSettingsWindow();
+    void setPasswordSettingsWindowHandler(ptr_to_passwordsettings_handler set_handler_ptr) override;
     void showErrorMessage() override;
     void createErrorMessage(const Error& error_message) override;
     std::string getOldPassword() override;
@@ -30,8 +30,8 @@ public slots:
     void returnToMain();
 
 private:
-    Ui::UserSettingsWindow *ui;
-    ptr_to_settings_handler settings_handler_ptr;
+    Ui::PasswordSettingsWindow *ui;
+    ptr_to_passwordsettings_handler settings_handler_ptr;
 
     std::string old_password;
     std::string new_password;
@@ -43,4 +43,4 @@ private:
     QErrorMessage* errorMes;
 };
 
-#endif // USERSETTINGSWINDOW_H
+#endif // PASSWORDSETTINGSWINDOW_H

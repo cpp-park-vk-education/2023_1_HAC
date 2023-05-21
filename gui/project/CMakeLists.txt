@@ -7,7 +7,7 @@ set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 
 
-find_package(QT NAMES Qt6 Qt5 COMPONENTS Widgets REQUIRED)
+find_package(QT NAMES Qt5 COMPONENTS Widgets REQUIRED)
 find_package(Qt5 REQUIRED COMPONENTS Network)
 find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Widgets REQUIRED)
 find_package(Qt5 REQUIRED COMPONENTS PrintSupport)
@@ -22,12 +22,20 @@ set(PROJECT_SOURCES
         src/usecase_authorizationwindow.cpp
         src/mainwindow.cpp
         src/registrationwindow.cpp
-        src/usersettingswindow.cpp
+        # src/usersettingswindow.cpp
         src/ionetwork.cpp
-        src/usersettingswindow_network.cpp
-        src/usecase_usersettingswindow.cpp
+        # src/usersettingswindow_network.cpp
+        # src/usecase_usersettingswindow.cpp
         src/authorizationwindow_network.cpp
         src/usecase_authorization_window.cpp
+
+        src/settings/usersettingswindow.cpp
+        src/settings/usersettingswindow_network.cpp
+        src/settings/usecase_usersettingswindow.cpp
+        src/settings/passwordsettingswindow.cpp
+        src/settings/usecase_passwordsettingswindow.cpp
+        src/settings/emailsettingswindow.cpp
+        src/settings/usecase_emailsettingswindow.cpp
 
         src/registrationwindow_network.cpp
         src/usecase_registrationwindow.cpp
@@ -39,7 +47,10 @@ set(PROJECT_SOURCES
         src/authorizationwindow.ui
         src/mainwindow.ui
         src/registrationwindow.ui
-        src/usersettingswindow.ui
+       # src/usersettingswindow.ui
+        src/settings/usersettingswindow.ui
+        src/settings/emailsettingswindow.ui
+        src/settings/passwordsettingswindow.ui       
 
         include/guicontroller.h
         include/guicontroller_interface.h
@@ -67,11 +78,24 @@ set(PROJECT_SOURCES
         include/mainwindow_network.h
         include/mainwindow_network_interface.h
 
-        include/usersettingswindow.h
-        include/usersettingswindow_interface.h
-        include/usecase_usersettingswindow.h
-        include/usersettingswindow_network.h
-        include/usersettingswindow_network_interface.h)
+        # include/usersettingswindow.h
+        # include/usersettingswindow_interface.h
+        # include/usecase_usersettingswindow.h
+        # include/usersettingswindow_network.h
+        # include/usersettingswindow_network_interface.h
+        
+        include/settings/usersettingswindow.h
+        include/settings/usersettingswindow_interface.h
+        include/settings/usecase_usersettingswindow.h
+        include/settings/passwordsettingswindow.h
+        include/settings/passwordsettingswindow_interface.h
+        include/settings/usecase_passwordsettingswindow.h
+        include/settings/emailsettingswindow.h
+        include/settings/emailsettingswindow_interface.h
+        include/settings/usecase_emailsettingswindow.h
+        include/settings/usersettingswindow_network.h
+        include/settings/usersettingswindow_network_interface.h)
+
 
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)

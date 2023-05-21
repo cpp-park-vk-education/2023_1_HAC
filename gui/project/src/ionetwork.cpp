@@ -80,23 +80,41 @@ void IONetwork::GetRequest(const std::string& url, const MainData& body,
     qDebug() << q_url <<'\n';
 
     QUrlQuery query;
-    query.addQueryItem("name", body.stock_name.c_str());
-    query.addQueryItem("graph", body.operation_title.c_str());
-    query.addQueryItem("lag", QString::number(body.lag));
-    query.addQueryItem("window_size", QString::number(body.window_size));
+  //  query.addQueryItem("name", body.stock_name.c_str());
+    // query.addQueryItem("graph", body.operation_title.c_str());
+    // query.addQueryItem("lag", QString::number(body.lag));
+ //   query.addQueryItem("window_size", QString::number(body.window_size));
 
-    q_url.setQuery(query.query());
-    QNetworkRequest request( q_url);
+   // q_url.setQuery(query.query());
+   // QNetworkRequest request( q_url);
+   //q_url.setQuery(query.query());
+  // QNetworkRequest request( q_url);
     if (body.operation_title == "plot") {
+        query.addQueryItem("name", body.stock_name.c_str());
+        query.addQueryItem("lag", QString::number(body.lag));
+        q_url.setQuery(query.query()); 
+        QNetworkRequest request( q_url);
+
         request.setHeader(QNetworkRequest::ContentDispositionHeader, QVariant("PLOT"));
+        request.setHeader(QNetworkRequest::ContentTypeHeader, QVariant("GET"));
+        auto reply = network_manager.get(request);
+        connect(reply, &QNetworkReply::finished, [this, reply, callback]() {
+                onFinishedGet(reply, callback);
+            });
     } else {
-        request.setHeader(QNetworkRequest::ContentDispositionHeader, QVariant("PREDICT"));
-    }
-    request.setHeader(QNetworkRequest::ContentTypeHeader, QVariant("GET"));
-    auto reply = network_manager.get(request);
-    connect(reply, &QNetworkReply::finished, [this, reply, callback]() {
-           onFinishedGet(reply, callback);
+        query.addQueryItem("name", body.stock_name.c_str());
+        query.addQueryItem("lenpredict", QString::number(body.window_size));
+        q_url.setQuery(query.query()); 
+        QNetworkRequest request( q_url);
+
+        request.setHeader(QNetworkRequest::ContentDispositionHeader, QVariant("PREDICT")); 
+        request.setHeader(QNetworkRequest::ContentTypeHeader, QVariant("GET"));
+        auto reply = network_manager.get(request);
+        connect(reply, &QNetworkReply::finished, [this, reply, callback]() {
+            onFinishedGet(reply, callback);
        });
+    }
+
 }
 
 void IONetwork::onFinishedGet(QNetworkReply* reply,

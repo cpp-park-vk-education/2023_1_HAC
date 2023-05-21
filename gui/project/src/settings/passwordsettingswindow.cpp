@@ -1,14 +1,11 @@
-#include "../include/usersettingswindow.h"
-#include "ui_usersettingswindow.h"
+#include "../../include/settings/passwordsettingswindow.h"
+#include "ui_passwordsettingswindow.h"
 
-#include "../include/guicontroller.h"
+#include "../../include/guicontroller.h"
 #include <memory>
 #include <iostream>
-#include <string>
 
-UserSettingsWindow::UserSettingsWindow(QWidget *parent) :
-    QWidget(parent),
-    ui(new Ui::UserSettingsWindow)
+PasswordSettingsWindow::PasswordSettingsWindow(QWidget *parent) : QWidget(parent), ui(new Ui::PasswordSettingsWindow)
 {
     ui->setupUi(this);
     ui->leOldPassword_2->setEchoMode(QLineEdit::Password);
@@ -20,7 +17,8 @@ UserSettingsWindow::UserSettingsWindow(QWidget *parent) :
     connect(btn_return,SIGNAL(clicked(bool)),this, SLOT(returnToMain()));
 
 }
-UserSettingsWindow::~UserSettingsWindow()
+
+PasswordSettingsWindow::~PasswordSettingsWindow()
 {
     delete ui;
     delete error_message_;
@@ -31,18 +29,18 @@ UserSettingsWindow::~UserSettingsWindow()
 }
 
 
-void UserSettingsWindow::setUserSettingsWindowHandler(ptr_to_settings_handler set_handler_ptr) {
+void PasswordSettingsWindow::setPasswordSettingsWindowHandler(ptr_to_passwordsettings_handler set_handler_ptr) {
     settings_handler_ptr = set_handler_ptr;
 }
 
-void UserSettingsWindow::showErrorMessage() {
+void PasswordSettingsWindow::showErrorMessage() {
     errorMes = new QErrorMessage(this);
     errorMes->showMessage(*error_type_ + "! " + *error_message_);
     qDebug() << *error_type_ << ' ' << *error_message_;
     std::cout << "error shown"<<std::endl;
 }
 
-void UserSettingsWindow::createErrorMessage(const Error& error_message) {
+void PasswordSettingsWindow::createErrorMessage(const Error& error_message) {
     if (error_message.type == "401") {
         error_type_ = new QString("IncorectInput");
         error_message_ = new QString("Incorrect old password was inputed!");
@@ -53,25 +51,25 @@ void UserSettingsWindow::createErrorMessage(const Error& error_message) {
     std::cout << "created error message"<<std::endl;
 }
 
-void UserSettingsWindow::sendSetting() {
+void PasswordSettingsWindow::sendSetting() {
     settings_handler_ptr->ConfirmHandler(getOldPassword(), getNewPassword(), getRepeatPassword());
 }
 
-void UserSettingsWindow::returnToMain() {
+void PasswordSettingsWindow::returnToMain() {
     settings_handler_ptr->passToMain();
 }
 
-std::string UserSettingsWindow::getOldPassword() {
+std::string PasswordSettingsWindow::getOldPassword() {
     old_password = ui->leOldPassword_2->text().toStdString();
     return old_password;
 }
 
-std::string UserSettingsWindow::getNewPassword() {
+std::string PasswordSettingsWindow::getNewPassword() {
     new_password = ui->leNewPassword_2->text().toStdString();
     return new_password;
 }
 
-std::string UserSettingsWindow::getRepeatPassword() {
+std::string PasswordSettingsWindow::getRepeatPassword() {
     std::string repeat_password = ui->leRepeatPassword_2->text().toStdString();
     return repeat_password;
 }

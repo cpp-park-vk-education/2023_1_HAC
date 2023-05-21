@@ -17,7 +17,7 @@ const std::string REGISTRATION_STATUS = "Registration-Status";
 const std::string AUTHORIZATION_STATUS = "Authorization-Status";
 
 const std::string HTTP_URL_NAME = "name";
-const std::string HTTP_URL_WINDOW_SIZE = "window_size";
+const std::string HTTP_URL_LENPREDICT = "lenpredict";
 const std::string HTTP_URL_LAG = "lag";
 
 const std::string METHOD = "method";
@@ -27,7 +27,7 @@ const std::string ACTIONS = "actions";
 const std::string HEADER_JSON_ERROR = "error";
 const std::string HEADER_JSON_NAME_STOCK = "name_stock";
 const std::string HEADER_JSON_LEN_LAGS = "len_lags";
-const std::string HEADER_JSON_WINDOW_SIZE = "window_size";
+const std::string HEADER_JSON_LENPREDICT = "lenpredict";
 const std::string HEADER_JSON_DATA = "data";
 const std::string HEADER_JSON_STATUS = "status";
 
@@ -55,7 +55,7 @@ const uint URL_SPECIAL_SYMBOL = 2;
 
 const uint NAME_STOCK_ORDER = 0;
 const uint LEN_LAGS_ORDER = 1;
-const uint WINDOW_SIZE_ORDER = 1;
+const uint LENPREDICT_ORDER = 1;
 
 const uint LOGIN_ORDER = 0;
 const uint PASSWORD_ORDER = 1;
@@ -112,7 +112,7 @@ void PredictHandler::handle(IHTTPRequest_ request, IHTTPResponse_ response) {
 }
 
 Json::Value PredictHandler::parseInputHttpRequest(const std::string& message) {
-    // /?name=apple&window_size=8
+    // /?name=apple&lenpredict=8
     Json::Value result;
     auto tokens = splitMessage(message, SEPARATOR_URL);
 
@@ -122,13 +122,12 @@ Json::Value PredictHandler::parseInputHttpRequest(const std::string& message) {
     auto names_tokens = cutUrlTokens(tokens, HANDLERS_PREDICT);
 
     if (names_tokens[NAME_STOCK_ORDER] != HTTP_URL_NAME || 
-        names_tokens[WINDOW_SIZE_ORDER] != HTTP_URL_WINDOW_SIZE) {
+        names_tokens[LENPREDICT_ORDER] != HTTP_URL_LENPREDICT) {
         throw market_mentor::InvalidHttpRequestError(HANDLERS_PREDICT);
     }
     
     result[HEADER_JSON_NAME_STOCK] = tokens[NAME_STOCK_ORDER];
-    result[HEADER_JSON_LEN_LAGS] = std::stoi(tokens[LEN_LAGS_ORDER]);
-    result[HEADER_JSON_WINDOW_SIZE] = std::stoi(tokens[WINDOW_SIZE_ORDER]);
+    result[HEADER_JSON_LENPREDICT] = std::stoi(tokens[LENPREDICT_ORDER]);
     
     return result;
 }

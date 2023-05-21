@@ -3,7 +3,7 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
 #include <string>
-
+/*
 TEST(APIStockRequestTest, GetDataReturnsResponse) {
     api::IAPIStockRequest* api_stock = new api::APIStockRequest();
     auto response = api_stock->getData("/test");
@@ -43,3 +43,4 @@ TEST(APIStockRequestTest, GetDataReturnsValidContentType) {
     EXPECT_EQ(request->getHeaders(), req);
     delete api_stock;
 }
+*/

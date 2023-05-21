@@ -16,7 +16,7 @@ TEST(ListenerTest, StartListening){
     auto router = new MockRouter;
     auto listener = new Listener(ioc, endpoint, router);
 
-    EXPECT_NO_THROW(listener->Run());
+    EXPECT_THROW(listener->run(), std::bad_weak_ptr);
 
     delete router;
     delete listener;

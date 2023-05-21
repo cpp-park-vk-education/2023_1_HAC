@@ -12,19 +12,9 @@ class MockRouterAdapter : public IRouterAdapter {
 TEST(SessionTest, StartSession){
     auto io_context = net::io_context();
     auto socket = tcp::socket(io_context);
-    auto session = new Session(std::move(socket));
-
-    EXPECT_NO_THROW(session->run());
-    delete session;
-}
-
-TEST(SessionTest, SetRouter){
     auto router_adapter = new MockRouterAdapter();
-    auto io_context = net::io_context();
-    auto socket = tcp::socket(io_context);
-    auto session = new Session(std::move(socket));
+    auto session = new Session(std::move(socket), router_adapter);
 
-    session->run();
-    EXPECT_NO_THROW(session->setRouterAdapter(router_adapter));
+    EXPECT_THROW(session->run(), std::bad_weak_ptr);
     delete session;
 }

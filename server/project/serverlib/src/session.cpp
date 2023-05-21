@@ -1,139 +1,100 @@
 #include "session.h"
+#include <sstream>
 
 template <class Body, class Allocator>
 http::message_generator
 handle_request(
     http::request<Body, http::basic_fields<Allocator>>&& req, IRouterAdapter* router_adapter)
 {
+    FileLogger& logger = FileLogger::getInstance();
     http::response<http::string_body> res;
     router_adapter->handle(req, res);
 
-    //std::unique_ptr<IHTTPRequest> req_ = std::make_unique<HTTPRequestToBoostAdapter>(req);
-    //std::cerr << "body: "<< req_->getBoby() << std::endl;
-    
-
     const auto& base = req.base();
-    //std::cerr << "method: "<< boost::beast::http::to_string(base.method()) << std::endl;
-    //auto headers = req_->getHeaders();
-    // for (const auto& pair : headers)
-    // {
-    //     std::cerr << "headers " << pair.first << " :: " << pair.second << std::endl;
-    // }
-
 
     res.set(http::field::content_length, std::to_string(res.body().size()));
-    std::cerr << "Status Response: " << res.result_int() << std::endl;
-    std::cerr << "Header: " << res.result_int() << std::endl;
-    std::cerr << "Body: " << res.body() << std::endl;
+    std::string resp_params;
+    resp_params = "\nStatus Response: " + std::to_string(res.result_int());
+    resp_params += "\nHeader: " + std::to_string(res.result_int());
+    resp_params += "\nBody: " + res.body(); 
+    logger.log("Response params:" + resp_params);
     return res;
 }
 
-//------------------------------------------------------------------------------
+Session::Session(
+    tcp::socket&& socket,
+    IRouterAdapter* router_adapter)
+    : stream_(std::move(socket)),
+    router_adapter_(router_adapter) {}
 
+void Session::run() {
+    net::dispatch(stream_.get_executor(),
+                  beast::bind_front_handler(
+                      &Session::doRead,
+                      shared_from_this()));
+}
 
+void Session::doRead() {
+    req_ = {};
+    stream_.expires_after(std::chrono::seconds(30));
 
-    Session::Session(
-        tcp::socket&& socket,
-        IRouterAdapter* router_adapter)
-        : stream_(std::move(socket)),
-        router_adapter_(router_adapter)
-    {
-    }
-
-    // Start the asynchronous operation
-    void
-    Session::run()
-    {
-        // We need to be executing within a strand to perform async operations
-        // on the I/O objects in this session. Although not strictly necessary
-        // for single-threaded contexts, this example code is written to be
-        // thread-safe by default.
-        net::dispatch(stream_.get_executor(),
-                      beast::bind_front_handler(
-                          &Session::do_read,
-                          shared_from_this()));
-    }
-
-    void
-    Session::do_read()
-    {
-        // Make the request empty before reading,
-        // otherwise the operation behavior is undefined.
-        req_ = {};
-
-        // Set the timeout.
-        stream_.expires_after(std::chrono::seconds(30));
-
-        // Read a request
         http::async_read(stream_, buffer_, req_,
             beast::bind_front_handler(
-                &Session::on_read,
+                &Session::onRead,
                 shared_from_this()));
     }
 
-    void
-    Session::on_read(
-        beast::error_code ec,
-        std::size_t bytes_transferred)
-    {
-        boost::ignore_unused(bytes_transferred);
+void Session::onRead(
+    beast::error_code ec,
+    std::size_t bytes_transferred) {
+    boost::ignore_unused(bytes_transferred);
 
-        // This means they closed the connection
-        if(ec == http::error::end_of_stream)
-            return do_close();
-
-        // Send the response
-        std::cout << "-----------------req start----------" << std::endl;
-        std::cout << req_ << std::endl;
-        std::cout << "-----------------req end----------" << std::endl;
-
-            
-        //std::cout << req_.body()<< std::endl;
-        send_response(
-        handle_request(std::move(req_), router_adapter_));
-        
+    if(ec == http::error::end_of_stream)
+        return doClose();
+    
+    if (ec){ 
+        return logger.log("Error session read:" + ec.message());
     }
 
-    void
-    Session::send_response(http::message_generator&& msg)
-    {
-        bool keep_alive = msg.keep_alive();
+    std::cout << "-----------------req start----------" << std::endl; // переделать на лог
+    std::cout << req_ << std::endl;
+    std::cout << "-----------------req end----------" << std::endl;    
+    std::ostringstream oss;
+    oss << "Catch request with params" << "\n" << req_;
 
-        //std::cout << msg;
-        // Write the response
-        beast::async_write(
-            stream_,
-            std::move(msg),
-            beast::bind_front_handler(
-                &Session::on_write, shared_from_this(), keep_alive));
+    logger.log(oss.str());
+
+
+    sendResponse(
+    handle_request(std::move(req_), router_adapter_));
+    
+}
+
+void Session::sendResponse(http::message_generator&& msg) {
+    bool keep_alive = msg.keep_alive();
+    beast::async_write(
+        stream_,
+        std::move(msg),
+        beast::bind_front_handler(
+            &Session::onWrite, shared_from_this(), keep_alive));
+}
+
+void Session::onWrite(
+    bool keep_alive,
+    beast::error_code ec,
+    std::size_t bytes_transferred) {
+    boost::ignore_unused(bytes_transferred);
+    if (ec){
+        return logger.log("Error session write:" + ec.message());
     }
-
-    void
-    Session::on_write(
-        bool keep_alive,
-        beast::error_code ec,
-        std::size_t bytes_transferred)
+    if(! keep_alive)
     {
-        boost::ignore_unused(bytes_transferred);
-
-
-        if(! keep_alive)
-        {
-            // This means we should close the connection, usually because
-            // the response indicated the "Connection: close" semantic.
-            return do_close();
-        }
-
-        // Read another request
-        do_read();
+        return doClose();
     }
+    doRead();
+}
 
-    void
-    Session::do_close()
-    {
-        // Send a TCP shutdown
-        beast::error_code ec;
-        stream_.socket().shutdown(tcp::socket::shutdown_send, ec);
-
-        // At this point the connection is closed gracefully
-    }
+void Session::doClose() {
+    beast::error_code ec;
+    stream_.socket().shutdown(tcp::socket::shutdown_send, ec);
+}

@@ -4,8 +4,10 @@
 #include <boost/beast/version.hpp>
 #include <boost/asio/dispatch.hpp>
 #include <boost/asio/strand.hpp>
+#include <boost/beast/http.hpp>
 #include <boost/config.hpp>
 #include "routers.h"
+#include "logger.h"
 #include "http_protocol.h"
 #include <algorithm>
 #include <cstdlib>
@@ -18,59 +20,44 @@
 #include <chrono>
 #include <thread>
 
-
 namespace beast = boost::beast;         // from <boost/beast.hpp>
 namespace http = beast::http;           // from <boost/beast/http.hpp>
 namespace net = boost::asio;            // from <boost/asio.hpp>
 using tcp = boost::asio::ip::tcp;       // from <boost/asio/ip/tcp.hpp>
 
-//
-// The concrete type of the response message (which depends on the
-// request), is type-erased in message_generator.
 template <class Body, class Allocator>
 http::message_generator
 handle_request(
     http::request<Body, http::basic_fields<Allocator>>&& req);
 
-//------------------------------------------------------------------------------
 
-
-// Handles an HTTP server connection
 class Session : public std::enable_shared_from_this<Session>
 {
 public:
-    // Take ownership of the stream
     Session(
         tcp::socket&& socket, IRouterAdapter* router_adapter);
 
+    void run();
 
-    // Start the asynchronous operation
-    void
-    run();
+    void doRead();
 
-    void
-    do_read();
-
-    void
-    on_read(
+    void onRead(
         beast::error_code ec,
         std::size_t bytes_transferred);
 
-    void
-    send_response(http::message_generator&& msg);
+    void sendResponse(http::message_generator&& msg);
 
-    void
-    on_write(
+    void onWrite(
         bool keep_alive,
         beast::error_code ec,
         std::size_t bytes_transferred);
 
-    void
-    do_close();
+    void doClose();
 
 private:
     IRouterAdapter* router_adapter_;
     beast::tcp_stream stream_;
     beast::flat_buffer buffer_;
     http::request<http::string_body> req_;
+    FileLogger& logger = FileLogger::getInstance();  
 };

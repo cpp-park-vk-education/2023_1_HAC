@@ -35,9 +35,6 @@ void HTTPRequestToBoostAdapter::setStatus(int status_code){};
 void HTTPRequestToBoostAdapter::setUrl(const std::string& url){};
 void HTTPRequestToBoostAdapter::setHeader(const std::string &header, const std::string &value){};
 void HTTPRequestToBoostAdapter::setBody(const std::string &bytes){};
-// int HTTPRequestToBoostAdapter::getStatus(){
-//     return static_cast<int>(request_->base()->result());
-// };
 std::string HTTPRequestToBoostAdapter::getURL(){
     return std::string(request_->target());
 };
@@ -53,7 +50,11 @@ std::map<std::string, std::string> HTTPRequestToBoostAdapter::getHeaders(){
         std::string value(headerField.value().data(), headerField.value().size());
         headers[std::move(name)] = std::move(value);
     }
-    headers["actions"] = headers["Content-Disposition"];
+    if (headers.find("Content-Disposition") != headers.end()){
+        headers["actions"] = headers["Content-Disposition"];
+    } else {
+        headers["actions"] = "null";
+    }
     
     return headers;
 };

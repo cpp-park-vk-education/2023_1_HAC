@@ -1,7 +1,7 @@
 from http.server import HTTPServer, BaseHTTPRequestHandler
 
 from model import Model
-from model import parse_http_to_seq
+from model import parse_http_data_to_seq
 
 HOST = "25.21.238.202"
 PORT = 9950
@@ -10,11 +10,12 @@ handles = {} # window_size, data
 
 
 def take_predict(json): # time solution
-    X_predict = parse_http_to_seq(json)
+    lenpredict = int(json["lenpredict"])
+    X = parse_http_data_to_seq(json)
     model = Model()
     model.download_model()
 
-    return model.predict(X_predict)
+    return model.predict(X, lenpredict)
     
     
 

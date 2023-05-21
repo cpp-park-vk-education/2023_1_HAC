@@ -17,6 +17,7 @@ from tensorflow.keras.losses import MeanSquaredError
 from tensorflow.keras.metrics import RootMeanSquaredError
 from tensorflow.keras.optimizers import Adam
 
+WINDOW_SIZE = 8
 
 def stock_to_X(stock, window_size=8):
     #stock_as_np = stock.to_numpy()
@@ -30,13 +31,11 @@ def stock_to_X(stock, window_size=8):
     return np.array(X)
 
 
-def parse_http_to_seq(json):
-    window_size = int(json["window_size"])
+def parse_http_data_to_seq(json):
     json_data = json["data"]
     X = []
     for i in json_data.split():
         X.append(float(i))
-    X = np.array(X).reshape(-1, window_size)
     return X
 
 
@@ -45,14 +44,14 @@ class Model:
         pass
 #       self.download_model()
 
-    def predict(self, X):
-        X_data = X.copy()
-        X_data = X_data[0]
+    def predict(self, X, lenpredict):
+        X_data = np.array(X)
 
-        for i in range(X.shape[1]):
-            X_data = np.append(X_data, self.model.predict((X_data[i:]).reshape(X.shape[1], -1))[0][0])
 
-        return X_data[X.shape[1]:]
+        for i in range(lenpredict):
+            X_data = np.append(X_data, self.model.predict((X_data[i:]).reshape(WINDOW_SIZE, -1))[0][0])
+
+        return X_data[WINDOW_SIZE:]
         
 
     def simple_predict(self, X):
@@ -87,11 +86,10 @@ if __name__ == '__main__':
     model = Model()
     #model.fit(X_train=X_train, y_train=y_train, X_val=X_val, y_val=y_val, window_size=8)
     model.download_model()
-    
-    result = parse_http_to_seq({"window_size": '8', 'data': '1 2 3 4 5 6 7 8'})
+    from server import take_predict
     #print(result.shape)
     
-    print(model.predict(result))
+    print(take_predict({"lenpredict": '10', 'data': '1 2 3 4 5 6 7 8'}))
 
     #print(model.predict(X_test))
 

@@ -5,7 +5,7 @@
 class MockPredictController : public controllers::IPredictController {
 public:
    MOCK_METHOD(Json::Value, makePredict, (const Json::Value& request), (override));
-   MOCK_METHOD(controllers::TimeSeriesPredicts, makeTimeSeries, (const std::vector<double>& samples_data, size_t window_size), (override));
+   MOCK_METHOD(controllers::TimeSeriesPredicts, makeTimeSeries, (const std::vector<double>& samples_data, size_t lenpredict), (override));
    MOCK_METHOD(std::vector<double>, parseDBProtocol, (const Json::Value& response), (override));
 };
 
@@ -45,7 +45,7 @@ TEST_F(PredictHandlerTest, CheckCorrectPositiveResponse) {
 
     EXPECT_CALL(*ptr_predict_controller, makePredict(_)).WillOnce(Return(expect_return));
 
-    EXPECT_CALL(*http_request, getURL()).WillOnce(Return("/?name=test&window_size=8"));
+    EXPECT_CALL(*http_request, getURL()).WillOnce(Return("/?name=test&lenpredict=8"));
 
     EXPECT_CALL(*http_response, setStatus(OK)).Times(1);
     EXPECT_CALL(*http_response, setHeader(PREDICT_DATA, PREDICT_DATA)).Times(1);
@@ -57,7 +57,7 @@ TEST_F(PredictHandlerTest, CheckCorrectPositiveResponse) {
 TEST_F(PredictHandlerTest, CheckCorrectNegativeResponseIncorrectNumberTokens) {
     handlers::PredictHandler predict_handler(ptr_predict_controller);
 
-    EXPECT_CALL(*http_request, getURL()).WillOnce(Return("/?name=testwindow_size=8"));
+    EXPECT_CALL(*http_request, getURL()).WillOnce(Return("/?name=testlenpredict=8"));
     EXPECT_CALL(*http_response, setStatus(BAD_REQUEST)).Times(1);
     EXPECT_CALL(*http_response, setBody(INVALID_HTTP_PREDICT)).Times(1);
 
@@ -66,7 +66,7 @@ TEST_F(PredictHandlerTest, CheckCorrectNegativeResponseIncorrectNumberTokens) {
 
 TEST_F(PredictHandlerTest, CheckCorrectNegativeResponseIncorrectSeparatorTokens) {
     handlers::PredictHandler predict_handler(ptr_predict_controller);
-    EXPECT_CALL(*http_request, getURL()).WillOnce(Return("/?nametest&window_size=8"));
+    EXPECT_CALL(*http_request, getURL()).WillOnce(Return("/?nametest&lenpredict=8"));
 
     EXPECT_CALL(*http_response, setStatus(BAD_REQUEST)).Times(1);
     EXPECT_CALL(*http_response, setBody(INVALID_HTTP_PREDICT)).Times(1);
@@ -89,7 +89,7 @@ TEST_F(PredictHandlerTest, CheckCorrectNegativeResponseIncorrectNameTokens) {
 TEST_F(PredictHandlerTest, CheckCorrectJSONPassToMakePredict) {
     handlers::PredictHandler predict_handler(ptr_predict_controller);
 
-    EXPECT_CALL(*http_request, getURL()).WillOnce(Return("/?name=test&window_size=8"));
+    EXPECT_CALL(*http_request, getURL()).WillOnce(Return("/?name=test&lenpredict=8"));
 
     Json::Value data;
     data["0"] = 1;
@@ -102,7 +102,7 @@ TEST_F(PredictHandlerTest, CheckCorrectJSONPassToMakePredict) {
 
     Json::Value expected_json_after_parsing;
     expected_json_after_parsing[HEADER_JSON_LEN_LAGS] = 8;
-    expected_json_after_parsing[HEADER_JSON_WINDOW_SIZE] = 8;
+    expected_json_after_parsing[HEADER_JSON_LENPREDICT] = 8;
     expected_json_after_parsing[HEADER_JSON_NAME_STOCK] = "test";
 
     EXPECT_CALL(*ptr_predict_controller, makePredict(expected_json_after_parsing)).WillOnce(Return(expect_return));

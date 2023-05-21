@@ -4,12 +4,15 @@
 #include <iostream>
 #include <vector>
 
+
+const size_t WINDOW_SIZE = 8;
+
 const std::string HEADER_JSON_ERROR = "error";
 const std::string HEADER_JSON_TYPE = "Type";
 const std::string HEADER_JSON_TYPEDATA = "TypeData";
 const std::string HEADER_JSON_NAME_STOCK = "name_stock";
 const std::string HEADER_JSON_LEN_LAGS = "len_lags";
-const std::string HEADER_JSON_WINDOW_SIZE = "window_size";
+const std::string HEADER_JSON_LENPREDICT = "lenpredict";
 const std::string HEADER_JSON_DATA = "data";
 const std::string HEADER_JSON_STATUS = "status";
 
@@ -32,7 +35,7 @@ Json::Value makeDBProtocolGetTS(const Json::Value& request) {
     db_protocol[HEADER_JSON_TYPE] = TypeRequest::GET_REQUEST;
     db_protocol[HEADER_JSON_TYPEDATA] = TypeData::TIMESERIES_REQUEST;
     db_protocol[HEADER_JSON_NAME_STOCK] = request[HEADER_JSON_NAME_STOCK].asString();
-    db_protocol[HEADER_JSON_LEN_LAGS] = request[HEADER_JSON_LEN_LAGS].asInt();
+    db_protocol[HEADER_JSON_LEN_LAGS] = WINDOW_SIZE;
     return db_protocol;
 }
 
@@ -41,19 +44,17 @@ hash_ hashPassword(const std::string& password) {
 }
 
 // class PredictController
-PredictController::PredictController
-    (const ptrToDBController db_controller, const ptrToModelController model_controller) :
-            db_controller_(db_controller), model_controller_(model_controller) {}
+PredictController::PredictController(const ptrToDBController db_controller, const ptrToModelController model_controller)
+    : db_controller_(db_controller), model_controller_(model_controller) {}
 
 Json::Value PredictController::makePredict(const Json::Value& request) {
-    // получает джейсон
-    // получает из него название акции
-    Json::Value request_to_db = makeDBProtocolGetTS(request);
+
+    Json::Value request_to_db = makeDBProtocol(request);
     // отправляет название ДБ контроллеру
     Json::Value response_db = db_controller_->DataRequest(request_to_db);
     try {
         std::vector<double> timeseries_vector = parseDBProtocol(response_db);        
-        auto time_series = makeTimeSeries(timeseries_vector, std::stoi(request[HEADER_JSON_WINDOW_SIZE].asString()));
+        auto time_series = makeTimeSeries(timeseries_vector, std::stoi(request[HEADER_JSON_LENPREDICT].asString()));
 
         return model_controller_->callModelApi(time_series);
 
@@ -68,6 +69,9 @@ std::vector<double> PredictController::parseDBProtocol(const Json::Value& respon
     if (!response[HEADER_JSON_STATUS].asBool()) {
         throw market_mentor::ErrorInGetDataFromDB("timeseries");
     }
+    if (response[HEADER_JSON_DATA].size() == 0) {
+        throw market_mentor::ErrorInGetDataFromDB("timeseries");
+    }
     std::vector<double> timeseries_vector;
     for (int i = 0; i < response[HEADER_JSON_DATA].size(); ++i) {
         timeseries_vector.push_back(std::stod(response[HEADER_JSON_DATA][i].asString()));
@@ -75,15 +79,22 @@ std::vector<double> PredictController::parseDBProtocol(const Json::Value& respon
     return timeseries_vector;
 }
 
-TimeSeriesPredicts PredictController::makeTimeSeries(const std::vector<double>& samples_data, size_t window_size) {
+TimeSeriesPredicts PredictController::makeTimeSeries(const std::vector<double>& samples_data, size_t lenpredict) {
     TimeSeriesPredicts ts;
-    ts.window_size = window_size;
-    if (samples_data.size() % ts.window_size != 0) {
-        throw market_mentor::ErrorInGetDataFromDB("timeseries (size)");
-    }
+    ts.lenpredict = lenpredict;
     ts.matrix_samples = samples_data;
     return ts;
 }
+
+Json::Value PredictController::makeDBProtocol(const Json::Value& request) {
+    Json::Value db_protocol;
+    db_protocol[HEADER_JSON_TYPE] = TypeRequest::GET_REQUEST;
+    db_protocol[HEADER_JSON_TYPEDATA] = TypeData::TIMESERIES_REQUEST;
+    db_protocol[HEADER_JSON_NAME_STOCK] = request[HEADER_JSON_NAME_STOCK].asString();
+    db_protocol[HEADER_JSON_LEN_LAGS] = WINDOW_SIZE;
+    return db_protocol;
+}
+
 
 // class ModelController
 ModelController::ModelController(api::IAPIModelRequest* api_model) 
@@ -99,9 +110,19 @@ ShowPlotController::ShowPlotController(const ptrToDBController db_controller)
 
 Json::Value ShowPlotController::createPlotData(const Json::Value& request) {
     // получает из джейсона название акции
-    Json::Value request_to_db = makeDBProtocolGetTS(request);
+    Json::Value request_to_db = makeDBProtocol(request);
     return db_controller_->DataRequest(request_to_db);
 }
+
+Json::Value ShowPlotController::makeDBProtocol(const Json::Value& request) {
+    Json::Value db_protocol;
+    db_protocol[HEADER_JSON_TYPE] = TypeRequest::GET_REQUEST;
+    db_protocol[HEADER_JSON_TYPEDATA] = TypeData::TIMESERIES_REQUEST;
+    db_protocol[HEADER_JSON_NAME_STOCK] = request[HEADER_JSON_NAME_STOCK].asString();
+    db_protocol[HEADER_JSON_LEN_LAGS] = request[HEADER_JSON_LEN_LAGS].asInt();
+    return db_protocol;
+}
+
 
 // class RegisterController
 RegisterController::RegisterController(const ptrToDBController db_controller)

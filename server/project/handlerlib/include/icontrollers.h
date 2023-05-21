@@ -14,14 +14,15 @@ namespace controllers {
 
 struct TimeSeriesPredicts {
     std::vector<double> matrix_samples;
-    size_t window_size;
+    size_t lenpredict;
 };
 
 class IPredictController {
  public:
    virtual Json::Value makePredict(const Json::Value& request) = 0;
  protected:
-   virtual TimeSeriesPredicts makeTimeSeries(const std::vector<double>& samples_data, size_t window_size) = 0;
+   virtual TimeSeriesPredicts makeTimeSeries(const std::vector<double>& samples_data, size_t lenpredict) = 0;
+   virtual Json::Value makeDBProtocol(const Json::Value& request) = 0;
    virtual std::vector<double> parseDBProtocol(const Json::Value& response) = 0;
 };
 
@@ -33,7 +34,9 @@ class IModelController {
 
 class IShowPlotController {
  public:
-   virtual Json::Value createPlotData(const Json::Value& request) = 0;
+  virtual Json::Value createPlotData(const Json::Value& request) = 0;
+ protected:
+  virtual Json::Value makeDBProtocol(const Json::Value& request) = 0;
 };
 
 

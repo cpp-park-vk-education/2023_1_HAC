@@ -5,9 +5,9 @@
 
 // internal dependencies
 #include "utils_gtest_handlers.h"
+
 #include "http_protocol.h"
 #include "icontrollers.h"
-#include "handler_exception.h"
 #include "handlers.h"
 #include "controllers.h"
 
@@ -19,7 +19,6 @@ const std::string INVALID_HTTP_PLOT = "Invalid HTTP request (plot)";
 const std::string ERROR_MESSAGE = "Error-Message";
 const std::string PREDICT_DATA = "Predict-Data";
 const std::string PLOT_DATA = "Plot-Data";
-const std::string HEADER_JSON_ERROR = "error";
 const std::string HEADER_JSON_NAME_STOCK = "name_stock";
 const std::string HEADER_JSON_LEN_LAGS = "len_lags";
 const std::string HEADER_JSON_LENPREDICT = "lenpredict";

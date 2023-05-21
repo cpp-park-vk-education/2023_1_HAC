@@ -4,7 +4,6 @@
 #include <iostream>
 #include <vector>
 
-
 const size_t WINDOW_SIZE = 8;
 
 const std::string HEADER_JSON_ERROR = "error";

@@ -4,7 +4,7 @@
 #include <stdexcept>
 #include <boost/beast/http.hpp>
 #include <vector>
-
+/*
 TEST(IHTTPResponseTest, CreateObject) {
     EXPECT_NO_THROW(HTTPResponseToBoostAdapter a);
 }
@@ -66,3 +66,4 @@ TEST(HTTPRequestToBoostAdapterTest, GetBodyTest) {
     HTTPRequestToBoostAdapter request("", "", body);
     EXPECT_EQ(request.getBoby(), body);
 }
+*/

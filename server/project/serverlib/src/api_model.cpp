@@ -59,16 +59,18 @@ Json::Value api::APIModelRequest::getData(const controllers::TimeSeriesPredicts&
         if(data_string[i] == '['){
             now_value = "";
         } else {
-            if (data_string[i] == ']'){
+            if (data_string[i] == ' '){
                 parsed_data.push_back(std::stod(now_value));
+                now_value = "";
             } else {
                 now_value += data_string[i]; 
             }
         }
     }
+    parsed_data.push_back(std::stod(now_value));
 
     for (auto i : parsed_data){
-        std::cout << i << " ";
+    //    std::cout << i << " ";
     }
 
     Json::Value json_resp;

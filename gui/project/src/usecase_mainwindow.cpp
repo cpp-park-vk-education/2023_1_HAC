@@ -64,7 +64,7 @@ void UseCaseMainWindow::stockSelectHandler(const std::string& stock_name) {
     stock_data.stock_name = stock_name;
     //stock_data.lag = 7 * 24;
     stock_data.lag = 20;
-    stock_data.window_size = 0;
+    stock_data.window_size = 8;
     main_network_ptr->getPlotData(stock_data);
 }
 void UseCaseMainWindow::predictHandler(const std::string& stock_name) {

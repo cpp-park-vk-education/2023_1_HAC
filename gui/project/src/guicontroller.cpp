@@ -9,9 +9,14 @@
 #include "../include/usecase_mainwindow.h"
 #include "../include/mainwindow_network.h"
 
-#include "../include/usersettingswindow.h"
-#include "../include/usecase_usersettingswindow.h"
-#include "../include/usersettingswindow_network.h"
+#include "../include/settings/usersettingswindow.h"
+#include "../include/settings/usecase_usersettingswindow.h"
+#include "../include/settings/usersettingswindow_network.h"
+
+#include "../include/settings/passwordsettingswindow.h"
+#include "../include/settings/emailsettingswindow.h"
+#include "../include/settings/usecase_passwordsettingswindow.h"
+#include "../include/settings/usecase_emailsettingswindow.h"
 
 #include "../include/registrationwindow.h"
 #include "../include/usecase_registrationwindow.h"
@@ -57,17 +62,50 @@ GUIController::GUIController(QWidget *parent)
     main_network_ptr->setMainHandler(main_handler_ptr);
     main_network_ptr->setMainNetwork(network_ptr);
 
+    // user_settings_window = new UserSettingsWindow(this);
+    // pages->addWidget(user_settings_window);
+    // user_settings_handler_ptr = std::make_shared<UseCaseUserSettingsWindow>();
+    // user_settings_window->setUserSettingsWindowHandler(user_settings_handler_ptr);
+    // user_settings_handler_ptr->setUserSettingsWindow(std::shared_ptr<UserSettingsWindow>(user_settings_window));
+    // user_settings_handler_ptr->setWindowManager(window_manager_ptr);
+    // user_settings_network_ptr = std::make_shared<NetworkUserSettingsWindow>();
+    // user_settings_handler_ptr->setUserSettingsNetwork(user_settings_network_ptr);
+    // user_settings_network_ptr->setUrl(url_);
+    // user_settings_network_ptr->setUserSettingsHandler(user_settings_handler_ptr);
+    // user_settings_network_ptr->setUserSettingsNetwork(network_ptr);
+
+
     user_settings_window = new UserSettingsWindow(this);
-    pages->addWidget(user_settings_window);
+    pages->addWidget(user_settings_window); 
     user_settings_handler_ptr = std::make_shared<UseCaseUserSettingsWindow>();
     user_settings_window->setUserSettingsWindowHandler(user_settings_handler_ptr);
     user_settings_handler_ptr->setUserSettingsWindow(std::shared_ptr<UserSettingsWindow>(user_settings_window));
     user_settings_handler_ptr->setWindowManager(window_manager_ptr);
+    // user_settings_handler_ptr->setUserSettingsNetwork(user_settings_network_ptr);
+    
     user_settings_network_ptr = std::make_shared<NetworkUserSettingsWindow>();
-    user_settings_handler_ptr->setUserSettingsNetwork(user_settings_network_ptr);
+    password_settings_handler_ptr = std::make_shared<UseCasePasswordSettingsWindow>();
+    email_settings_handler_ptr = std::make_shared<UseCaseEmailSettingsWindow>();
+
+    password_settings_window = new PasswordSettingsWindow(this);
+    pages->addWidget(password_settings_window);
+    password_settings_window->setPasswordSettingsWindowHandler(password_settings_handler_ptr);
+    password_settings_handler_ptr->setWindowManager(window_manager_ptr);
+    password_settings_handler_ptr->setPasswordSettingsWindowHandler(std::shared_ptr<PasswordSettingsWindow>(password_settings_window));
+    password_settings_handler_ptr->setUserSettingsNetwork(user_settings_network_ptr);
+
+    email_settings_window = new EmailSettingsWindow(this);
+    pages->addWidget(email_settings_window);
+    email_settings_window->setEmailSettingsWindowHandler(email_settings_handler_ptr);
+    email_settings_handler_ptr->setWindowManager(window_manager_ptr);
+    email_settings_handler_ptr->setEmailSettingsWindow(std::shared_ptr<EmailSettingsWindow>(email_settings_window));
+    email_settings_handler_ptr->setUserSettingsNetwork(user_settings_network_ptr);
+
     user_settings_network_ptr->setUrl(url_);
-    user_settings_network_ptr->setUserSettingsHandler(user_settings_handler_ptr);
+    //user_settings_network_ptr->setUserSettingsHandler(user_settings_handler_ptr);
     user_settings_network_ptr->setUserSettingsNetwork(network_ptr);
+    user_settings_network_ptr->setUserPasswordSettingsHandler(password_settings_handler_ptr);
+    user_settings_network_ptr->setUserEmailSettingsHandler(email_settings_handler_ptr);
 
     reg_window = new RegistrationWindow(this);
     pages->addWidget(reg_window);

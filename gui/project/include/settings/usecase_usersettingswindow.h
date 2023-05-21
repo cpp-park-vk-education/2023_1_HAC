@@ -12,15 +12,18 @@ public:
     void setWindowManager(ptr_to_iwindow_manager wind_manager_ptr) override;
     void setUserSettingsWindow(
             ptr_to_isettings_window user_set_ptr) override;
-    void setUserSettingsNetwork(ptr_to_isettings_network settings_net_ptr)override;
-    ptr_to_isettings_window getUserSettingsWindow() override;
-    void sendError(const Error& error_message) override;
+
+    //void setUserSettingsNetwork(ptr_to_isettings_network settings_net_ptr)override;
+    //ptr_to_isettings_window getUserSettingsWindow() override;
+   // void sendError(const Error& error_message) override;
+    // void ConfirmHandler(const std::string& old_password,
+    //                              const std::string& new_password, const std::string& repeat_password) override;
+
+    void OpenPasswordWindow() override;
+    void OpenEmailWindow() override;
     void passToMain() override;
-    void ConfirmHandler(const std::string& old_password,
-                                 const std::string& new_password, const std::string& repeat_password) override;
+
     std::string getUser() override;
-    // std::string getUrl() override;
-    // void setUrl(const std::string& url) override;
     void setUser(const std::string& user) override;
 
 private:

@@ -1,35 +1,35 @@
-#include "../include/usecase_usersettingswindow.h"
+#include "../../include/settings/usecase_passwordsettingswindow.h"
 
 
-UseCaseUserSettingsWindow::~UseCaseUserSettingsWindow() {
+UseCasePasswordSettingsWindow::~UseCasePasswordSettingsWindow() {
 };
 
-void UseCaseUserSettingsWindow::setWindowManager(ptr_to_iwindow_manager wind_manager_ptr) {
+void UseCasePasswordSettingsWindow::setWindowManager(ptr_to_iwindow_manager wind_manager_ptr) {
     window_manager_ptr = wind_manager_ptr;
 }
 
-void UseCaseUserSettingsWindow::setUserSettingsWindow(ptr_to_isettings_window user_set_ptr) {
+void UseCasePasswordSettingsWindow::setPasswordSettingsWindowHandler(ptr_to_ipasswordsettings_window user_set_ptr) {
     settings_window_ptr = user_set_ptr;
 }
 
-void UseCaseUserSettingsWindow::setUserSettingsNetwork(ptr_to_isettings_network settings_net_ptr) {
+void UseCasePasswordSettingsWindow::setUserSettingsNetwork(ptr_to_isettings_network settings_net_ptr) {
     settings_network_ptr = settings_net_ptr;
 }
 
-ptr_to_isettings_window UseCaseUserSettingsWindow::getUserSettingsWindow() {
+ptr_to_ipasswordsettings_window UseCasePasswordSettingsWindow::getPasswordSettingsWindow() {
     return settings_window_ptr;
 }
 
-void UseCaseUserSettingsWindow::sendError(const Error& error_message) {
+void UseCasePasswordSettingsWindow::sendError(const Error& error_message) {
     settings_window_ptr->createErrorMessage(error_message);
     settings_window_ptr->showErrorMessage();
 }
 
-void UseCaseUserSettingsWindow::passToMain() {
-    window_manager_ptr->openMainWindow();
+void UseCasePasswordSettingsWindow::passToMain() {
+    window_manager_ptr->openUserSettingsWindow();
 }
 
-void UseCaseUserSettingsWindow::ConfirmHandler(const std::string& old_password, 
+void UseCasePasswordSettingsWindow::ConfirmHandler(const std::string& old_password, 
                 const std::string& new_password, const std::string&  repeat_password) {
     if (old_password ==  new_password) {
         std::cout << "bad" << std::endl;
@@ -51,24 +51,14 @@ void UseCaseUserSettingsWindow::ConfirmHandler(const std::string& old_password,
         return;
     }
 
-    if (new_password == "") {
+    if (new_password.empty() || old_password.empty()) {
         std::cout << "bad" << std::endl;
         Error error_message;
-        error_message.type = "BadNewPassword";
+        error_message.type = "BadPassword";
         error_message.message = "Password is null!";
         settings_window_ptr->createErrorMessage(error_message);
         settings_window_ptr->showErrorMessage();
-        return;
-    }
-
-    if (old_password.empty()) {
-        std::cout << "bad" << std::endl;
-        Error error_message;
-        error_message.type = "BadOldPassword";
-        error_message.message = "Password is null!";
-        settings_window_ptr->createErrorMessage(error_message);
-        settings_window_ptr->showErrorMessage();
-        return;
+        return;        
     }
 
     ConfirmEdit user;
@@ -79,22 +69,13 @@ void UseCaseUserSettingsWindow::ConfirmHandler(const std::string& old_password,
     } 
 
     user.user_name = user_;
-    settings_network_ptr->getUserSettings(user);
+    settings_network_ptr->getUserPasswordSettings(user);
 }
 
-std::string UseCaseUserSettingsWindow::getUser() {
+std::string UseCasePasswordSettingsWindow::getUser() {
     return user_;
 }
 
-// std::string UseCaseUserSettingsWindow::getUrl() {
-//     return url_;
-// }
-
-// void UseCaseUserSettingsWindow::setUrl(const std::string& url) {
-//     url_ = url;
-// }
-
-
-void UseCaseUserSettingsWindow::setUser(const std::string& user) {
+void UseCasePasswordSettingsWindow::setUser(const std::string& user) {
     user_ = user;
 }

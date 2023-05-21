@@ -1,4 +1,5 @@
 #include "listener.h"
+#include "logger.h"
 #include <iostream>
 
 
@@ -10,46 +11,58 @@ Listener::Listener(
         , acceptor_(net::make_strand(ioc)),
         router_adapter_(router_adapter)
     {
+        FileLogger& logger = FileLogger::getInstance();
         beast::error_code ec;
-
-        // Open the acceptor
         acceptor_.open(endpoint.protocol(), ec);
 
-        // Allow address reuse
+        if (ec) {
+            logger.log("Error listener open: " + ec.message());
+            return;
+        }
+
         acceptor_.set_option(net::socket_base::reuse_address(true), ec);
-        // Bind to the server address
+        if (ec){
+            logger.log("Error listener set_option: " + ec.message());
+            return;
+        }
         acceptor_.bind(endpoint, ec);
-        // Start listening for connections
+        if (ec){
+            logger.log("Error listener bind: " + ec.message());
+            return;
+        }
+
+
         acceptor_.listen(
             net::socket_base::max_listen_connections, ec);
+        
+        if (ec) {
+            logger.log("Error listener listen: " + ec.message());
+            return;
+        }
     }
 
-    // Start accepting incoming connections
-    void
-    Listener::run()
+    void Listener::run()
     {
-        do_accept();
+        doAccept();
     }
 
-    void
-    Listener::do_accept()
+    void Listener::doAccept()
     {
-        // The new connection gets its own strand
         acceptor_.async_accept( 
             net::make_strand(ioc_),
             beast::bind_front_handler(
-                &Listener::on_accept,
+                &Listener::onAccept,
                 shared_from_this()));
     }
 
-    void
-    Listener::on_accept(beast::error_code ec, tcp::socket socket)
+    void Listener::onAccept(beast::error_code ec, tcp::socket socket)
     {
-
-            // Create the session and run it
+        if (ec){
+            // Write to log
+            return;
+        }
             std::make_shared<Session>(
                 std::move(socket), router_adapter_)->run();
 
-        // Accept another connection
-        do_accept();
+        doAccept();
     }

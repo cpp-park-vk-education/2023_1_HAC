@@ -1,31 +1,41 @@
-// #include <iostream>
 #include "server.h"
-// #include "listener.h"
-// // #include <boost/config.hpp>
-
+#include "logger.h"
 
 Config Server::parseConfigFhomFile(const std::string& path_to_config_file) {
+    std::ifstream config_stream (path_to_config_file);
+    if (!config_stream) {
+        throw market_mentor::InvalidServerConfig("Wrong config path");
+    }
+    std::string address, port, threads;
+    config_stream >> address >> port >> threads;
+    if (!address.length() || !port.length() || !threads.length()) {
+        throw market_mentor::InvalidServerConfig("Invalid config data");
+    }  
     Config config;
-    config.address = "0.0.0.0";
-    config.port = 8080;
-    config.threads = 1;
+    try {
+        config.address = address;
+        config.port = stoi(port);
+        config.threads = stoi(threads);
+    } 
+    catch(std::invalid_argument){
+        throw market_mentor::InvalidServerConfig("Invalid config data");
+    } 
     return config;
 }
 
 Server::Server(const std::string& path_to_config_file) {
-    std::unique_ptr<api::IAPIModelRequest> api_model 
-                  = std::make_unique<api::APIModelRequest>();
-            
-    controllers::TimeSeriesPredicts samples;
-    //api_model->getData(samples);
     
-
+    std::unique_ptr<api::IAPIModelRequest> api_model 
+                   = std::make_unique<api::APIModelRequest>();
     std::unique_ptr<dbcontroller::IDataBaseController> database_controller 
                    = std::make_unique<dbcontroller::DataBaseController>();
 
-    if(!database_controller->ConnectToDatabase()) {
-        std::cerr << "DB is not open" << std::endl;
-        exit(1);
+    if (!api_model || !database_controller) {
+        throw market_mentor::CreatingNullptr("Creating server error");
+    }
+
+    if (!database_controller->ConnectToDatabase()) {
+        throw market_mentor::ConnectDatabaseException();
     }
                 
     std::unique_ptr<controllers::IShowPlotController> show_plot_controller 
@@ -39,32 +49,40 @@ Server::Server(const std::string& path_to_config_file) {
     std::unique_ptr<controllers::IPredictController> predict_controller 
                    = std::make_unique<controllers::PredictController>(database_controller.get(), model_controller.get());
 
+    if (!show_plot_controller || !register_contoller || !aurhorize_controller || !model_controller || !predict_controller) {
+        throw market_mentor::CreatingNullptr("Creating server error");
+    }
+
     prtToIHandler predict_handler = std::make_unique<handlers::PredictHandler>(predict_controller.get());
     prtToIHandler register_handler = std::make_unique<handlers::RegisterHandler>(register_contoller.get());
     prtToIHandler authorize_handler = std::make_unique<handlers::AuthorizeHandler>(aurhorize_controller.get());
     prtToIHandler show_plot_handler = std::make_unique<handlers::ShowPlotHandler>(show_plot_controller.get());
     
+    if (!predict_handler || !register_handler || !authorize_handler || !show_plot_handler) {
+        throw market_mentor::CreatingNullptr("Creating server error");
+    }
 
-    // Переделать с чтением из конфига
-    handlers_.insert(std::pair<std::string, handlers::IHandler*>("POST:AUTHORIZATION", authorize_handler.get()));
-    handlers_.insert(std::pair<std::string, handlers::IHandler*>("POST:REGISTRATION", register_handler.get()));
-    handlers_.insert(std::pair<std::string, handlers::IHandler*>("GET:PREDICT", predict_handler.get()));
-    handlers_.insert(std::pair<std::string, handlers::IHandler*>("GET:PLOT", show_plot_handler.get()));
+    setHandlers("POST:AUTHORIZATION", authorize_handler.get());
+    setHandlers("POST:REGISTRATION",  register_handler.get());
+    setHandlers("GET:PREDICT",  predict_handler.get());
+    setHandlers("GET:PLOT",  show_plot_handler.get());
 
     prtToIHandler global_router = std::make_unique<handlers::Router>(handlers_);
 
     std::unique_ptr<IRouterAdapter> router_adapter = std::make_unique<RouterAdapter>(global_router.get());
 
-
-    config_ = Server::parseConfigFhomFile(path_to_config_file);
+    if (!global_router || !router_adapter){
+        throw market_mentor::CreatingNullptr("Creating server error");
+    }
+    FileLogger& logger = FileLogger::getInstance();   
+    config_ = Server::parseConfigFhomFile(path_to_config_file); 
     net::io_context ioc{config_.threads};
 
-    // Create and launch a listening port
     std::make_shared<Listener>(
         ioc,
         tcp::endpoint{net::ip::make_address(config_.address), config_.port},router_adapter.get())->run();
 
-    // Run the I/O service on the requested number of threads
+    logger.log("Server started with params: ip " + config_.address + " port " + std::to_string(config_.port) + " threads " + std::to_string(config_.threads));
     std::vector<std::thread> v;
     v.reserve(config_.threads - 1);
     for(auto i = config_.threads - 1; i > 0; --i)
@@ -74,11 +92,8 @@ Server::Server(const std::string& path_to_config_file) {
             ioc.run();
         });
     ioc.run();
-
 };
-void Server::setHandlers(std::map<std::string, handlers::IHandler*> &handlers, 
-                        const std::string& header, handlers::IHandler* hendler) {
-    //handlers.insert(std::make_pair(header, header));
+void Server::setHandlers(const std::string& header, handlers::IHandler* hendler) {
+    handlers_.insert(std::pair<std::string, handlers::IHandler*>(header, hendler));
 };
-//Server::Config parseConfigFhomFile(const std::string& path_to_config_file){};
 handlers::ProtocolAPI Server::parseAPIConfigFhomFile(const std::string& path_to_API_config){};

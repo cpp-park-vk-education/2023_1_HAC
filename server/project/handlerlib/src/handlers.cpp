@@ -16,6 +16,9 @@ const std::string PLOT_DATA = "Plot-Data";
 const std::string REGISTRATION_STATUS = "Registration-Status";
 const std::string AUTHORIZATION_STATUS = "Authorization-Status";
 
+const std::string HTTP_URL_NAME = "name";
+const std::string HTTP_URL_WINDOW_SIZE = "window_size";
+const std::string HTTP_URL_LAG = "lag";
 
 const std::string METHOD = "method";
 const std::string ACTIONS = "actions";
@@ -32,8 +35,6 @@ const std::string HEADER_JSON_PASSWORD = "password";
 const std::string HEADER_JSON_EMAIL = "email";
 const std::string HEADER_JSON_LOGIN = "login";
 
-
-
 const int OK = 200;
 const int BAD_REQUEST = 400;
 const int NOT_FOUND = 404;
@@ -44,14 +45,17 @@ const char SEPARATOR_URL = '&';
 const char SEPARATOR_BODY = '/';
 const std::string SEPARATOR_TOKEN_URL = "=";
 
-const uint SIZE_URL_GET_PREDICT_PLOT = 4;
+const uint SIZE_URL_GET_PREDICT = 2;
+const uint SIZE_URL_GET_PLOT = 2;
 const uint SIZE_BODY_POST_REGISTRATION = 3;
 const uint SIZE_BODY_POST_AUTHORIZATION = 2;
 const uint SIZE_BODY_POST_USER_SETTINGS = 4;
 
+const uint URL_SPECIAL_SYMBOL = 2;
+
 const uint NAME_STOCK_ORDER = 0;
-const uint LEN_LAGS_ORDER = 2;
-const uint WINDOW_SIZE_ORDER = 3;
+const uint LEN_LAGS_ORDER = 1;
+const uint WINDOW_SIZE_ORDER = 1;
 
 const uint LOGIN_ORDER = 0;
 const uint PASSWORD_ORDER = 1;
@@ -70,14 +74,18 @@ std::vector<std::string> splitMessage(const std::string& message, char separator
     return tokens;
 }
 
-void cutUrlTokens(std::vector<std::string>& tokens, const std::string& error_mess) {
+std::vector<std::string> cutUrlTokens(std::vector<std::string>& tokens, const std::string& error_mess) {
+    std::vector<std::string> names_tokens;
     for (size_t i = 0; i < tokens.size(); ++i) {
         size_t equally_lit = tokens[i].find(SEPARATOR_TOKEN_URL);
         if (equally_lit == std::string::npos) {
             throw market_mentor::InvalidHttpRequestError(error_mess);
         }
+        names_tokens.push_back(tokens[i].substr(0, equally_lit));
         tokens[i] = tokens[i].substr(equally_lit + 1);
     }
+    names_tokens[NAME_STOCK_ORDER] = names_tokens[NAME_STOCK_ORDER].substr(URL_SPECIAL_SYMBOL);
+    return names_tokens;
 }
 
 // class PredictHandler
@@ -104,14 +112,19 @@ void PredictHandler::handle(IHTTPRequest_ request, IHTTPResponse_ response) {
 }
 
 Json::Value PredictHandler::parseInputHttpRequest(const std::string& message) {
-    // /?name=apple&graph=predict&lag=8&window_size=8
+    // /?name=apple&window_size=8
     Json::Value result;
     auto tokens = splitMessage(message, SEPARATOR_URL);
 
-    if (tokens.size() != SIZE_URL_GET_PREDICT_PLOT) {
+    if (tokens.size() != SIZE_URL_GET_PREDICT) {
         throw market_mentor::InvalidHttpRequestError(HANDLERS_PREDICT);
     }
-    cutUrlTokens(tokens, HANDLERS_PREDICT);
+    auto names_tokens = cutUrlTokens(tokens, HANDLERS_PREDICT);
+
+    if (names_tokens[NAME_STOCK_ORDER] != HTTP_URL_NAME || 
+        names_tokens[WINDOW_SIZE_ORDER] != HTTP_URL_WINDOW_SIZE) {
+        throw market_mentor::InvalidHttpRequestError(HANDLERS_PREDICT);
+    }
     
     result[HEADER_JSON_NAME_STOCK] = tokens[NAME_STOCK_ORDER];
     result[HEADER_JSON_LEN_LAGS] = std::stoi(tokens[LEN_LAGS_ORDER]);
@@ -160,15 +173,20 @@ void ShowPlotHandler::handle(IHTTPRequest_ request, IHTTPResponse_ response) {
 }
 
 Json::Value ShowPlotHandler::parseInputHttpRequest(const std::string& message) {
-    // /?name=apple&graph=predict&lag=8&window_size=8
+    // /?name=apple&lag=8
     Json::Value result;
     std::vector<std::string> tokens = splitMessage(message, SEPARATOR_URL);
 
-    if (tokens.size() != SIZE_URL_GET_PREDICT_PLOT) {
+    if (tokens.size() != SIZE_URL_GET_PLOT) {
         throw market_mentor::InvalidHttpRequestError(HANDLERS_PLOT);
     }
-    cutUrlTokens(tokens, HANDLERS_PLOT);
-    
+    auto names_tokens = cutUrlTokens(tokens, HANDLERS_PLOT);
+
+    if (names_tokens[NAME_STOCK_ORDER] != HTTP_URL_NAME || 
+        names_tokens[LEN_LAGS_ORDER] != HTTP_URL_LAG) {
+        throw market_mentor::InvalidHttpRequestError(HANDLERS_PLOT);
+    }
+
     result[HEADER_JSON_NAME_STOCK] = tokens[NAME_STOCK_ORDER];
     result[HEADER_JSON_LEN_LAGS] = std::stoi(tokens[LEN_LAGS_ORDER]);
     

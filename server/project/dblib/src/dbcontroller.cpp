@@ -171,6 +171,8 @@ Json::Value DataBaseController::ClientRequestPost(const Json::Value& data) {
     client_data->email = data["email"].asString();
     client_data->session_id = std::stoi(data["session_id"].asString());
     client_data->token = data["token"].asString();
+    client_data->token_start_date = data["token_start_data"].asString();
+    client_data->token_finish_date = data["token_finish_data"].asString();
 
     response["status"] = clien_rep_->Insert(client_data);
     return response;
@@ -198,6 +200,9 @@ Json::Value DataBaseController::ClientRequestGet(const TypeData& request_type, c
         response["email"] = data->email;    
         response["session_id"] = data->session_id;
         response["token"] = data->token;
+        response["token_start_date"] = data->token_start_date;
+        response["token_finish_date"] = data->token_finish_date;
+
     }
 
     return response;
@@ -220,6 +225,8 @@ Json::Value DataBaseController::ClientRequestUpdate(const Json::Value& data) {
         type = UPDATE_SESSION;  
         client_data->token = data["token"].asString();
         client_data->session_id = std::stoi(data["session_id"].asString());
+        client_data->token_start_date = data["token_start_date"].asString();
+        client_data->token_finish_date = data["token_finish_date"].asString();
     }
 
     response["status"] = clien_rep_->Update(type, client_data->login, client_data);

@@ -22,9 +22,9 @@ bool ClientRepository::Insert(const std::shared_ptr<ClientData>& data) {
         return false;
     }
 
-    std::string query = "INSERT into client(login,password, email, session_id, token) VALUES ('" + 
-        data->login + "', '" + data->hash + "', '" + data->email +", " + std::to_string(data->session_id) + "' " + 
-                    data->token + "')";
+    std::string query = "INSERT into client(login,password, email, session_id, token, token_date) VALUES ('" + 
+        data->login + "', '" + data->hash + "', '" + data->email +"', '" + std::to_string(data->session_id) + "', '" + 
+                    data->token + "', '" + data->token_start_date + "', '" + data->token_finish_date + "')";
 
     bool result = database_->SendQuery(query);
     if (result) {
@@ -40,14 +40,18 @@ std::shared_ptr<ClientData> ClientRepository::DatabaseResponseParse(const Json::
     const int kEmailId = 2;
     const int kPasswordId = 3;
     const int kSessionId = 7;
-    const int kTokenID = 8;
+    const int kTokenId = 8;
+    const int kTokenStartDateId = 9;
+    const int kTokenFinishDateId = 9;
 
     auto result = std::make_shared<ClientData>();
     result->login = db_response[kLoginId].asString();
     result->email = db_response[kEmailId].asString();
     result->hash = db_response[kPasswordId].asString();
     result->session_id = std::stoi(db_response[kSessionId].asString());
-    result->token = db_response[kTokenID].asString();
+    result->token = db_response[kTokenId].asString();
+    result->token_start_date = db_response[kTokenStartDateId].asString();
+    result->token_finish_date = db_response[kTokenFinishDateId].asString();
 
     return result;
 }
@@ -131,11 +135,12 @@ bool ClientRepository::Update(const ClientUpdateType& type, const std::string& k
 
     case UPDATE_SESSION:
         if (data->token == "NULL") {
-            query = "UPDATE client SET session_id = NULL, token = NULL WHERE login = '" + key + "'";              
+            query = "UPDATE client SET session_id = NULL, token = NULL, token_date = NULL WHERE login = '" + key + "'";              
         }
         else {
-            query = "UPDATE client SET session_id = '" + std::to_string(data->session_id) + 
-                    + "', token = '" + data->token + "' WHERE login = '" + key + "'";                     
+            query = "UPDATE client SET session_id = '" + std::to_string(data->session_id) + "', token = '" + 
+                        data->token + "', token_start_date = '" + data->token_start_date + "', token_finish_date = '"  + 
+                        data->token_finish_date + "' WHERE login = '" + key + "'";                     
         }
 
         break;
@@ -169,6 +174,9 @@ void ClientRepository::CacheUpdate(const ClientUpdateType& type, const std::stri
     case UPDATE_SESSION:
         cache_data->session_id = data->session_id;
         cache_data->token = data->token;
+        cache_data->token_start_date = data->token_start_date;
+        cache_data->token_finish_date = data->token_finish_date;
+
         break;
 
     default:

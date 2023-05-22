@@ -60,8 +60,8 @@ TEST_F(RepositoryTest, ClientGetCase){
     row[1] = client->login;
     row[2] = client->email;
     row[3] = client->hash;
-    row[4] = "1";
-    row[5] = "token";
+    row[7] = "1";
+    row[8] = "token";
 
     EXPECT_CALL(*db, IsOpen()).WillOnce(Return(true));
     EXPECT_CALL(*db, GetRow(_)).WillOnce(Return(row)); 

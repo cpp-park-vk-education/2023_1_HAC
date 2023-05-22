@@ -5,7 +5,7 @@ INCLUDE_DIRECTORIES(include ${DB_INCLUDE_DIRS} ${GTEST_INCLUDE_DIRS})
 
 ADD_EXECUTABLE(
         tests_db
-       # src/dbcontroller_test.cpp
+        src/dbcontroller_test.cpp
         src/repositories_tests.cpp
         src/repositorycache_tests.cpp
 )

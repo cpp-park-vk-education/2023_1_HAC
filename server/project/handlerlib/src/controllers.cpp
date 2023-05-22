@@ -4,9 +4,14 @@
 #include <iostream>
 #include <vector>
 
-
 const size_t WINDOW_SIZE = 8;
 
+const bool SERVER_ERROR = true;
+const bool NOT_SERVER_ERROR = false;
+
+const std::string TIME_SERIES = "timeseries";
+
+const std::string HEADER_JSON_DB_STATUS_OPEN = "DatabaseIsOpen";
 const std::string HEADER_JSON_ERROR = "error";
 const std::string HEADER_JSON_TYPE = "Type";
 const std::string HEADER_JSON_TYPEDATA = "TypeData";
@@ -14,7 +19,9 @@ const std::string HEADER_JSON_NAME_STOCK = "name_stock";
 const std::string HEADER_JSON_LEN_LAGS = "len_lags";
 const std::string HEADER_JSON_LENPREDICT = "lenpredict";
 const std::string HEADER_JSON_DATA = "data";
+
 const std::string HEADER_JSON_STATUS = "status";
+const std::string HEADER_JSON_SERVER_ERROR = "server_error";
 
 const std::string HEADER_JSON_PASSWORD = "password";
 const std::string HEADER_JSON_EMAIL = "email";
@@ -23,9 +30,10 @@ const std::string HEADER_JSON_DATE = "date";
 
 namespace controllers {
 
-Json::Value makeJsonError(const std::string& error_mes) {
+Json::Value makeJsonError(const std::string& error_mes, bool server_error) {
   Json::Value response;
   response[HEADER_JSON_STATUS] = false;
+  response[HEADER_JSON_SERVER_ERROR] = server_error;
   response[HEADER_JSON_ERROR] = error_mes;
   return response;
 }
@@ -57,20 +65,28 @@ Json::Value PredictController::makePredict(const Json::Value& request) {
         auto time_series = makeTimeSeries(timeseries_vector, std::stoi(request[HEADER_JSON_LENPREDICT].asString()));
 
         return model_controller_->callModelApi(time_series);
-
+    } catch (market_mentor::ErrorInGetDataFromDBInternal &e) {
+        return makeJsonError(e.what(), SERVER_ERROR);
+    } catch (market_mentor::ErrorInGetDataFromDBNotFound &e) {
+        return makeJsonError(e.what(), NOT_SERVER_ERROR);
     } catch (market_mentor::MarketMentorException &e) {
-        return makeJsonError(e.what());
+        return makeJsonError(e.what(), SERVER_ERROR);
     } catch (std::exception &e) {
-        return makeJsonError(e.what());
+        return makeJsonError(e.what(), SERVER_ERROR);
     }
 }
 
 std::vector<double> PredictController::parseDBProtocol(const Json::Value& response) {
-    if (!response[HEADER_JSON_STATUS].asBool()) {
-        throw market_mentor::ErrorInGetDataFromDB("timeseries");
+    if (!response[HEADER_JSON_STATUS].asBool() && !response[HEADER_JSON_DB_STATUS_OPEN].asBool()) {
+        throw market_mentor::ErrorInGetDataFromDBInternal(TIME_SERIES);
     }
-    if (response[HEADER_JSON_DATA].size() == 0) {
-        throw market_mentor::ErrorInGetDataFromDB("timeseries");
+
+    if (!response[HEADER_JSON_STATUS].asBool() && response[HEADER_JSON_DB_STATUS_OPEN].asBool()) {
+        throw market_mentor::ErrorInGetDataFromDBNotFound(TIME_SERIES);
+    }
+
+    if (response[HEADER_JSON_DATA].size() != WINDOW_SIZE) {
+        throw market_mentor::ErrorInGetDataFromDBInternal(TIME_SERIES);
     }
     std::vector<double> timeseries_vector;
     for (int i = 0; i < response[HEADER_JSON_DATA].size(); ++i) {

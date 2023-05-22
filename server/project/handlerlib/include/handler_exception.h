@@ -32,10 +32,18 @@ class InvalidJsonFormatError : public MarketMentorException {
 };
 
 
-class ErrorInGetDataFromDB : public MarketMentorException {
+class ErrorInGetDataFromDBInternal : public MarketMentorException {
  public:
-    explicit ErrorInGetDataFromDB(const std::string& message) :
-        MarketMentorException("Get false status, when try get " + message + ", time: ") {}
+    explicit ErrorInGetDataFromDBInternal(const std::string& message) :
+        MarketMentorException("Get false status from DB, when try get " + message + 
+        ". Problem with DB.") {}
+};
+
+class ErrorInGetDataFromDBNotFound : public MarketMentorException {
+ public:
+    explicit ErrorInGetDataFromDBNotFound(const std::string& message) :
+        MarketMentorException("Get false status from DB, when try get " + message + 
+        ". Not found data request.") {}
 };
 
 

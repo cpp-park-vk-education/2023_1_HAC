@@ -23,7 +23,8 @@ const std::string HTTP_URL_LAG = "lag";
 const std::string METHOD = "method";
 const std::string ACTIONS = "actions";
 
-
+const std::string HEADER_JSON_DB_STATUS_OPEN = "DatabaseIsOpen";
+const std::string HEADER_JSON_SERVER_ERROR = "server_error";
 const std::string HEADER_JSON_ERROR = "error";
 const std::string HEADER_JSON_NAME_STOCK = "name_stock";
 const std::string HEADER_JSON_LEN_LAGS = "len_lags";
@@ -134,7 +135,11 @@ Json::Value PredictHandler::parseInputHttpRequest(const std::string& message) {
 
 void PredictHandler::makeResponse(IHTTPResponse_ response, const Json::Value& response_json) {
     if (!response_json[HEADER_JSON_STATUS].asBool()) {
-        response->setStatus(INTERNAL_SERVER_ERROR);
+        if (response_json[HEADER_JSON_SERVER_ERROR].asBool()) {
+            response->setStatus(INTERNAL_SERVER_ERROR);
+        } else {
+            response->setStatus(NOT_FOUND);
+        }
         response->setHeader(ERROR_MESSAGE, ERROR_MESSAGE);
         response->setBody(response_json[HEADER_JSON_ERROR].asString());
         return;
@@ -194,7 +199,11 @@ Json::Value ShowPlotHandler::parseInputHttpRequest(const std::string& message) {
 
 void ShowPlotHandler::makeResponse(IHTTPResponse_ response, const Json::Value& response_json) {
     if (!response_json[HEADER_JSON_STATUS].asBool()) {
-        response->setStatus(INTERNAL_SERVER_ERROR);
+        if (response_json[HEADER_JSON_DB_STATUS_OPEN].asBool()) {
+            response->setStatus(NOT_FOUND);
+        } else {
+            response->setStatus(INTERNAL_SERVER_ERROR);
+        }
         response->setHeader(ERROR_MESSAGE, ERROR_MESSAGE);
         response->setBody(response_json[HEADER_JSON_ERROR].asString());
         return;

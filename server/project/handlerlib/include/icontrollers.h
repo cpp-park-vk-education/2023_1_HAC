@@ -13,8 +13,13 @@ namespace controllers {
  
 
 struct TimeSeriesPredicts {
+public:
     std::vector<double> matrix_samples;
     size_t lenpredict;
+
+    bool operator==(const TimeSeriesPredicts& other) const {
+        return matrix_samples == other.matrix_samples && lenpredict == other.lenpredict;
+    }
 };
 
 class IPredictController {

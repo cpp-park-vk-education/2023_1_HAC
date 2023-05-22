@@ -17,9 +17,12 @@ enum TypeRequest {
 enum TypeData {
     AUTHORIZATION,
     REGISTRATION,
-    CHANGE_USER_SETTINGS,
+    CHANGE_USER_EMAIL_SETTINGS,
+    CHANGE_USER_SESSION,
+    CHANGE_USER_PASSWORD_SETTINGS,
     TIMESERIES_REQUEST,
-    STOCKS_REQUEST
+    STOCKS_REQUEST, 
+    SESSION_REQUEST
 };
 
 namespace dbcontroller {
@@ -37,7 +40,7 @@ namespace dbcontroller {
         virtual Json::Value StocksGet() = 0;
         // Client
         virtual Json::Value ClientRequestPost(const Json::Value& data) = 0;
-        virtual Json::Value ClientRequestGet(const std::string& key) = 0;
+        virtual Json::Value ClientRequestGet(const TypeData& request_type, const std::string& key) = 0;
         virtual Json::Value ClientRequestUpdate(const Json::Value& data) = 0;
     };
 
@@ -45,7 +48,7 @@ namespace dbcontroller {
     class DataBaseController: public IDataBaseController {
     public:
         DataBaseController();
-        DataBaseController(const std::shared_ptr<IClientRepository>& client_rep, 
+        DataBaseController(const std::shared_ptr<IDataBase>& db, const std::shared_ptr<IClientRepository>& client_rep, 
             const std::shared_ptr<ITimeSeriesRepository>& timeseries_rep, const std::shared_ptr<ISubscriptionRepository>& subscription_rep);
         bool ConnectToDatabase() override;
         void SetDatabaseConfig(const std::string&  addr, const std::string&  port,
@@ -65,8 +68,9 @@ namespace dbcontroller {
         
         // Client
         Json::Value ClientRequestPost(const Json::Value& data) override;
-        Json::Value ClientRequestGet(const std::string& key) override;
+        Json::Value ClientRequestGet(const TypeData& request_type, const std::string& key) override;
         Json::Value ClientRequestUpdate(const Json::Value& data) override;
+        Json::Value SessionRequestGet(const std::string& key);
 
         std::string host_addr_ = "25.21.238.202";
         std::string port_ = "5433";

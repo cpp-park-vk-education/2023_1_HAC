@@ -8,9 +8,9 @@ DataBaseController::DataBaseController(): database_ (std::make_shared<PostgresSe
                                     db_name_, user_, password_)) {
 }
 
-DataBaseController::DataBaseController(const std::shared_ptr<IClientRepository>& client_rep, 
+DataBaseController::DataBaseController(const std::shared_ptr<IDataBase>& db, const std::shared_ptr<IClientRepository>& client_rep, 
         const std::shared_ptr<ITimeSeriesRepository>& timeseries_rep, const std::shared_ptr<ISubscriptionRepository>& subscription_rep): 
-        clien_rep_(client_rep), timeseries_rep_(timeseries_rep), subscription_rep_(subscription_rep), database_(nullptr) {
+        database_(db), clien_rep_(client_rep), timeseries_rep_(timeseries_rep), subscription_rep_(subscription_rep) {
 }
 
 bool DataBaseController::ConnectToDatabase() {
@@ -36,8 +36,7 @@ void DataBaseController::SetDatabaseConfig(const std::string&  addr, const std::
 
 
 Json::Value DataBaseController::DataRequest(const Json::Value& request) {
-    Json::Value response;
-    
+    Json::Value response; 
     if (!database_.get()) {
         response["DatabaseIsOpen"] = false;
         response["status"] = false;
@@ -72,14 +71,23 @@ void DataBaseController::GetRequestRouter(const Json::Value& request, Json::Valu
     // Получить список акций
     if (request["TypeData"] == STOCKS_REQUEST) {
         response = StocksGet();
-    }            
+    }
+
+    // Получить пользователя по токену
+    if (request["TypeData"] == SESSION_REQUEST) {
+        std::string key = response["token"].asString();
+        TypeData type = SESSION_REQUEST;
+        response = ClientRequestGet(type, key);
+    }           
 }
 
 
 void DataBaseController::PostRequestRouter(const Json::Value& request, Json::Value& response) {
     // Получить данные пользователя
     if (request["TypeData"] == AUTHORIZATION) {
-        response = ClientRequestGet(request["login"].asString());
+        std::string key = response["token"].asString();
+        TypeData type = AUTHORIZATION;
+        response = ClientRequestGet(type, request["login"].asString());
     }
 
     // Добавить пользователя
@@ -93,7 +101,8 @@ void DataBaseController::PostRequestRouter(const Json::Value& request, Json::Val
     }       
     
     // Обновить пользователя
-    if (request["TypeData"] == CHANGE_USER_SETTINGS) {
+    if (request["TypeData"] == CHANGE_USER_EMAIL_SETTINGS || 
+                request["TypeData"] == CHANGE_USER_PASSWORD_SETTINGS || request["TypeData"] == CHANGE_USER_SESSION) {
         response = ClientRequestUpdate(request); 
     }    
 }
@@ -160,15 +169,25 @@ Json::Value DataBaseController::ClientRequestPost(const Json::Value& data) {
     client_data->login = data["login"].asString();
     client_data->hash = data["password"].asString();
     client_data->email = data["email"].asString();
+    client_data->session_id = std::stoi(data["session_id"].asString());
+    client_data->token = data["token"].asString();
 
     response["status"] = clien_rep_->Insert(client_data);
     return response;
 }
 
 
-Json::Value DataBaseController::ClientRequestGet(const std::string& key) {
+Json::Value DataBaseController::ClientRequestGet(const TypeData& request_type, const std::string& key) {
     Json::Value response;
-    auto data = clien_rep_->GetByKey(key);
+    ClientGetType type;
+    if (request_type == SESSION_REQUEST) {
+        type = TOKEN_KEY;
+    }
+    else if (request_type == AUTHORIZATION) {
+        type = LOGIN_KEY;
+    }
+
+    auto data = clien_rep_->GetByKey(type, key);
     if (data == nullptr) {
         response["status"] = false;
     }
@@ -176,27 +195,33 @@ Json::Value DataBaseController::ClientRequestGet(const std::string& key) {
         response["status"] = true;
         response["login"] = data->login;
         response["password"] = data->hash;                
-        response["email"] = data->email;                
+        response["email"] = data->email;    
+        response["session_id"] = data->session_id;
+        response["token"] = data->token;
     }
 
     return response;
 }
 
-
 Json::Value DataBaseController::ClientRequestUpdate(const Json::Value& data) {
-    Json::Value response;   
-
-    auto client_data = std::make_shared<ClientData>();
-    if (data["email"] == Json::Value::null) {
-        client_data->email = "";   
-    }
-    else {
+    Json::Value response;
+    ClientUpdateType type;
+    auto client_data = std::make_shared<ClientData>(); 
+    client_data->login = data["login"].asString();
+    if (data["TypeData"] == CHANGE_USER_EMAIL_SETTINGS) {
+        type = UPDATE_EMAIL;
         client_data->email = data["email"].asString();
     }
+    if (data["TypeData"] == CHANGE_USER_PASSWORD_SETTINGS) {
+        type = UPDATE_PASSWORD;  
+        client_data->hash = data["hash"].asString();
+    }   
+    if (data["TypeData"] == CHANGE_USER_SESSION) {
+        type = UPDATE_SESSION;  
+        client_data->token = data["token"].asString();
+        client_data->session_id = std::stoi(data["session_id"].asString());
+    }
 
-    client_data->login = data["login"].asString();
-    client_data->hash = data["password"].asString();
-
-    response["status"] = clien_rep_->Update(client_data->login, client_data);
+    response["status"] = clien_rep_->Update(type, client_data->login, client_data);
     return response;
 }

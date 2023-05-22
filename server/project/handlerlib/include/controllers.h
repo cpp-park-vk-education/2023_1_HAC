@@ -15,7 +15,7 @@ using ptrToDBController = dbcontroller::IDataBaseController*;
 using ptrToModelController = controllers::IModelController*;
 
 
-Json::Value makeJsonError(const std::string& error_mes);
+Json::Value makeJsonError(const std::string& error_mes, bool server_error);
 
 hash_ hashPassword(const std::string& password);
 

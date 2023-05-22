@@ -25,6 +25,9 @@ const std::string HEADER_JSON_TYPEDATA = "TypeData";
 const std::string HEADER_JSON_LEN_LAGS = "len_lags";
 const std::string HEADER_JSON_DATA = "data";
 const std::string HEADER_JSON_STATUS = "status";
+const std::string HEADER_JSON_ERROR = "error";
+const std::string HEADER_JSON_DB_STATUS_OPEN = "DatabaseIsOpen";
+const std::string HEADER_JSON_SERVER_ERROR = "server_error";
 
 // MOCKS
 class MockDataBaseController : public dbcontroller::IDataBaseController {

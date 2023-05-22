@@ -90,4 +90,58 @@ TEST_F(PredictHandlerTest, CheckCorrectPositiveResponseAndJSONPass) {
     EXPECT_NO_THROW(predict_handler.handle(http_request, http_response));
 }
 
-// тест ели пустой реквест
+
+TEST_F(PredictHandlerTest, CheckCorrectNegativeResponseOnNullUrl) {
+    handlers::PredictHandler predict_handler(ptr_predict_controller);
+    EXPECT_CALL(*http_request, getURL()).WillOnce(Return(""));
+
+    EXPECT_CALL(*http_response, setStatus(BAD_REQUEST)).Times(1);
+    EXPECT_CALL(*http_response, setBody(INVALID_HTTP_PREDICT)).Times(1);
+
+    EXPECT_NO_THROW(predict_handler.handle(http_request, http_response));
+}
+
+TEST_F(PredictHandlerTest, CheckCorrectProcessingNegativeResponseFromControllerServerError) {
+    handlers::PredictHandler predict_handler(ptr_predict_controller);
+
+    EXPECT_CALL(*http_request, getURL()).WillOnce(Return("/?name=test&lenpredict=8"));
+
+
+    Json::Value expect_return;
+    expect_return[HEADER_JSON_STATUS] = false;
+    expect_return[HEADER_JSON_SERVER_ERROR] = true;
+    expect_return[HEADER_JSON_ERROR] = "error";
+
+    Json::Value expected_json_after_parsing;
+    expected_json_after_parsing[HEADER_JSON_LENPREDICT] = 8;
+    expected_json_after_parsing[HEADER_JSON_NAME_STOCK] = "test";
+
+    EXPECT_CALL(*ptr_predict_controller, makePredict(expected_json_after_parsing)).WillOnce(Return(expect_return));
+    EXPECT_CALL(*http_response, setStatus(INTERNAL_SERVER_ERROR)).Times(1);
+    EXPECT_CALL(*http_response, setHeader(ERROR_MESSAGE, ERROR_MESSAGE)).Times(1);
+    EXPECT_CALL(*http_response, setBody("error")).Times(1);
+    
+    EXPECT_NO_THROW(predict_handler.handle(http_request, http_response));
+}
+
+TEST_F(PredictHandlerTest, CheckCorrectProcessingNegativeResponseFromControllerNotFound) {
+    handlers::PredictHandler predict_handler(ptr_predict_controller);
+
+    EXPECT_CALL(*http_request, getURL()).WillOnce(Return("/?name=test&lenpredict=8"));
+
+    Json::Value expect_return;
+    expect_return[HEADER_JSON_STATUS] = false;
+    expect_return[HEADER_JSON_SERVER_ERROR] = false;
+    expect_return[HEADER_JSON_ERROR] = "error";
+
+    Json::Value expected_json_after_parsing;
+    expected_json_after_parsing[HEADER_JSON_LENPREDICT] = 8;
+    expected_json_after_parsing[HEADER_JSON_NAME_STOCK] = "test";
+
+    EXPECT_CALL(*ptr_predict_controller, makePredict(expected_json_after_parsing)).WillOnce(Return(expect_return));
+    EXPECT_CALL(*http_response, setStatus(NOT_FOUND)).Times(1);
+    EXPECT_CALL(*http_response, setHeader(ERROR_MESSAGE, ERROR_MESSAGE)).Times(1);
+    EXPECT_CALL(*http_response, setBody("error")).Times(1);
+    
+    EXPECT_NO_THROW(predict_handler.handle(http_request, http_response));
+}

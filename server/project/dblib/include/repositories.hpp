@@ -10,7 +10,16 @@
 using namespace database;
 using namespace cache;
 
-//enum Status{}
+enum ClientUpdateType {
+    UPDATE_EMAIL,
+    UPDATE_PASSWORD,
+    UPDATE_SESSION
+};
+
+enum ClientGetType {
+    TOKEN_KEY,
+    LOGIN_KEY
+};
 
 namespace repository {
     class IClientRepository {
@@ -18,8 +27,9 @@ namespace repository {
         virtual ~IClientRepository() {};
         virtual bool Insert(const std::shared_ptr<ClientData>& data) = 0;
         virtual bool Delete(const std::string& key) = 0;
-        virtual bool Update(const std::string& key, const std::shared_ptr<ClientData>& data) = 0;
-        virtual std::shared_ptr<ClientData> GetByKey(const std::string& key) = 0;
+        virtual bool Update(const ClientUpdateType& type, const std::string& key, const std::shared_ptr<ClientData>& data) = 0;
+
+        virtual std::shared_ptr<ClientData> GetByKey(const ClientGetType& type, const std::string& key) = 0;
     };
 
 
@@ -48,12 +58,12 @@ namespace repository {
         
         bool Insert(const std::shared_ptr<ClientData>& data) override;
         bool Delete(const std::string& key) override;
-        bool Update(const std::string& key, const std::shared_ptr<ClientData>& data) override;
-        std::shared_ptr<ClientData> GetByKey(const std::string& key) override;
+        bool Update(const ClientUpdateType& type, const std::string& key, const std::shared_ptr<ClientData>& data) override;
+        std::shared_ptr<ClientData> GetByKey(const ClientGetType& type, const std::string& key) override;
 
     private:
         std::shared_ptr<ClientData> DatabaseResponseParse(const Json::Value& db_response);
-
+        void CacheUpdate(const ClientUpdateType& type, const std::string& key, const std::shared_ptr<ClientData>& data);
         std::shared_ptr<IDataBase> database_;
         std::shared_ptr<IRepositoryCache<std::string, ClientData>> client_cache_;
     };

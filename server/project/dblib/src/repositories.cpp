@@ -22,8 +22,9 @@ bool ClientRepository::Insert(const std::shared_ptr<ClientData>& data) {
         return false;
     }
 
-    std::string query = "INSERT into client(login,password, email) VALUES ('" + 
-        data->login + "', '" + data->hash + "', '" + data->email + "')";
+    std::string query = "INSERT into client(login,password, email, session_id, token) VALUES ('" + 
+        data->login + "', '" + data->hash + "', '" + data->email +", " + std::to_string(data->session_id) + "' " + 
+                    data->token + "')";
 
     bool result = database_->SendQuery(query);
     if (result) {
@@ -38,16 +39,21 @@ std::shared_ptr<ClientData> ClientRepository::DatabaseResponseParse(const Json::
     const int kLoginId = 1;
     const int kEmailId = 2;
     const int kPasswordId = 3;
+    const int kSessionId = 7;
+    const int kTokenID = 8;
 
     auto result = std::make_shared<ClientData>();
     result->login = db_response[kLoginId].asString();
     result->email = db_response[kEmailId].asString();
     result->hash = db_response[kPasswordId].asString();
+    result->session_id = std::stoi(db_response[kSessionId].asString());
+    result->token = db_response[kTokenID].asString();
+
     return result;
 }
 
-std::shared_ptr<ClientData> ClientRepository::GetByKey(const std::string& key){
-    if (client_cache_->Has(key)) {
+std::shared_ptr<ClientData> ClientRepository::GetByKey(const ClientGetType& type, const std::string& key){
+    if (client_cache_->Has(key) && type == LOGIN_KEY) {
         std::shared_ptr<ClientData> result = std::make_shared<ClientData>(client_cache_->Get(key));
         return result;
     }
@@ -56,7 +62,20 @@ std::shared_ptr<ClientData> ClientRepository::GetByKey(const std::string& key){
         return nullptr;
     }
 
-    std::string query = "SELECT * from client where login = '" + key + "'";
+    std::string query;
+    switch (type)
+    {
+    case LOGIN_KEY:
+        query = "SELECT * from client where login = '" + key + "'";
+        break;
+    case TOKEN_KEY: 
+        query = "SELECT * from client where token = '" + key + "'";
+        break;
+            
+    default:
+        return nullptr;
+    }
+
     Json::Value buffer;
     try {
         buffer = database_->GetRow(query);
@@ -90,30 +109,75 @@ bool ClientRepository::Delete(const std::string& key) {
 }
 
 
-bool ClientRepository::Update(const std::string& key, const std::shared_ptr<ClientData>& data) {
+bool ClientRepository::Update(const ClientUpdateType& type, const std::string& key, const std::shared_ptr<ClientData>& data) {
     if (!database_->IsOpen()) {
         return false;
     }    
 
-    std::string query;
-    if (data->email != "") {
-        query = "UPDATE client SET password = '" + data->hash + "', email =  '" 
-                + data->email + "' WHERE login = '" + key + "'";        
+    std::shared_ptr<ClientData> cache_data;
+    if (client_cache_->Has(key)) {
+        cache_data = std::make_shared<ClientData>(client_cache_->Get(key));        
     }
-    else {
-        query = "UPDATE client SET password = '" + data->hash + "' WHERE login = '" + key + "'";        
+
+    std::string query;
+    switch (type) {
+    case UPDATE_EMAIL:
+        query = "UPDATE client SET email =  '" + data->email + "' WHERE login = '" + key + "'"; 
+        break;
+
+    case UPDATE_PASSWORD:
+        query = "UPDATE client SET password = '" + data->hash + "' WHERE login = '" + key + "'";    
+        break;
+
+    case UPDATE_SESSION:
+        if (data->token == "NULL") {
+            query = "UPDATE client SET session_id = NULL, token = NULL WHERE login = '" + key + "'";              
+        }
+        else {
+            query = "UPDATE client SET session_id = '" + std::to_string(data->session_id) + 
+                    + "', token = '" + data->token + "' WHERE login = '" + key + "'";                     
+        }
+
+        break;
+
+    default:
+        return false;
     }
 
     bool result = database_->SendQuery(query);
 
-    if (result) {
-        client_cache_->Delete(key);
-        client_cache_->Insert(key, *data);            
+    if (result && client_cache_->Has(key)) {
+        CacheUpdate(type, key, data);
     }    
 
     return result;
 }
 
+void ClientRepository::CacheUpdate(const ClientUpdateType& type, const std::string& key, const std::shared_ptr<ClientData>& data) {
+    std::shared_ptr<ClientData> cache_data;
+    cache_data = std::make_shared<ClientData>(client_cache_->Get(key));  
+
+    switch (type) {
+    case UPDATE_EMAIL:
+        cache_data->email = data->email;
+        break;
+
+    case UPDATE_PASSWORD:
+        cache_data->hash = data->hash;
+        break;
+
+    case UPDATE_SESSION:
+        cache_data->session_id = data->session_id;
+        cache_data->token = data->token;
+        break;
+
+    default:
+        return;
+    }    
+
+    client_cache_->Delete(key);
+    client_cache_->Insert(key, *cache_data);
+}
 
 // TimeSeriesRepository
 
@@ -285,8 +349,8 @@ std::shared_ptr<SubscriptionData> SubscriptionRepository::DatabaseResponseParse(
 
     auto row = std::make_shared<SubscriptionData>();
     row->name = db_response[kNameId].asString();
-    row->cost = db_response[kCostId].asInt();
-    row->count = db_response[kCountId].asInt();
+    row->cost = std::stoi(db_response[kCostId].asString());
+    row->count = std::stoi(db_response[kCountId].asString());
 
     return row;
 }
@@ -332,7 +396,7 @@ std::shared_ptr<AllSubscription> SubscriptionRepository::GetAll() {
 
     Json::Value buffer;
     try {
-        buffer = database_->GetRow(query);
+        buffer = database_->GetData(query);
     }
     catch(ConnectError const &e) {
         return nullptr;
@@ -345,13 +409,16 @@ std::shared_ptr<AllSubscription> SubscriptionRepository::GetAll() {
     }
     
     std::shared_ptr<SubscriptionData> row;
-    std::shared_ptr<AllSubscription> result;
+    std::shared_ptr<AllSubscription> result = std::make_shared<AllSubscription>();
+    Json::Value data;
+
     for (int i = 0; i < buffer.size(); i++) {
         row = DatabaseResponseParse(buffer[i]);
-        result->list[i]["name"] = row->name;
-        result->list[i]["count"] = row->count;
-        result->list[i]["cost"] = row->cost;
+        data[i]["name"] = row->name;
+        data[i]["count"] = row->count;
+        data[i]["cost"] = row->cost;
     };
 
+    result->list = data;
     return result;    
 }

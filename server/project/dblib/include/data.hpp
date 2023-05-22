@@ -6,6 +6,8 @@ struct ClientData {
     std::string login;
     std::string hash;
     std::string email;
+    size_t session_id;
+    std::string token;
 };
 
 struct TimeSeriesData {

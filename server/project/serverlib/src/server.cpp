@@ -1,4 +1,5 @@
 #include "server.h"
+#include "update_data_job.h"
 #include "logger.h"
 
 Config Server::parseConfigFhomFile(const std::string& path_to_config_file) {
@@ -25,6 +26,8 @@ Config Server::parseConfigFhomFile(const std::string& path_to_config_file) {
 
 Server::Server(const std::string& path_to_config_file) {
     
+    std::thread jobThread(printHelloWorldByTimer);
+
     std::unique_ptr<api::IAPIModelRequest> api_model 
                    = std::make_unique<api::APIModelRequest>();
     std::unique_ptr<dbcontroller::IDataBaseController> database_controller 
@@ -34,7 +37,9 @@ Server::Server(const std::string& path_to_config_file) {
         throw market_mentor::CreatingNullptr("Creating server error");
     }
 
-    if (!database_controller->ConnectToDatabase()) {
+    try {
+        database_controller->ConnectToDatabase();
+    } catch(...){
         throw market_mentor::ConnectDatabaseException();
     }
                 
@@ -92,6 +97,7 @@ Server::Server(const std::string& path_to_config_file) {
             ioc.run();
         });
     ioc.run();
+    jobThread.join(); 
 };
 void Server::setHandlers(const std::string& header, handlers::IHandler* hendler) {
     handlers_.insert(std::pair<std::string, handlers::IHandler*>(header, hendler));

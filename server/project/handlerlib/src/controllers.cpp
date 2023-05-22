@@ -58,8 +58,11 @@ Json::Value PredictController::makePredict(const Json::Value& request) {
         return model_controller_->callModelApi(time_series);
 
     } catch (market_mentor::MarketMentorException &e) {
+        std::cerr << "упало из-за внутренней ошибки" << std::endl;
         return makeJsonError(e.what());
     } catch (std::exception &e) {
+        std::cerr << "упало из-за ввнешней ошибки" << std::endl;
+        std::cerr << e.what() << std::endl;
         return makeJsonError(e.what());
     }
 }
@@ -68,7 +71,7 @@ std::vector<double> PredictController::parseDBProtocol(const Json::Value& respon
     if (!response[HEADER_JSON_STATUS].asBool()) {
         throw market_mentor::ErrorInGetDataFromDB("timeseries");
     }
-    if (response[HEADER_JSON_DATA].size() == 0) {
+    if (response[HEADER_JSON_DATA].size() != WINDOW_SIZE) {
         throw market_mentor::ErrorInGetDataFromDB("timeseries");
     }
     std::vector<double> timeseries_vector;

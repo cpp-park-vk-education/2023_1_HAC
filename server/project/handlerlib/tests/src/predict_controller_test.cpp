@@ -35,26 +35,27 @@ TEST_F(PredictControllerTest, CheckCorrectPositiveResponse) {
 
 
     Json::Value data_db_request;
-    data_db_request["0"] = 1;
-    data_db_request["1"] = 2;
-    data_db_request["2"] = 3;
-    data_db_request["3"] = 4;
+    data_db_request[0] = 1;
+    data_db_request[1] = 2;
+    data_db_request[2] = 3;
+    data_db_request[3] = 4;
+    data_db_request[4] = 5;
+    data_db_request[5] = 6;
+    data_db_request[6] = 7;
+    data_db_request[7] = 8;
     Json::Value expected_db_return;
     expected_db_return[HEADER_JSON_STATUS] = true;
     expected_db_return[HEADER_JSON_DATA] = data_db_request;
 
     EXPECT_CALL(*ptr_db_controller, DataRequest(expected_json_to_db)).WillOnce(Return(expected_db_return));
     
-    // EXPECT_CALL(predict_controller, parseDBProtocol(expected_db_return));
-    // ;
-    // EXPECT_CALL(predict_controller, makeTimeSeries(expected_to_makeTS, 2));
     controllers::TimeSeriesPredicts ts;
     ts.lenpredict = 2;
-    ts.matrix_samples = std::vector<double>{1, 2, 3, 4};
+    ts.matrix_samples = std::vector<double>{1, 2, 3, 4, 5, 6, 7, 8};
 
     Json::Value data_predict;
-    data_predict["0"] = 1;
-    data_predict["1"] = 2;
+    data_predict[0] = 1;
+    data_predict[1] = 2;
     Json::Value expected_model_return;
     expected_model_return[HEADER_JSON_STATUS] = true;
     expected_model_return[HEADER_JSON_DATA] = data_predict;

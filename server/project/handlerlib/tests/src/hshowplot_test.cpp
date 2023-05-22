@@ -67,10 +67,10 @@ TEST_F(ShowPlotHandlerTest, CheckCorrectPositiveResponseAndCorrectJSONPass) {
     EXPECT_CALL(*http_request, getURL()).WillOnce(Return("/?name=test&lag=8"));
 
     Json::Value data;
-    data["0"] = 1;
-    data["1"] = 2;
-    data["2"] = 3;
-    data["3"] = 4;
+    data[0] = 1;
+    data[1] = 2;
+    data[2] = 3;
+    data[3] = 4;
     Json::Value expect_return;
     expect_return[HEADER_JSON_STATUS] = true;
     expect_return[HEADER_JSON_DATA] = data;

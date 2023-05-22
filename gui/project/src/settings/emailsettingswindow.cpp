@@ -10,6 +10,7 @@ EmailSettingsWindow::EmailSettingsWindow(QWidget *parent) :
     ui(new Ui::EmailSettingsWindow)
 {
     ui->setupUi(this);
+    ui->lePassword->setEchoMode(QLineEdit::Password);
     btn_enter = ui->btnEnter;
     btn_return = ui->btnReturn;
     connect(btn_enter,SIGNAL(clicked(bool)),this, SLOT(sendSetting()));
@@ -52,7 +53,7 @@ void EmailSettingsWindow::createErrorMessage(const Error& error_message) {
 }
 
 void EmailSettingsWindow::sendSetting() {
-    settings_handler_ptr->ConfirmHandler(getNewEmail());
+    settings_handler_ptr->ConfirmHandler(getNewEmail(), getPassword());
 }
 
 void EmailSettingsWindow::returnToMain() {
@@ -62,4 +63,9 @@ void EmailSettingsWindow::returnToMain() {
 std::string EmailSettingsWindow::getNewEmail() {
     new_email = ui->leNewEmail->text().toStdString();
     return new_email;
+}
+
+std::string EmailSettingsWindow::getPassword() {
+    password = ui->lePassword->text().toStdString();
+    return password;
 }

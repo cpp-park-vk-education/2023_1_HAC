@@ -16,7 +16,7 @@ class IHTTPResponse{
    virtual std::string getURL() = 0;
    virtual int getStatus() = 0;
    virtual std::map<std::string, std::string> getHeaders() = 0;
-   virtual std::string getBoby() = 0;
+   virtual std::string getBody() = 0;
 };
 
 class IHTTPRequest{
@@ -44,7 +44,7 @@ class HTTPResponseToBoostAdapter : public IHTTPResponse{
     std::string getURL() override;
     int getStatus() override;
     std::map<std::string, std::string> getHeaders() override;
-    std::string getBoby() override;
+    std::string getBody() override;
 
  private:
     httpResponse* response_;

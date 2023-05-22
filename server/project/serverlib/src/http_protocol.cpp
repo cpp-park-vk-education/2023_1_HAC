@@ -18,10 +18,26 @@ std::string HTTPResponseToBoostAdapter::getURL(){};
 int HTTPResponseToBoostAdapter::getStatus(){
     return response_->result_int();
 };
-std::map<std::string, std::string> HTTPResponseToBoostAdapter::getHeaders(){};
-std::string HTTPResponseToBoostAdapter::getBoby(){
+
+std::map<std::string, std::string> HTTPResponseToBoostAdapter::getHeaders(){
+    std::map<std::string, std::string> headers;
+    
+    auto responseHeaders = response_->base();
+        
+    for (const auto& header : responseHeaders)
+    {
+        std::string name(header.name_string().data(), header.name_string().size());
+        std::string value(header.value().data(), header.value().size());
+        headers[std::move(name)] = std::move(value);
+    }
+
+    return headers;
+};
+
+std::string HTTPResponseToBoostAdapter::getBody() {
     return response_->body();
 };
+
 
 
 
@@ -44,10 +60,10 @@ std::map<std::string, std::string> HTTPRequestToBoostAdapter::getHeaders(){
     const auto& base = request_->base();
         
     headers["method"] = boost::beast::http::to_string(base.method());
-    for (const auto& headerField : base)
+    for (const auto& header : base)
     {
-        std::string name(headerField.name_string().data(), headerField.name_string().size());
-        std::string value(headerField.value().data(), headerField.value().size());
+        std::string name(header.name_string().data(), header.name_string().size());
+        std::string value(header.value().data(), header.value().size());
         headers[std::move(name)] = std::move(value);
     }
     if (headers.find("Content-Disposition") != headers.end()){

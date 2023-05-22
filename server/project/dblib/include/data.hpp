@@ -8,6 +8,8 @@ struct ClientData {
     std::string email;
     size_t session_id;
     std::string token;
+    std::string token_start_date;
+    std::string token_finish_date;
 };
 
 struct TimeSeriesData {

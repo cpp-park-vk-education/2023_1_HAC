@@ -27,7 +27,7 @@ public:
     MOCK_METHOD(bool, Delete, (const std::string& key),(override));         
     MOCK_METHOD(bool, Update, (const ClientUpdateType& type, const std::string& key, 
                                 const std::shared_ptr<ClientData>& data),(override));         
-    MOCK_METHOD(std::shared_ptr<ClientData>, GetByKey, (const std::string& key),(override));         
+    MOCK_METHOD(std::shared_ptr<ClientData>, GetByKey, (const ClientGetType& type, const std::string& key),(override));         
 };
 
 class TimeSeriesRepositoryMock: public ITimeSeriesRepository {
@@ -49,19 +49,21 @@ public:
 
 class DBControllerTest: public ::testing::Test {
 public:
-    DBControllerTest(): db(new DatabaseMock), test_client_rep(new ClientRepositoryMock), 
-            test_timeseries_rep(new TimeSeriesRepositoryMock), 
-            db_controller(new DataBaseController(db, test_client_rep, test_timeseries_rep, nullptr)) {
+    DBControllerTest(): test_client_rep(new ClientRepositoryMock), test_timeseries_rep(new TimeSeriesRepositoryMock), 
+    test_sub_rep(new SubscriptionRepositoryMock), db(new DatabaseMock),
+            db_controller(new DataBaseController(db, test_client_rep, test_timeseries_rep, test_sub_rep)) {
     }
 
 protected:
-    std::shared_ptr<IDataBaseController> db_controller;
-    std::shared_ptr<DatabaseMock> db;
     std::shared_ptr<ClientRepositoryMock> test_client_rep;
     std::shared_ptr<TimeSeriesRepositoryMock> test_timeseries_rep;
-  //  std::shared_ptr<SubscriptionRepositoryMock> test_sub_rep;
+    std::shared_ptr<SubscriptionRepositoryMock> test_sub_rep; 
+    std::shared_ptr<DatabaseMock> db;
+    std::shared_ptr<IDataBaseController> db_controller;
 
 };
+
+
 
 // Client
 
@@ -92,7 +94,7 @@ TEST_F(DBControllerTest, ClientGet) {
     request["token"] = "token";
 
     EXPECT_CALL(*db, IsOpen()).WillRepeatedly(Return(true)); 
-    EXPECT_CALL(*test_client_rep, GetByKey(_));
+    EXPECT_CALL(*test_client_rep, GetByKey(_,_));
     db_controller->DataRequest(request);
 }
 

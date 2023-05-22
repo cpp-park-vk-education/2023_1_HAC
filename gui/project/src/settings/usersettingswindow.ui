@@ -18,12 +18,12 @@
     <rect>
      <x>10</x>
      <y>10</y>
-     <width>211</width>
-     <height>81</height>
+     <width>151</width>
+     <height>71</height>
     </rect>
    </property>
    <property name="text">
-    <string>Вернуться в главное меню</string>
+    <string>Вернуться назад</string>
    </property>
   </widget>
   <widget class="QWidget" name="layoutWidget">

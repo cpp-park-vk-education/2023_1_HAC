@@ -23,6 +23,7 @@ public:
     void showErrorMessage() override;
     void createErrorMessage(const Error& error_message) override;
     std::string getNewEmail() override;
+    std::string getPassword() override;
 
 public slots:
     void sendSetting();
@@ -33,7 +34,8 @@ private:
     ptr_to_emailsettings_handler settings_handler_ptr;
 
     std::string new_email;
-    
+    std::string password;
+
     QPushButton* btn_enter;
     QPushButton* btn_return;
     QString* error_message_;

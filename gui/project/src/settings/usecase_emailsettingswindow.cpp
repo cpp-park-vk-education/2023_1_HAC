@@ -29,13 +29,13 @@ void UseCaseEmailSettingsWindow::passToMain() {
     window_manager_ptr->openUserSettingsWindow();
 }
 
-void UseCaseEmailSettingsWindow::ConfirmHandler(const std::string& new_email) {
+void UseCaseEmailSettingsWindow::ConfirmHandler(const std::string& new_email, const std::string& password) {
 
-    if (new_email.empty()) {
+    if (new_email.empty() || password.empty()) {
         std::cout << "bad" << std::endl;
         Error error_message;
         error_message.type = "BadEmail";
-        error_message.message = "New email is null!";
+        error_message.message = "Fields cannot be empty!";
         settings_window_ptr->createErrorMessage(error_message);
         settings_window_ptr->showErrorMessage();
         return;        
@@ -43,6 +43,7 @@ void UseCaseEmailSettingsWindow::ConfirmHandler(const std::string& new_email) {
 
     ConfirmEdit user;
     user.new_email = new_email;
+    user.old_password = password;
     if (user_ == "") {
         setUser(window_manager_ptr->getUser());
     } 

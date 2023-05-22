@@ -15,7 +15,7 @@ public:
     ptr_to_iemailsettings_window getEmailSettingsWindow() override;
     void sendError(const Error& error_message) override;
     void passToMain() override;
-    void ConfirmHandler(const std::string& new_email) override;
+    void ConfirmHandler(const std::string& new_email, const std::string& password) override;
     std::string getUser() override;
     void setUser(const std::string& user) override;
 

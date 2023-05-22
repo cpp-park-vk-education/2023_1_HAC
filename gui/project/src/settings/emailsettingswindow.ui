@@ -32,26 +32,36 @@
      <x>290</x>
      <y>230</y>
      <width>251</width>
-     <height>111</height>
+     <height>181</height>
     </rect>
    </property>
    <layout class="QGridLayout" name="gridLayout_2">
-    <item row="2" column="0">
-     <widget class="QLineEdit" name="leNewEmail"/>
-    </item>
-    <item row="4" column="0">
+    <item row="6" column="0">
      <widget class="QPushButton" name="btnEnter">
       <property name="text">
        <string>Потвердить</string>
       </property>
      </widget>
     </item>
+    <item row="2" column="0">
+     <widget class="QLineEdit" name="leNewEmail"/>
+    </item>
     <item row="1" column="0">
-     <widget class="QLabel" name="OldPassword_2">
+     <widget class="QLabel" name="Email">
       <property name="text">
        <string>Новый адрес электронной почты</string>
       </property>
      </widget>
+    </item>
+    <item row="4" column="0">
+     <widget class="QLabel" name="Password">
+      <property name="text">
+       <string>Подтвердите пароль</string>
+      </property>
+     </widget>
+    </item>
+    <item row="5" column="0">
+     <widget class="QLineEdit" name="lePassword"/>
     </item>
    </layout>
   </widget>

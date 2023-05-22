@@ -16,6 +16,7 @@ public:
     virtual void showErrorMessage() = 0;
     virtual void createErrorMessage(const Error& error_message) = 0;
     virtual std::string getNewEmail() = 0;
+    virtual std::string getPassword() = 0;
 };
 
 #endif // EMAILSETTINGSWINDOW_INTERFACE_H

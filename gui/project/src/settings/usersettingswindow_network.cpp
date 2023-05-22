@@ -21,7 +21,7 @@ void NetworkUserSettingsWindow::getUserPasswordSettings(const ConfirmEdit& confi
     std::cout << "here I am in UserPasswordSetting" << std::endl;
     std::string setting_line = confirm_passwords.user_name + "\t" + confirm_passwords.old_password + 
                 "\t" + confirm_passwords.new_password;
-    network_ptr->setConfig("CHANGE_USER_SETTINGS");
+    network_ptr->setConfig("CHANGE_USER_PASSWORD_SETTINGS");
     network_ptr->PostRequest(url_, setting_line,
                                 [this](const Error& error_state)
                                 {onGetUserPasswordSettingsResponse
@@ -30,8 +30,8 @@ void NetworkUserSettingsWindow::getUserPasswordSettings(const ConfirmEdit& confi
 
 void NetworkUserSettingsWindow::getUserEmailSettings(const ConfirmEdit& confirm_email) {
     std::cout << "here I am in UserEmailSetting" << std::endl;
-    std::string setting_line = confirm_email.user_name + "\t" + confirm_email.new_email;
-    network_ptr->setConfig("CHANGE_USER_SETTINGS");
+    std::string setting_line = confirm_email.user_name + "\t" + confirm_email.new_email + '\t' + confirm_email.old_password;
+    network_ptr->setConfig("CHANGE_USER_EMAIL_SETTINGS");
     network_ptr->PostRequest(url_, setting_line,
                                 [this](const Error& error_state)
                                 {onGetUserEmailSettingsResponse

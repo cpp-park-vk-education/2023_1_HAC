@@ -52,8 +52,13 @@
   status: false;
 
 -------// Добавить запрос на названий акций. (для отображения табоицы кнопок)
-
-
+Запрос:
+    request["Type"] = GET_REQUEST;
+    request["TypeData"] = STOCKS_REQUEST;
+    
+Ответ:
+    request["param"] = json; 
+    
 
 // Таймсерии записать в БД
 Запрос:
@@ -67,17 +72,45 @@
     status: true
 
 
-// Обновить клиента, ченж настроек
+// Обновить почту
+
 Запрос:
     request["Type"] = POST_REQUEST;
-    request["TypeData"] = CHANGE_USER_SETTINGS;
+    request["TypeData"] = CHANGE_USER_EMAIL_SETTINGS;
     request["login"] = "test";
-    request["password"] = "new_password(hash)";
     request["email"] = "new_email@email.com";  
-Ответ:
-    status: true
 
-Почта уже занята:
+// Обновить пароль
+Запрос:
+    request["Type"] = POST_REQUEST;
+    request["TypeData"] = CHANGE_USER_PASSWORD_SETTINGS;
+    request["login"] = "test";
+    request["password"] = "pass";  
+
+
+// Получить токен
+
+Запрос:
+    request["Type"] = GET_REQUEST;
+    request["TypeData"] = SESSION_REQUEST;
+    request["token"] = "test";
+
+Ответ:
+Данные пользователя
+
+// Обновить токен
+
+Запрос:
+    request["Type"] = POST_REQUEST;
+    request["TypeData"] = CHANGE_USER_SESSION;
+    request["token"] = "token";
+    request["session_id"] = 1;
+
+Если нужно удалить токен, то везде указывай "NULL"
+
+
+
+
     status: false
 
 */

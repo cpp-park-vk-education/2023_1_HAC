@@ -96,21 +96,24 @@
     request["token"] = "test";
 
 Ответ:
-Данные пользователя
+    response["status"] = true
+    response["login"] = login
 
-// Обновить токен
+    или
+
+    response["status"] = false
+
+// добавить токен
 
 Запрос:
     request["Type"] = POST_REQUEST;
-    request["TypeData"] = CHANGE_USER_SESSION;
+    request["TypeData"] = SESSION_REQUEST;
     request["token"] = "token";
-    request["session_id"] = 1;
+    request["login"] = "login";
 
-Если нужно удалить токен, то везде указывай "NULL"
-
-
-
-
-    status: false
+Ответ:
+    response["status"] = true
+    или
+    response["status"] = false
 
 */

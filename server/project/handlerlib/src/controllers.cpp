@@ -2,6 +2,12 @@
 #include "handler_exception.h"
 #include "logger.h"
 
+
+#include <openssl/sha.h>
+#include <openssl/rand.h>
+
+#include <iomanip>
+#include <sstream>
 #include <iostream>
 #include <vector>
 
@@ -20,6 +26,7 @@ const std::string HEADER_JSON_NAME_STOCK = "name_stock";
 const std::string HEADER_JSON_LEN_LAGS = "len_lags";
 const std::string HEADER_JSON_LENPREDICT = "lenpredict";
 const std::string HEADER_JSON_DATA = "data";
+const std::string HEADER_JSON_TOKEN = "token";
 
 const std::string HEADER_JSON_STATUS = "status";
 const std::string HEADER_JSON_SERVER_ERROR = "server_error";
@@ -42,9 +49,39 @@ Json::Value makeJsonError(const std::string& error_mes, bool server_error) {
   return response;
 }
 
+std::string makeCookie() {
+    int outf;
+    unsigned char buf[1024];
+    if (!RAND_bytes(buf, sizeof(buf))) { /* 1 succes, 0 otherwise */
+        throw market_mentor::CreateCookieError();
+    }
 
-hash_ hashPassword(const std::string& password) {
-    return password;
+    return std::string(reinterpret_cast<char*>(buf), 1024);
+}
+
+Json::Value makeProtocolSendCookie(const std::string& cookie, const std::string& login) {
+    Json::Value db_protocol;
+    db_protocol[HEADER_JSON_TYPE] = TypeRequest::POST_REQUEST;
+    db_protocol[HEADER_JSON_TYPEDATA] = TypeData::SESSION_REQUEST;
+    db_protocol[HEADER_JSON_LOGIN] = login;
+    db_protocol[HEADER_JSON_TOKEN] = cookie;
+    logger.log("Json DP prtocol cookie completed successfully");
+    return db_protocol;
+}
+
+hash_ hashing(const std::string& buffer) {
+    unsigned char hash[SHA256_DIGEST_LENGTH];
+    SHA256_CTX sha256;
+    SHA256_Init(&sha256);
+    SHA256_Update(&sha256, buffer.c_str(), buffer.size());
+    SHA256_Final(hash, &sha256);
+
+    std::stringstream ss;
+
+    for(int i = 0; i < SHA256_DIGEST_LENGTH; i++) {
+        ss << std::hex << std::setw(2) << std::setfill('0') << static_cast<int>(hash[i]);
+    }
+    return ss.str();
 }
 
 // class PredictController
@@ -52,7 +89,6 @@ PredictController::PredictController(const ptrToDBController db_controller, cons
     : db_controller_(db_controller), model_controller_(model_controller) {}
 
 Json::Value PredictController::makePredict(const Json::Value& request) {
-
     Json::Value request_to_db = makeDBProtocol(request);
     // отправляет название ДБ контроллеру
     logger.log("Request to DB... : predict controller");
@@ -155,10 +191,28 @@ RegisterController::RegisterController(const ptrToDBController db_controller)
     : db_controller_(db_controller) {}
 
 Json::Value RegisterController::registration(Json::Value& request) {
-    request[HEADER_JSON_PASSWORD] = hashPassword(request[HEADER_JSON_PASSWORD].asString());
+    request[HEADER_JSON_PASSWORD] = hashing(request[HEADER_JSON_PASSWORD].asString());
     Json::Value request_to_db = makeDBProtocol(request);
     logger.log("Request to DB... : registration controller");
-    return db_controller_->DataRequest(request_to_db);
+    Json::Value response_db = db_controller_->DataRequest(request_to_db);
+
+    if (response_db[HEADER_JSON_STATUS].asBool()) {
+        std::string cookie = makeCookie();
+        logger.log("Make protocol for cookie... : registration controller");
+        Json::Value coockei_to_db = makeProtocolSendCookie(cookie, request[HEADER_JSON_LOGIN].asString());
+        logger.log("DB request for cookie... : registration controller");
+        Json::Value result_send_coockie = db_controller_->DataRequest(coockei_to_db);
+        if (!result_send_coockie[HEADER_JSON_STATUS].asBool()) {
+            logger.log("Bad response from DB request for cookie... : registration controller");
+            throw market_mentor::CreateCookieError();
+        }
+        logger.log("Add cookie to response... : registration controller");
+        result_send_coockie[HEADER_JSON_TOKEN] = cookie;
+        return result_send_coockie;
+    }
+
+    logger.log("There is already such a user : registration controller");
+    return response_db;
 }
 
 Json::Value RegisterController::makeDBProtocol(const Json::Value& request) {
@@ -178,20 +232,40 @@ AuthorizeController::AuthorizeController(const ptrToDBController db_controller)
     : db_controller_(db_controller) {}
 
 Json::Value AuthorizeController::authorization(Json::Value& request) {
+
     Json::Value request_to_db = makeDBProtocol(request);
-    logger.log("Request to DB... : authorization controller");
+    logger.log("Request to DB for auth data... : authorization controller");
     Json::Value response_db = db_controller_->DataRequest(request_to_db);
-    request[HEADER_JSON_PASSWORD] = hashPassword(request[HEADER_JSON_PASSWORD].asString());
-    return checkPassword(response_db, request);
+    logger.log("Hashing... : authorization controller");
+    request[HEADER_JSON_PASSWORD] = hashing(request[HEADER_JSON_PASSWORD].asString());
     
-} 
+    Json::Value result_password_check = checkPassword(response_db, request);
+    if (result_password_check[HEADER_JSON_STATUS].asBool()) {
+        logger.log("Make cookie... : authorization controller");
+        std::string cookie = makeCookie();
+        logger.log("Make protocol for cookie... : authorization controller");
+        Json::Value coockei_to_db = makeProtocolSendCookie(cookie, request[HEADER_JSON_LOGIN].asString());
+        logger.log("DB request for cookie... : authorization controller");
+        Json::Value result_send_coockie = db_controller_->DataRequest(coockei_to_db);
+        if (!result_send_coockie[HEADER_JSON_STATUS].asBool()) {
+            logger.log("Bad response from DB request for cookie... : authorization controller");
+            throw market_mentor::CreateCookieError();
+        }
+        logger.log("Add cookie to response... : authorization controller");
+        result_send_coockie[HEADER_JSON_TOKEN] = cookie;
+        return result_send_coockie;
+    }
+    logger.log("Bad password or login : authorization controller");
+    return result_password_check;
+}
+
 
 Json::Value AuthorizeController::makeDBProtocol(const Json::Value& request) {
     Json::Value db_protocol;
     db_protocol[HEADER_JSON_TYPE] = TypeRequest::POST_REQUEST;
     db_protocol[HEADER_JSON_TYPEDATA] = TypeData::AUTHORIZATION;
     db_protocol[HEADER_JSON_LOGIN] = request[HEADER_JSON_LOGIN].asString();
-    logger.log("Json DP prtocol completed successfully: authorization controller");
+    logger.log("Json DP prtocol auth completed successfully: authorization controller");
     return db_protocol;
 }
 
@@ -206,8 +280,7 @@ UpdateDataController::UpdateDataController(const ptrToDBController db_controller
     : db_controller_(db_controller), api_stock_(api_stock) {}
 
 bool UpdateDataController::updateData(const handlers::ProtocolAPI& protocol) {
-    // создаём из структуры стрингу
-    auto response_model = api_stock_->getData(protocol); // json
+    Json::Value response_model = api_stock_->getData(protocol); // json
     Json::Value db_protocol = makeDBProtocol(response_model);
     Json::Value json_response_db = db_controller_->DataRequest(db_protocol);
     return json_response_db[HEADER_JSON_STATUS].asBool();
@@ -221,6 +294,38 @@ Json::Value UpdateDataController::makeDBProtocol(const Json::Value& request) {
     db_protocol[HEADER_JSON_DATE] = request[HEADER_JSON_DATE].asString();
     db_protocol[HEADER_JSON_DATA] = request[HEADER_JSON_DATA].asString();
     return db_protocol;
+}
+
+
+// class MiddleWare
+
+MiddleWare::MiddleWare(const ptrToDBController db_controller)
+    : db_controller_(db_controller) {}
+
+
+cookie_map MiddleWare::checkCookieFile(const std::string& cookie) {
+    
+    Json::Value request_to_db = makeDBProtocol(cookie);
+    Json::Value response_db = db_controller_->DataRequest(request_to_db);
+    return paseDBResponse(response_db, cookie);
+}
+
+Json::Value MiddleWare::makeDBProtocol(const std::string& cookie) {
+    Json::Value db_protocol;
+    db_protocol[HEADER_JSON_TYPE] = TypeRequest::GET_REQUEST;
+    db_protocol[HEADER_JSON_TYPEDATA] = TypeData::SESSION_REQUEST;
+    db_protocol[HEADER_JSON_TOKEN] = cookie;
+    logger.log("Json DP prtocol completed successfully: middleware");
+    return db_protocol;
+}
+
+cookie_map MiddleWare::paseDBResponse(const Json::Value& response, const std::string& cookie) {
+    if (!response[HEADER_JSON_STATUS].asBool()) {
+        throw market_mentor::InvalidCookieError();
+    }
+    cookie_map result;
+    result[response[HEADER_JSON_LOGIN].asString()] = cookie;
+    return result;
 }
 
 

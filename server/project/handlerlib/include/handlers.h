@@ -5,20 +5,23 @@
 #include <memory>
 #include <map>
 
+
+
 namespace handlers {
 
 std::vector<std::string> cutUrlTokens(std::vector<std::string>& tokens, const std::string& error_mess);
 std::vector<std::string> splitMessage(const std::string& message, char separator);
 
-
+using cookie_map = std::map<std::string, std::string>;
 using ptrToPredictController = controllers::IPredictController*;
 using ptrToShowPlotController = controllers::IShowPlotController*;
 using ptrToRegisterController = controllers::IRegisterController*;
 using ptrToAuthorizeController = controllers::IAuthorizeController*;
 using ptrToModelController = controllers::IModelController*;
 using ptrToUpdateDataController = controllers::IUpdateDataController*;
+using ptrToMiddleWare = controllers::IMiddleWare*;
 
-class PredictHandler : public IHandler {
+class PredictHandler : public IHandler, public IHTTPParser {
  public:
    explicit PredictHandler(ptrToPredictController controller);
    void handle(IHTTPRequest_ request, IHTTPResponse_ response) override;
@@ -29,7 +32,7 @@ class PredictHandler : public IHandler {
 };
 
 
-class ShowPlotHandler : public IHandler {
+class ShowPlotHandler : public IHandler, public IHTTPParser {
  public:
    explicit ShowPlotHandler(ptrToShowPlotController controller);
    void handle(IHTTPRequest_ request, IHTTPResponse_ response) override;
@@ -40,7 +43,7 @@ class ShowPlotHandler : public IHandler {
    ptrToShowPlotController controller_;  
 };
 
-class RegisterHandler : public IHandler {
+class RegisterHandler : public IHandler, public IHTTPParser  {
  public:
    explicit RegisterHandler(ptrToRegisterController controller);
    void handle(IHTTPRequest_ request, IHTTPResponse_ response) override;
@@ -52,7 +55,7 @@ class RegisterHandler : public IHandler {
 };
 
 
-class AuthorizeHandler : public IHandler {
+class AuthorizeHandler : public IHandler, public IHTTPParser  {
  public:
    explicit AuthorizeHandler(ptrToAuthorizeController controller); 
    void handle(IHTTPRequest_ request, IHTTPResponse_ response) override;
@@ -65,13 +68,12 @@ class AuthorizeHandler : public IHandler {
 
 class Router : public IHandler {
  public:
-   explicit Router(const std::map<std::string, IHandler*>& handlers);
-   void handle(IHTTPRequest_ request, IHTTPResponse_ response) override;
+  Router(const std::map<std::string, IHandler*>& handlers, ptrToMiddleWare middleware);
+  void handle(IHTTPRequest_ request, IHTTPResponse_ response) override;
 
  private:
-   Json::Value parseInputHttpRequest(const std::string& message) override;
-   void makeResponse(IHTTPResponse_ response, const Json::Value& response_json) override;
-   std::map<std::string, IHandler*> handlers_;
+  std::map<std::string, IHandler*> handlers_;
+  ptrToMiddleWare middleware_;
 };
 
 

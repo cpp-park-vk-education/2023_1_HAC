@@ -17,8 +17,8 @@ using ptrToModelController = controllers::IModelController*;
 
 Json::Value makeJsonError(const std::string& error_mes, bool server_error);
 
-hash_ hashPassword(const std::string& password);
-
+hash_ hashing(const std::string& buffer);
+std::string makeCookie();
 
 // class PredictController
 class PredictController : public IPredictController {
@@ -99,5 +99,20 @@ class UpdateDataController : public IUpdateDataController {
   ptrToDBController db_controller_;
   ptrToAPIStock api_stock_;
 };
+
+
+// class MiddleWare
+class MiddleWare : public IMiddleWare {
+ public:
+  explicit MiddleWare(const ptrToDBController db_controller);
+  
+  cookie_map checkCookieFile(const std::string& cookie) override;
+ private:
+  Json::Value makeDBProtocol(const std::string& cookie) override;
+  cookie_map paseDBResponse(const Json::Value& response, const std::string& cookie) override;
+
+  ptrToDBController db_controller_;
+};
+
 
 } // namespace controllers 

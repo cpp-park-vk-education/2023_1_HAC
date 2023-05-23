@@ -25,6 +25,7 @@
 #include "api_model.h"
 #include "api_stock.h"
 #include "server_exception.h"
+#include "update_data_job.h"
 
 using prtToIHandler = std::unique_ptr<handlers::IHandler>;
 using IDatabaseController = std::string;
@@ -50,6 +51,10 @@ private:
     std::unique_ptr<controllers::IRegisterController> register_contoller;
     std::unique_ptr<controllers::IAuthorizeController> aurhorize_controller;
     std::unique_ptr<controllers::IPredictController> predict_controller;
+    std::unique_ptr<controllers::IUpdateDataController> update_controller;
+
+    std::unique_ptr<api::IAPIStockRequest> api_stock;
+    std::unique_ptr<api::IAPIModelRequest> api_model;
 
     prtToIHandler predict_handler;
     prtToIHandler register_handler;

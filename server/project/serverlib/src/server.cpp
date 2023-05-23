@@ -1,5 +1,4 @@
 #include "server.h"
-#include "update_data_job.h"
 #include "logger.h"
 
 Config Server::parseConfigFhomFile(const std::string& path_to_config_file) {
@@ -26,10 +25,10 @@ Config Server::parseConfigFhomFile(const std::string& path_to_config_file) {
 
 Server::Server(const std::string& path_to_config_file) {
     
-    std::thread jobThread(printHelloWorldByTimer);
-
     std::unique_ptr<api::IAPIModelRequest> api_model 
                    = std::make_unique<api::APIModelRequest>();
+    std::unique_ptr<api::IAPIStockRequest> api_stock
+                   = std::make_unique<api::APIStockRequest>();
     std::unique_ptr<dbcontroller::IDataBaseController> database_controller 
                    = std::make_unique<dbcontroller::DataBaseController>();
 
@@ -53,10 +52,16 @@ Server::Server(const std::string& path_to_config_file) {
                    = std::make_unique<controllers::ModelController>(api_model.get());
     std::unique_ptr<controllers::IPredictController> predict_controller 
                    = std::make_unique<controllers::PredictController>(database_controller.get(), model_controller.get());
+    std::unique_ptr<controllers::IUpdateDataController> update_controller 
+                   = std::make_unique<controllers::UpdateDataController>(database_controller.get(), api_stock.get());
 
     if (!show_plot_controller || !register_contoller || !aurhorize_controller || !model_controller || !predict_controller) {
         throw market_mentor::CreatingNullptr("Creating server error");
     }
+
+    std::thread jobThread([update_controller = std::move(update_controller)]() {
+        getNewDataByTimer(update_controller.get());
+    });
 
     prtToIHandler predict_handler = std::make_unique<handlers::PredictHandler>(predict_controller.get());
     prtToIHandler register_handler = std::make_unique<handlers::RegisterHandler>(register_contoller.get());

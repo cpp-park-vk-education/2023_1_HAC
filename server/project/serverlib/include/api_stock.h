@@ -13,6 +13,7 @@
 #include <jsoncpp/json/reader.h>
 #include "http_protocol.h"
 #include "handlers.h"
+#include "config_handler.h"
 #include <map>
 #include <cstdlib>
 #include <iostream>
@@ -40,8 +41,12 @@ class APIStockRequest : public IAPIStockRequest{
     APIStockRequest();
     Json::Value getData(const handlers::ProtocolAPI& protocol) override;
  private:
+    void parseApiProtocol(const handlers::ProtocolAPI& protocol);
     void doConnect(const handlers::ProtocolAPI& protocol);
     IHTTPResponse* onConnect(ssl::stream<tcp::socket> stream);
+    std::string host;
+    std::string port = "443";
+    std::string target;
 };
 
 } // namespace api_stock 

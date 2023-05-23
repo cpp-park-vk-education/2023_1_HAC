@@ -1,67 +1,74 @@
 #include "api_stock.h"
+#include <string>
 
 api::APIStockRequest::APIStockRequest(){};
 Json::Value api::APIStockRequest::getData(const handlers::ProtocolAPI& protocol){
     http::response<http::string_body> res;
 
-        auto const host = "finnhub.io" ;
-        auto const port = "443";
-        auto const target = "/api/v1/stock/candle?symbol=AAPL&resolution=1&from=1679476980&to=1679649780&token=cgjamq1r01qoenkm782gcgjamq1r01qoenkm7830";
-        
-        int version =  11;
+    parseApiProtocol(protocol);
+    int version =  11;
+    boost::asio::io_context ioc;
 
-        boost::asio::io_context ioc;
+    ssl::context ctx{ssl::context::sslv23_client};
+    load_root_certificates(ctx);
 
+    tcp::resolver resolver{ioc};
+    ssl::stream<tcp::socket>stream{ioc, ctx};
+
+    if(! SSL_set_tlsext_host_name(stream.native_handle(), host.c_str()))
+    {
+        boost::system::error_code ec{static_cast<int>(::ERR_get_error()), boost::asio::error::get_ssl_category()};
+        throw boost::system::system_error{ec};
+    }
+
+    auto const results = resolver.resolve(host, port);
+
+    boost::asio::connect(stream.next_layer(), results.begin(), results.end());
+    stream.handshake(ssl::stream_base::client);
+
+    http::request<http::string_body> req{http::verb::get, target, version};
+    req.set(http::field::host, host);
+    req.set(http::field::user_agent, BOOST_BEAST_VERSION_STRING);
+
+    http::write(stream, req);
+
+    boost::beast::flat_buffer buffer;
+
+    http::read(stream, buffer, res);
     
-        ssl::context ctx{ssl::context::sslv23_client};
-        load_root_certificates(ctx);
+    std::cout << res.body() << std::endl;
 
-        tcp::resolver resolver{ioc};
-        ssl::stream<tcp::socket>stream{ioc, ctx};
-
-        if(! SSL_set_tlsext_host_name(stream.native_handle(), host))
-        {
-            boost::system::error_code ec{static_cast<int>(::ERR_get_error()), boost::asio::error::get_ssl_category()};
-            throw boost::system::system_error{ec};
-        }
-
-        auto const results = resolver.resolve(host, port);
-
-        boost::asio::connect(stream.next_layer(), results.begin(), results.end());
-        stream.handshake(ssl::stream_base::client);
-
-        http::request<http::string_body> req{http::verb::get, target, version};
-        req.set(http::field::host, host);
-        req.set(http::field::user_agent, BOOST_BEAST_VERSION_STRING);
-
-        http::write(stream, req);
-
-        boost::beast::flat_buffer buffer;
-
-
-        http::read(stream, buffer, res);
-
-        std::cout << res.body() << std::endl;
-
-        boost::system::error_code ec;
-        stream.shutdown(ec);
-        if(ec == boost::asio::error::eof)
-        {
-            
-            ec.assign(0, ec.category());
-        }
-        if(ec)
-            throw boost::system::system_error{ec};
-    
-    Json::Value completeJsonData;
+    boost::system::error_code ec;
+    stream.shutdown(ec);
+    if(ec == boost::asio::error::eof)
+    {     
+        ec.assign(0, ec.category());
+    }
+    Json::Value completeJson_data;
     Json::Reader reader;
-    auto epoch_seconds = reader.parse(res.body(), completeJsonData);
-    std::cout << completeJsonData["c"].toStyledString();  
+    auto epoch_seconds = reader.parse(res.body(), completeJson_data);
+    std::cerr << completeJson_data["c"].toStyledString();
+    Json::Value json_resp;
+    json_resp["name_stock"] = protocol.name_packet_stock;
+    json_resp["date"] = protocol.end_time;
+    json_resp["data"] = completeJson_data["c"][0];
+    return completeJson_data;
 };
+
+void api::APIStockRequest::parseApiProtocol(const handlers::ProtocolAPI& protocol){
+    host = protocol.name_stock_hub;
+    target = "/api/v1/stock/candle?symbol=";
+    target += protocol.name_packet_stock;
+    target += "&resolution=1&from=";
+    target += protocol.start_time;
+    target += "&to=";
+    target += protocol.end_time;
+    target += "&token=";
+    target += protocol.token;
+}
+
 
 void api::APIStockRequest::doConnect(const handlers::ProtocolAPI& protocol){
 };
 IHTTPResponse* api::APIStockRequest::onConnect(ssl::stream<tcp::socket> stream){
-
-
 };

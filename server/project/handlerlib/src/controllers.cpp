@@ -12,6 +12,7 @@
 #include <vector>
 
 const size_t WINDOW_SIZE = 8;
+const size_t TIME_LIFE = 86400;
 
 const bool SERVER_ERROR = true;
 const bool NOT_SERVER_ERROR = false;
@@ -27,6 +28,7 @@ const std::string HEADER_JSON_LEN_LAGS = "len_lags";
 const std::string HEADER_JSON_LENPREDICT = "lenpredict";
 const std::string HEADER_JSON_DATA = "data";
 const std::string HEADER_JSON_TOKEN = "token";
+const std::string HEADER_JSON_TIME_LIFE = "time_life";
 
 const std::string HEADER_JSON_STATUS = "status";
 const std::string HEADER_JSON_SERVER_ERROR = "server_error";
@@ -35,6 +37,8 @@ const std::string HEADER_JSON_PASSWORD = "password";
 const std::string HEADER_JSON_EMAIL = "email";
 const std::string HEADER_JSON_LOGIN = "login";
 const std::string HEADER_JSON_DATE = "date";
+
+
 
 FileLogger& logger = FileLogger::getInstance();
 
@@ -65,6 +69,7 @@ Json::Value makeProtocolSendCookie(const std::string& cookie, const std::string&
     db_protocol[HEADER_JSON_TYPEDATA] = TypeData::SESSION_REQUEST;
     db_protocol[HEADER_JSON_LOGIN] = login;
     db_protocol[HEADER_JSON_TOKEN] = cookie;
+    db_protocol[HEADER_JSON_TIME_LIFE] = TIME_LIFE;
     logger.log("Json DP prtocol cookie completed successfully");
     return db_protocol;
 }

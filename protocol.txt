@@ -110,6 +110,7 @@
     request["TypeData"] = SESSION_REQUEST;
     request["token"] = "token";
     request["login"] = "login";
+    request["time_life"] = tl;
 
 Ответ:
     response["status"] = true

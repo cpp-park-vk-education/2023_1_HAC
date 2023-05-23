@@ -104,23 +104,13 @@ class UpdateDataController : public IUpdateDataController {
 class ExitController : public IExitController {
  public:
   explicit ExitController(const ptrToDBController db_controller);
-  Json::Value deleteCookie(Json::Value& request) override;
+  Json::Value deleteCookie(const Json::Value& request) override;
  private:
   Json::Value makeDBProtocol(const Json::Value& request) override;
 
   ptrToDBController db_controller_;
 };
 
-// class CheckCookieAuthorizedController
-class CheckCookieAuthorizedController : public ICheckCookieAuthorizedController {
- public:
-  explicit CheckCookieAuthorizedController(const ptrToDBController db_controller);
-  Json::Value deleteCookie(Json::Value& request) override;
- private:
-  Json::Value makeDBProtocol(const Json::Value& request) override;
-
-  ptrToDBController db_controller_;
-};
 
 // class MiddleWare
 class MiddleWare : public IMiddleWare {

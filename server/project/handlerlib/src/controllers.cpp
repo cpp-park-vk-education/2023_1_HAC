@@ -336,7 +336,7 @@ cookie_map MiddleWare::paseDBResponse(const Json::Value& response, const std::st
 ExitController::ExitController(const ptrToDBController db_controller)
     : db_controller_(db_controller) {}
 
-Json::Value ExitController::deleteCookie(Json::Value& request) {
+Json::Value ExitController::deleteCookie(const Json::Value& request) {
     Json::Value request_to_db = makeDBProtocol(request);
     logger.log("Request to DB... : exit controller");
     return db_controller_->DataRequest(request_to_db);

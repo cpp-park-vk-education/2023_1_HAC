@@ -21,7 +21,7 @@ using ptrToModelController = controllers::IModelController*;
 using ptrToUpdateDataController = controllers::IUpdateDataController*;
 using ptrToMiddleWare = controllers::IMiddleWare*;
 using ptrToExitController = controllers::IExitController*;
-using ptrToCheckCookieAuthorizedController = controllers::ICheckCookieAuthorizedController*;
+
 
 class PredictHandler : public IHandler, public IHTTPParser {
  public:
@@ -71,28 +71,18 @@ class AuthorizeHandler : public IHandler, public IHTTPParser  {
 
 class ExitHandler : public IHandler, public IHTTPParser  {
  public:
-   explicit ExitHandler(ptrToExitController controller); 
-   void handle(IHTTPRequest_ request, IHTTPResponse_ response) override;
- private:
-
-   Json::Value parseInputHttpRequest(const std::string& message) override;
-   void makeResponse(IHTTPResponse_ response, const Json::Value& response_json) override;
-
-   ptrToAuthorizeController controller_; 
-};
-
-
-class CheckCookieAuthorizedHandler : public IHandler, public IHTTPParser {
- public:
-  explicit CheckCookieAuthorizedHandler(ptrToCheckCookieAuthorizedController controller); 
+  explicit ExitHandler(ptrToExitController controller); 
   void handle(IHTTPRequest_ request, IHTTPResponse_ response) override;
  private:
 
   Json::Value parseInputHttpRequest(const std::string& message) override;
   void makeResponse(IHTTPResponse_ response, const Json::Value& response_json) override;
 
-  ptrToCheckCookieAuthorizedController controller_;
+  ptrToExitController controller_; 
 };
+
+
+
 
 class Router : public IHandler {
  public:

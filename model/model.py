@@ -1,6 +1,5 @@
 import sys
 
-import finnhub
 import numpy as np
 
 import tensorflow.keras

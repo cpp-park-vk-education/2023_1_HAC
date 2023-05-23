@@ -17,4 +17,28 @@ services:
     ports:
       - 5432:5432
     volumes:
-      - ./_sql/:/docker-entrypoint-initdb.d
+      - /home/mmm/market_mentor/dump_db/dump:/tmp/dump
+
+
+  model:
+    build:
+      dockerfile: model/Dockerfile
+    command: cd /home/model && python3 server.py
+    ports:
+      - 9950:9950
+    volumes:
+      - /home/mmm/market_mentor/model:/home/model
+    depends_on:
+      - server
+
+
+  server:
+    build:
+      dockerfile: Dockerfile
+    command: cd /home/market_mentor && make build_server && make start_server
+    ports:
+      - 9988:8080
+    volumes:
+      - /home/mmm/market_mentor:/home/market_mentor
+    depends_on:
+      - db

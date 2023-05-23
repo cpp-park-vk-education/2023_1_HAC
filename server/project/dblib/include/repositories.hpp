@@ -17,7 +17,7 @@ enum ClientUpdateType {
 };
 
 enum ClientGetType {
-    TOKEN_KEY,
+  //  TOKEN_KEY,
     LOGIN_KEY
 };
 

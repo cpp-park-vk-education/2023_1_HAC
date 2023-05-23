@@ -1,6 +1,6 @@
 version: '3'
 
-# To start: 
+# To start:
 # - docker-compose up
 # To finish:
 # - docker-compose down
@@ -23,34 +23,25 @@ services:
       - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
 
   model:
-    build:
-      dockerfile: model/Dockerfile
-    command: cd /home/model && python3 server.py
+    build: ./model/
     ports:
       - 9950:9950
-    volumes:
-      - /home/mmm/market_mentor/model:/home/model
     depends_on:
       - server
-  
+
 
   server:
-    build:
-      dockerfile: Dockerfile
-    command: cd /home/market_mentor && make build_server && make start_server
+    build: ./
     ports:
       - 9988:8080
-    volumes:
-      - /home/mmm/market_mentor:/home/market_mentor
     depends_on:
       - redis
-
 
   redis:
     image: 'bitnami/redis:latest'
     environment:
       - ALLOW_EMPTY_PASSWORD=yes
     ports:
-      - 9966:7000
+      - 6379:6379
     depends_on:
       - db

@@ -3,7 +3,7 @@ from http.server import HTTPServer, BaseHTTPRequestHandler
 from model import Model
 from model import parse_http_data_to_seq
 
-HOST = "25.21.238.202"
+HOST = "0.0.0.0"
 PORT = 9950
 
 handles = {} # window_size, data

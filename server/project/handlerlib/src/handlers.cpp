@@ -1,6 +1,7 @@
 #include "handlers.h"
 #include "handler_exception.h"
 
+#include "logger.h"
 #include <vector>
 #include <sstream>
 #include <iostream>
@@ -22,6 +23,7 @@ const std::string HTTP_URL_LAG = "lag";
 
 const std::string METHOD = "method";
 const std::string ACTIONS = "actions";
+const std::string COOKIE = "cookie";
 
 const std::string HEADER_JSON_DB_STATUS_OPEN = "DatabaseIsOpen";
 const std::string HEADER_JSON_SERVER_ERROR = "server_error";
@@ -31,15 +33,20 @@ const std::string HEADER_JSON_LEN_LAGS = "len_lags";
 const std::string HEADER_JSON_LENPREDICT = "lenpredict";
 const std::string HEADER_JSON_DATA = "data";
 const std::string HEADER_JSON_STATUS = "status";
+const std::string HEADER_JSON_TOKEN = "token";
 
 const std::string HEADER_JSON_PASSWORD = "password";
 const std::string HEADER_JSON_EMAIL = "email";
 const std::string HEADER_JSON_LOGIN = "login";
 
+const std::string POST_AUTHORIZATION = "POST:AUTHORIZATION";
+const std::string POST_REGISTRATION = "POST:REGISTRATION";
+
 const int OK = 200;
 const int BAD_REQUEST = 400;
 const int NOT_FOUND = 404;
 const int UNAUTHORIZED = 401;
+const int FORBIDDEN = 403;
 const int INTERNAL_SERVER_ERROR = 500;
 
 const char SEPARATOR_URL = '&';
@@ -62,6 +69,7 @@ const uint LOGIN_ORDER = 0;
 const uint PASSWORD_ORDER = 1;
 const uint EMAIL_ORDER = 2;
 
+FileLogger& logger = FileLogger::getInstance();
 
 namespace handlers {
 
@@ -259,7 +267,9 @@ void RegisterHandler::makeResponse(IHTTPResponse_ response, const Json::Value& r
         return;
     }
     response->setStatus(OK);
+    response->setHeader(COOKIE, response_json[HEADER_JSON_TOKEN].asString());
 }
+
 
 
 // class AuthorizeHandler
@@ -295,7 +305,7 @@ Json::Value AuthorizeHandler::parseInputHttpRequest(const std::string& message) 
 
     result[HEADER_JSON_LOGIN] = tokens[LOGIN_ORDER];
     result[HEADER_JSON_PASSWORD] = tokens[PASSWORD_ORDER];
- 
+
     return result;
 }
 
@@ -305,31 +315,49 @@ void AuthorizeHandler::makeResponse(IHTTPResponse_ response, const Json::Value& 
         return;
     }
     response->setStatus(OK);
+    response->setHeader(COOKIE, response_json[HEADER_JSON_TOKEN].asString());
 }
 
 
 // class Router
-Router::Router(const std::map<std::string, IHandler*>& handlers)
-    : handlers_(handlers) {}
+Router::Router(const std::map<std::string, IHandler*>& handlers, ptrToMiddleWare middleware)
+    : handlers_(handlers), middleware_(middleware) {}
 void Router::handle(IHTTPRequest_ request, IHTTPResponse_ response) {
     auto header = request->getHeaders();
+    
     std::string key = header[METHOD] + ":" + header[ACTIONS];
+
     if (handlers_.find(key) == handlers_.end()) {
-        std::cerr << "\nNot found key: \"" << key << "\"" << std::endl;
+        logger.log("\nNot found key: \"" + key + "\"");
         response->setStatus(BAD_REQUEST);
-        response->setHeader(ERROR_MESSAGE, ERROR_MESSAGE);
-        response->setBody(ERROR_MESSAGE);
+        response->setBody("Not found key METHOD:ACTIONS");
         return;
     }
+
+    if (key != POST_AUTHORIZATION && key != POST_REGISTRATION) {
+        try {
+            cookie_map cookies = middleware_->checkCookieFile(header[COOKIE]);
+            for (auto it : cookies) {
+                request->setHeader(it.first, it.second);
+            }
+        } catch(market_mentor::InvalidCookieError &e) {
+            response->setStatus(FORBIDDEN);
+            response->setBody(e.what());
+            return;
+        } catch(market_mentor::MarketMentorException &e) {
+            response->setStatus(INTERNAL_SERVER_ERROR);
+            response->setBody(e.what());
+            return;
+        } catch(std::exception &e) {
+            response->setStatus(INTERNAL_SERVER_ERROR);
+            response->setBody(e.what());
+            return;
+        }
+    }
+
     handlers_[key]->handle(request, response);
 }
 
 
-Json::Value Router::parseInputHttpRequest(const std::string& message) {
-}
-
-void Router::makeResponse(IHTTPResponse_ response, const Json::Value& response_json) {
-
-}
 
 } // namespace handlers 

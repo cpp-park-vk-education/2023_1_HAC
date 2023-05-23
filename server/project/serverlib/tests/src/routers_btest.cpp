@@ -5,11 +5,6 @@
 class MockHandler : public handlers::IHandler {
 public:
     MOCK_METHOD(void, handle, (IHTTPRequest*, IHTTPResponse*), (override));
-    Json::Value parseInputHttpRequest(const std::string& message) override {
-        
-    }
-    void makeResponse(IHTTPResponse* response, const Json::Value& response_json) override {
-    }
 };
 
 TEST(RouterAdapterTest, BasicRequest) {

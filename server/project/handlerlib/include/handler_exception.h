@@ -46,7 +46,16 @@ class ErrorInGetDataFromDBNotFound : public MarketMentorException {
         ". Not found data request.") {}
 };
 
+class InvalidCookieError : public MarketMentorException {
+ public:
+    InvalidCookieError() :
+        MarketMentorException("Invalid cookie. Refused.") {}
+};
 
-
+class CreateCookieError : public MarketMentorException {
+ public:
+    CreateCookieError() :
+        MarketMentorException("Error when try create cookie.") {}
+};
 
 } // namespace market_mentor

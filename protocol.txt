@@ -117,4 +117,19 @@
     или
     response["status"] = false
 
+
+// удалить токен 
+
+запрос:
+request["Type"] = GET_REQUEST;
+request["TypeData"] = SESSION_DELETE;
+request["token"] = "test";
+
+ответ 
+
+response["status"] = true
+или
+response["status"] = false
+
+
 */

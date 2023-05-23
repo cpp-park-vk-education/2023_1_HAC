@@ -74,6 +74,21 @@ class IUpdateDataController {
 
 };
 
+class IExitController {
+ public:
+  virtual Json::Value deleteCookie(Json::Value& request) = 0;
+ protected:
+  virtual Json::Value makeDBProtocol(const Json::Value& request) = 0;
+};
+
+class ICheckCookieAuthorizedController {
+ public:
+  virtual Json::Value checkCookie(Json::Value& request) = 0;
+ protected:
+  virtual Json::Value makeDBProtocol(const Json::Value& request) = 0;
+};
+
+
 class IMiddleWare {
  public:
   virtual cookie_map checkCookieFile(const std::string& cookie) = 0;

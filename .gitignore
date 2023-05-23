@@ -2,3 +2,4 @@
 .DS_Store
 /dump_db/dump
 .env
+/db

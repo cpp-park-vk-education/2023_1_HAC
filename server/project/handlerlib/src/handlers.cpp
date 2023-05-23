@@ -10,6 +10,8 @@ const std::string HANDLERS_PREDICT = "predict";
 const std::string HANDLERS_PLOT = "plot";
 const std::string HANDLERS_REGISTRATION = "registration";
 const std::string HANDLERS_AUTHORIZATION = "authorization";
+const std::string HANDLERS_EXIT = "exit";
+const std::string HANDLERS_CHECK_COOKIE = "check cookie";
 
 const std::string ERROR_MESSAGE = "Error-Message";
 const std::string PREDICT_DATA = "Predict-Data";
@@ -41,6 +43,7 @@ const std::string HEADER_JSON_LOGIN = "login";
 
 const std::string POST_AUTHORIZATION = "POST:AUTHORIZATION";
 const std::string POST_REGISTRATION = "POST:REGISTRATION";
+const std::string POST_CHECKCOOKIE = "POST:CHECKCOOKIE";
 
 const int OK = 200;
 const int BAD_REQUEST = 400;
@@ -53,6 +56,8 @@ const char SEPARATOR_URL = '&';
 const char SEPARATOR_BODY = '/';
 const std::string SEPARATOR_TOKEN_URL = "=";
 
+const uint SIZE_BODY_CHECK_EXIT = 1;
+const uint SIZE_BODY_EXIT = 1;
 const uint SIZE_URL_GET_PREDICT = 2;
 const uint SIZE_URL_GET_PLOT = 2;
 const uint SIZE_BODY_POST_REGISTRATION = 3;
@@ -354,10 +359,107 @@ void Router::handle(IHTTPRequest_ request, IHTTPResponse_ response) {
             return;
         }
     }
-
+    if (key == POST_CHECKCOOKIE) {
+        response->setStatus(OK);
+        response->setBody(request->getHeader().begin().first);
+        return;         
+    }
     handlers_[key]->handle(request, response);
 }
 
 
+// class ExitHandler
+
+ExitHandler::ExitHandler(ptrToExitController controller)
+    : controller_(controller) {}
+
+void ExitHandler::handle(IHTTPRequest_ request, IHTTPResponse_ response) {
+    // post / body
+    try {
+        Json::Value request_json = parseInputHttpRequest(request->getBoby());
+        if (request_json->getHeaders().begin().first != request_json[HEADER_JSON_LOGIN].asString()) {
+            response->setStatus(FORBIDDEN);
+            return;
+        }
+        Json::Value response_json = controller_->deleteCookie(request_json);
+        makeResponse(response, response_json);
+
+    } catch (market_mentor::InvalidHttpRequestError &e) {
+        response->setStatus(BAD_REQUEST);
+        response->setBody(e.what());
+    } catch (market_mentor::MarketMentorException &e) {
+        response->setStatus(INTERNAL_SERVER_ERROR);
+        response->setBody(e.what());
+    } catch (std::exception &e) {
+        response->setStatus(INTERNAL_SERVER_ERROR);
+        response->setBody(e.what());
+    }
+}
+
+Json::Value ExitHandler::parseInputHttpRequest(const std::string& message) {
+    //  login
+    Json::Value result;
+    std::vector<std::string> tokens = splitMessage(message, SEPARATOR_BODY);
+
+    if (tokens.size() != SIZE_BODY_EXIT) {
+        throw market_mentor::InvalidHttpRequestError(HANDLERS_AUTHORIZATION);
+    }
+    result[HEADER_JSON_LOGIN] = tokens[LOGIN_ORDER];
+    return result;
+}
+
+void ExitHandler::makeResponse(IHTTPResponse_ response, const Json::Value& response_json) {
+    if (!response_json[HEADER_JSON_STATUS].asBool()) {
+        response->setStatus(NOT_FOUND);
+        return;
+    }
+    response->setStatus(OK);
+}
+
+
+// class CheckCoockieAuthorizedHandler
+
+void CheckCoockieAuthorizedHandler::handle(IHTTPRequest_ request, IHTTPResponse_ response) {
+    // post / body
+    try {
+        Json::Value request_json = parseInputHttpRequest(request->getBoby());
+        Json::Value response_json = controller_->checkCookie(request_json);
+        makeResponse(response, response_json);
+
+    } catch (market_mentor::InvalidHttpRequestError &e) {
+        response->setStatus(BAD_REQUEST);
+        response->setBody(e.what());
+    } catch (market_mentor::MarketMentorException &e) {
+        response->setStatus(INTERNAL_SERVER_ERROR);
+        response->setBody(e.what());
+    } catch (std::exception &e) {
+        response->setStatus(INTERNAL_SERVER_ERROR);
+        response->setBody(e.what());
+    }
+}
+
+Json::Value CheckCoockieAuthorizedHandler::parseInputHttpRequest(const std::string& message) {
+    //  real_login/real_password/
+    Json::Value result;
+    std::vector<std::string> tokens = splitMessage(message, SEPARATOR_BODY);
+
+    if (tokens.size() != SIZE_BODY_POST_AUTHORIZATION) {
+        throw market_mentor::InvalidHttpRequestError(HANDLERS_AUTHORIZATION);
+    }
+
+    result[HEADER_JSON_LOGIN] = tokens[LOGIN_ORDER];
+    result[HEADER_JSON_PASSWORD] = tokens[PASSWORD_ORDER];
+
+    return result;
+}
+
+void CheckCoockieAuthorizedHandler::makeResponse(IHTTPResponse_ response, const Json::Value& response_json) {
+    if (!response_json[HEADER_JSON_STATUS].asBool()) {
+        response->setStatus(UNAUTHORIZED);
+        return;
+    }
+    response->setStatus(OK);
+    response->setHeader(COOKIE, response_json[HEADER_JSON_TOKEN].asString());
+}
 
 } // namespace handlers 

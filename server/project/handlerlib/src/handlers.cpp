@@ -74,9 +74,9 @@ const uint LOGIN_ORDER = 0;
 const uint PASSWORD_ORDER = 1;
 const uint EMAIL_ORDER = 2;
 
-FileLogger& logger = FileLogger::getInstance();
-
 namespace handlers {
+
+FileLogger& logger = FileLogger::getInstance();
 
 std::vector<std::string> splitMessage(const std::string& message, char separator) {
     std::vector<std::string> tokens;

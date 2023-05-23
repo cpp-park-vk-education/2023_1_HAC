@@ -361,7 +361,7 @@ void Router::handle(IHTTPRequest_ request, IHTTPResponse_ response) {
     }
     if (key == POST_CHECKCOOKIE) {
         response->setStatus(OK);
-        response->setBody(request->getHeader().begin().first);
+        response->setBody(request->getHeaders().begin()->first);
         return;         
     }
     handlers_[key]->handle(request, response);
@@ -377,7 +377,7 @@ void ExitHandler::handle(IHTTPRequest_ request, IHTTPResponse_ response) {
     // post / body
     try {
         Json::Value request_json = parseInputHttpRequest(request->getBoby());
-        if (request_json->getHeaders().begin().first != request_json[HEADER_JSON_LOGIN].asString()) {
+        if (request->getHeaders().begin()->first != request_json[HEADER_JSON_LOGIN].asString()) {
             response->setStatus(FORBIDDEN);
             return;
         }
@@ -417,49 +417,5 @@ void ExitHandler::makeResponse(IHTTPResponse_ response, const Json::Value& respo
 }
 
 
-// class CheckCoockieAuthorizedHandler
-
-void CheckCoockieAuthorizedHandler::handle(IHTTPRequest_ request, IHTTPResponse_ response) {
-    // post / body
-    try {
-        Json::Value request_json = parseInputHttpRequest(request->getBoby());
-        Json::Value response_json = controller_->checkCookie(request_json);
-        makeResponse(response, response_json);
-
-    } catch (market_mentor::InvalidHttpRequestError &e) {
-        response->setStatus(BAD_REQUEST);
-        response->setBody(e.what());
-    } catch (market_mentor::MarketMentorException &e) {
-        response->setStatus(INTERNAL_SERVER_ERROR);
-        response->setBody(e.what());
-    } catch (std::exception &e) {
-        response->setStatus(INTERNAL_SERVER_ERROR);
-        response->setBody(e.what());
-    }
-}
-
-Json::Value CheckCoockieAuthorizedHandler::parseInputHttpRequest(const std::string& message) {
-    //  real_login/real_password/
-    Json::Value result;
-    std::vector<std::string> tokens = splitMessage(message, SEPARATOR_BODY);
-
-    if (tokens.size() != SIZE_BODY_POST_AUTHORIZATION) {
-        throw market_mentor::InvalidHttpRequestError(HANDLERS_AUTHORIZATION);
-    }
-
-    result[HEADER_JSON_LOGIN] = tokens[LOGIN_ORDER];
-    result[HEADER_JSON_PASSWORD] = tokens[PASSWORD_ORDER];
-
-    return result;
-}
-
-void CheckCoockieAuthorizedHandler::makeResponse(IHTTPResponse_ response, const Json::Value& response_json) {
-    if (!response_json[HEADER_JSON_STATUS].asBool()) {
-        response->setStatus(UNAUTHORIZED);
-        return;
-    }
-    response->setStatus(OK);
-    response->setHeader(COOKIE, response_json[HEADER_JSON_TOKEN].asString());
-}
 
 } // namespace handlers 

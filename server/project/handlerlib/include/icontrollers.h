@@ -76,17 +76,11 @@ class IUpdateDataController {
 
 class IExitController {
  public:
-  virtual Json::Value deleteCookie(Json::Value& request) = 0;
+  virtual Json::Value deleteCookie(const Json::Value& request) = 0;
  protected:
   virtual Json::Value makeDBProtocol(const Json::Value& request) = 0;
 };
 
-class ICheckCookieAuthorizedController {
- public:
-  virtual Json::Value checkCookie(Json::Value& request) = 0;
- protected:
-  virtual Json::Value makeDBProtocol(const Json::Value& request) = 0;
-};
 
 
 class IMiddleWare {

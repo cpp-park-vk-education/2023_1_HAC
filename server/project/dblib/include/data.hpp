@@ -38,3 +38,9 @@ struct SubscriptionData {
 struct AllSubscription {
     Json::Value list;
 };
+
+struct TokenData {
+    std::string login;
+    std::string token;
+    size_t time_live;
+};

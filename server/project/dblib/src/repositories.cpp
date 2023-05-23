@@ -39,19 +39,19 @@ std::shared_ptr<ClientData> ClientRepository::DatabaseResponseParse(const Json::
     const int kLoginId = 1;
     const int kEmailId = 2;
     const int kPasswordId = 3;
-    const int kSessionId = 7;
-    const int kTokenId = 8;
-    const int kTokenStartDateId = 9;
-    const int kTokenFinishDateId = 9;
+   // const int kSessionId = 7;
+   // const int kTokenId = 8;
+   // const int kTokenStartDateId = 9;
+   // const int kTokenFinishDateId = 9;
 
     auto result = std::make_shared<ClientData>();
     result->login = db_response[kLoginId].asString();
     result->email = db_response[kEmailId].asString();
     result->hash = db_response[kPasswordId].asString();
-    result->session_id = std::stoi(db_response[kSessionId].asString());
-    result->token = db_response[kTokenId].asString();
-    result->token_start_date = db_response[kTokenStartDateId].asString();
-    result->token_finish_date = db_response[kTokenFinishDateId].asString();
+ //   result->session_id = std::stoi(db_response[kSessionId].asString());
+ //   result->token = db_response[kTokenId].asString();
+  //  result->token_start_date = db_response[kTokenStartDateId].asString();
+  //  result->token_finish_date = db_response[kTokenFinishDateId].asString();
 
     return result;
 }
@@ -72,9 +72,9 @@ std::shared_ptr<ClientData> ClientRepository::GetByKey(const ClientGetType& type
     case LOGIN_KEY:
         query = "SELECT * from client where login = '" + key + "'";
         break;
-    case TOKEN_KEY: 
-        query = "SELECT * from client where token = '" + key + "'";
-        break;
+    // case TOKEN_KEY: 
+    //     query = "SELECT * from client where token = '" + key + "'";
+    //     break;
             
     default:
         return nullptr;
@@ -133,17 +133,17 @@ bool ClientRepository::Update(const ClientUpdateType& type, const std::string& k
         query = "UPDATE client SET password = '" + data->hash + "' WHERE login = '" + key + "'";    
         break;
 
-    case UPDATE_SESSION:
-        if (data->token == "NULL") {
-            query = "UPDATE client SET session_id = NULL, token = NULL, token_date = NULL WHERE login = '" + key + "'";              
-        }
-        else {
-            query = "UPDATE client SET session_id = '" + std::to_string(data->session_id) + "', token = '" + 
-                        data->token + "', token_start_date = '" + data->token_start_date + "', token_finish_date = '"  + 
-                        data->token_finish_date + "' WHERE login = '" + key + "'";                     
-        }
+    // case UPDATE_SESSION:
+    //     if (data->token == "NULL") {
+    //         query = "UPDATE client SET session_id = NULL, token = NULL, token_date = NULL WHERE login = '" + key + "'";              
+    //     }
+    //     else {
+    //         query = "UPDATE client SET session_id = '" + std::to_string(data->session_id) + "', token = '" + 
+    //                     data->token + "', token_start_date = '" + data->token_start_date + "', token_finish_date = '"  + 
+    //                     data->token_finish_date + "' WHERE login = '" + key + "'";                     
+    //     }
 
-        break;
+    //     break;
 
     default:
         return false;
@@ -171,11 +171,11 @@ void ClientRepository::CacheUpdate(const ClientUpdateType& type, const std::stri
         cache_data->hash = data->hash;
         break;
 
-    case UPDATE_SESSION:
-        cache_data->session_id = data->session_id;
-        cache_data->token = data->token;
-        cache_data->token_start_date = data->token_start_date;
-        cache_data->token_finish_date = data->token_finish_date;
+    // case UPDATE_SESSION:
+    //     cache_data->session_id = data->session_id;
+    //     cache_data->token = data->token;
+    //     cache_data->token_start_date = data->token_start_date;
+    //     cache_data->token_finish_date = data->token_finish_date;
 
         break;
 
@@ -357,8 +357,14 @@ std::shared_ptr<SubscriptionData> SubscriptionRepository::DatabaseResponseParse(
 
     auto row = std::make_shared<SubscriptionData>();
     row->name = db_response[kNameId].asString();
-    row->cost = std::stoi(db_response[kCostId].asString());
-    row->count = std::stoi(db_response[kCountId].asString());
+    try {
+        row->cost = std::stoi(db_response[kCostId].asString());
+        row->count = std::stoi(db_response[kCountId].asString());       
+    }
+    catch (const std::exception& e) {
+        std::cerr << e.what() << std::endl;
+        return nullptr;
+    }
 
     return row;
 }

@@ -54,6 +54,8 @@ Server::Server(const std::string& path_to_config_file) {
                    = std::make_unique<controllers::PredictController>(database_controller.get(), model_controller.get());
     std::unique_ptr<controllers::IUpdateDataController> update_controller 
                    = std::make_unique<controllers::UpdateDataController>(database_controller.get(), api_stock.get());
+    std::unique_ptr<controllers::IMiddleWare> middleware_controller 
+                   = std::make_unique<controllers::MiddleWare>(database_controller.get());
 
     if (!show_plot_controller || !register_contoller || !aurhorize_controller || !model_controller || !predict_controller) {
         throw market_mentor::CreatingNullptr("Creating server error");
@@ -77,7 +79,7 @@ Server::Server(const std::string& path_to_config_file) {
     setHandlers("GET:PREDICT",  predict_handler.get());
     setHandlers("GET:PLOT",  show_plot_handler.get());
 
-    prtToIHandler global_router = std::make_unique<handlers::Router>(handlers_);
+    prtToIHandler global_router = std::make_unique<handlers::Router>(handlers_, middleware_controller.get());
 
     std::unique_ptr<IRouterAdapter> router_adapter = std::make_unique<RouterAdapter>(global_router.get());
 

@@ -40,9 +40,9 @@ const std::string HEADER_JSON_DATE = "date";
 
 
 
-FileLogger& logger = FileLogger::getInstance();
-
 namespace controllers {
+
+FileLogger& logger = FileLogger::getInstance();
 
 Json::Value makeJsonError(const std::string& error_mes, bool server_error) {
   Json::Value response;

@@ -17,3 +17,14 @@ RUN cd /root && \
     ./bootstrap.sh && \
     ./b2 --with-system --with-thread --with-date_time --with-regex --with-serialization stage
 RUN apt install -y libgmock-dev
+RUN cd /root && \
+    git clone https://github.com/redis/hiredis.git && \
+    cd hiredis && \
+    make && \
+    make install
+RUN cd /root && \
+    git clone https://github.com/sewenew/redis-plus-plus.git && \
+    cd redis-plus-plus && \
+    mkdir build && \
+    cd build && \
+    cmake -DREDIS_PLUS_PLUS_CXX_STANDARD=17 ..

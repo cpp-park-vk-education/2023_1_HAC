@@ -23,7 +23,8 @@ enum TypeData {
     CHANGE_USER_PASSWORD_SETTINGS,
     TIMESERIES_REQUEST,
     STOCKS_REQUEST, 
-    SESSION_REQUEST
+    SESSION_REQUEST,
+    SESSION_DELETE
 };
 
 namespace dbcontroller {
@@ -47,6 +48,7 @@ namespace dbcontroller {
         // Token
         virtual Json::Value TokenRequestGet(const Json::Value& request) = 0;
         virtual Json::Value TokenRequestPost(const Json::Value& request) = 0;
+        virtual Json::Value TokenRequestDelete(const std::string& key) = 0;
 
     };
 
@@ -85,6 +87,7 @@ namespace dbcontroller {
         // Token 
         Json::Value TokenRequestGet(const Json::Value& request) override;
         Json::Value TokenRequestPost(const Json::Value& request) override;
+        Json::Value TokenRequestDelete(const std::string& key) override;
 
         // Postgres
         std::string postgres_host_addr_ = "25.21.238.202";

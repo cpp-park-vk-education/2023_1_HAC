@@ -9,7 +9,8 @@ namespace repository {
     class  ITokenRepository {
     public:
         virtual bool Insert(const TokenData& data) = 0;
-        virtual std::shared_ptr<TokenData> Get(const std::string key) = 0;
+        virtual bool Delete(const std::string& key) = 0;
+        virtual std::shared_ptr<TokenData> Get(const std::string& key) = 0;
     };
 
     class TokenRepository: public ITokenRepository {
@@ -18,7 +19,8 @@ namespace repository {
         TokenRepository(const std::shared_ptr<IMemoryDataBase>& db);
 
         bool Insert(const TokenData& data) override;
-        std::shared_ptr<TokenData> Get(const std::string key) override;
+        bool Delete(const std::string& key) override;
+        std::shared_ptr<TokenData> Get(const std::string& key) override;
     
     private:
         std::shared_ptr<IMemoryDataBase> database_;

@@ -27,4 +27,6 @@ RUN cd /root && \
     cd redis-plus-plus && \
     mkdir build && \
     cd build && \
-    cmake -DREDIS_PLUS_PLUS_CXX_STANDARD=17 ..
+    cmake -DREDIS_PLUS_PLUS_CXX_STANDARD=17 .. && \
+    make && \
+    make install

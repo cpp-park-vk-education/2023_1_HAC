@@ -51,6 +51,6 @@ services:
     environment:
       - ALLOW_EMPTY_PASSWORD=yes
     ports:
-      - 7000:7000
+      - 9966:7000
     depends_on:
       - db

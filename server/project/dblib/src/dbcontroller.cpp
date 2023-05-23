@@ -101,7 +101,13 @@ void DataBaseController::GetRequestRouter(const Json::Value& request, Json::Valu
         // TypeData type = SESSION_REQUEST;
         // response = ClientRequestGet(type, key);
         response = TokenRequestGet(request);
-    }           
+    }  
+
+    // Удалить токен
+    if (request["TypeData"] == SESSION_DELETE) {
+        std::string key = request["token"].asString();
+        response = TokenRequestDelete(key);
+    }               
 }
 
 
@@ -319,5 +325,23 @@ Json::Value DataBaseController::TokenRequestPost(const Json::Value& request) {
     }
 
     response["status"] = token_rep_->Insert(token_data);
+    return response;
+}
+
+Json::Value DataBaseController::TokenRequestDelete(const std::string& key) {
+    Json::Value response;
+    if (!redis_database_.get()) {
+        response["DatabaseIsOpen"] = false;
+        response["status"] = false;
+        return response;
+    }
+
+    if (!redis_database_->IsOpen()) {  
+        response["DatabaseIsOpen"] = false;
+        response["status"] = false;
+        return response;
+    }
+
+    response["status"] = token_rep_->Delete(key);
     return response;
 }

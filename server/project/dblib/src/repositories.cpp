@@ -183,6 +183,7 @@ void ClientRepository::CacheUpdate(const ClientUpdateType& type, const std::stri
         return;
     }    
 
+ 
     client_cache_->Delete(key);
     client_cache_->Insert(key, *cache_data);
 }

@@ -10,15 +10,17 @@ services:
   db:
     image: postgres:14.4
     restart: always
+    env_file:
+      - .env
     environment:
-      POSTGRES_DB: marketmentor
-      POSTGRES_USER: marketmentor_server
-      POSTGRES_PASSWORD: marketmentor_password
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
     ports:
       - 5432:5432
     volumes:
-      - /home/mmm/market_mentor/dump_db/dump:/tmp/dump
-
+      - ./db/data:/var/lib/postgresql/data
+      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
 
   model:
     build:
@@ -30,7 +32,7 @@ services:
       - /home/mmm/market_mentor/model:/home/model
     depends_on:
       - server
-
+  
 
   server:
     build:
@@ -40,5 +42,15 @@ services:
       - 9988:8080
     volumes:
       - /home/mmm/market_mentor:/home/market_mentor
+    depends_on:
+      - redis
+
+
+  redis:
+    image: 'bitnami/redis:latest'
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
+    ports:
+      - 7000:7000
     depends_on:
       - db

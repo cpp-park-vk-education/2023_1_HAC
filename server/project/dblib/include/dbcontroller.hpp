@@ -70,6 +70,9 @@ namespace dbcontroller {
         Json::Value DataRequest(const Json::Value& request) noexcept override;
 
     private:
+        bool DatabaseIsOpen();
+        bool MemoryDatabaseIsOpen();
+        
         // Route
         void GetRequestRouter(const Json::Value& request, Json::Value& response);
         void PostRequestRouter(const Json::Value& request, Json::Value& response);

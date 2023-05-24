@@ -14,7 +14,7 @@ struct ClientData {
 
 struct TimeSeriesData {
     std::string name_stock;
-    std::string date;
+    Json::Value date;
     Json::Value param;    
 };
 

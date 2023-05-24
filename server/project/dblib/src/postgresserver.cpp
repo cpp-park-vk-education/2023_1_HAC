@@ -2,7 +2,7 @@
 
 using namespace database;
 
-PostgresServer::PostgresServer(): host_addr_("25.21.238.202"), port_("5433"), db_name_("marketmentor"),
+PostgresServer::PostgresServer(): host_addr_("62.84.127.93"), port_("5433"), db_name_("marketmentor"),
      user_("marketmentor_server"), password_("marketmentor_password") {
 }
 
@@ -24,6 +24,7 @@ bool PostgresServer::IsOpen() {
 bool PostgresServer::Connect() {
     std::string connecting_string = "dbname = " + db_name_+ " user = " + user_ + " password = " + password_ +
         " hostaddr = " + host_addr_ + " port = " + port_;
+    std::cout << connecting_string << std::endl;
     try {
         conn_ = std::make_shared<pqxx::connection>(connecting_string);
     } 

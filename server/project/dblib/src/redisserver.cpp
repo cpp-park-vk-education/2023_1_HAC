@@ -2,7 +2,7 @@
 
 using namespace database;
 
-RedisServer::RedisServer(): host_("127:0:0:1"), port_(6369), password_("marketmentor_password") {
+RedisServer::RedisServer(): host_("62.84.127.93"), port_(6369), password_("marketmentor_password") {
 }
 
 RedisServer::RedisServer(const std::string& host, int port, const std::string& password): 

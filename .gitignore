@@ -3,3 +3,5 @@
 /dump_db/dump
 .env
 /db
+.docker-compose.yml.swo
+

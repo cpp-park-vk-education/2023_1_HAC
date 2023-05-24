@@ -90,14 +90,14 @@ namespace dbcontroller {
         Json::Value TokenRequestDelete(const std::string& key) override;
 
         // Postgres
-        std::string postgres_host_addr_ = "25.21.238.202";
+        std::string postgres_host_addr_ = "62.84.127.93";
         std::string postgres_port_ = "5433";
         std::string postgres_db_name_ = "marketmentor";
         std::string postgres_user_ = "marketmentor_server";
         std::string postgres_password_ = "marketmentor_password";
 
         // Redis
-        std::string redis_host_addr_ = "127.0.0.1";
+        std::string redis_host_addr_ = "62.84.127.93";
         int redis_port_ = 6379;
         std::string redis_password_ = "marketmentor_password";
 

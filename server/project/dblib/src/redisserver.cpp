@@ -2,7 +2,7 @@
 
 using namespace database;
 
-RedisServer::RedisServer(): host_("127:0:0:1"), port_(6369), password_("marketmentor_password") {
+RedisServer::RedisServer(): host_("62.84.127.93"), port_(6369), password_("marketmentor_password") {
 }
 
 RedisServer::RedisServer(const std::string& host, int port, const std::string& password): 
@@ -23,7 +23,7 @@ bool RedisServer::IsOpen() {
 
 bool RedisServer::Connect() {
     sw::redis::ConnectionOptions connection_options;
-    connection_options.host = "127.0.0.1"; 
+    connection_options.host = "62.84.127.93"; 
     connection_options.port = 6379; 
 //  connection_options.password = "auth"; 
     redis_ = std::make_shared<sw::redis::Redis>(connection_options);

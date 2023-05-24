@@ -49,7 +49,9 @@ HTTPRequestToBoostAdapter::HTTPRequestToBoostAdapter(const std::string &url,
 
 void HTTPRequestToBoostAdapter::setStatus(int status_code){};
 void HTTPRequestToBoostAdapter::setUrl(const std::string& url){};
-void HTTPRequestToBoostAdapter::setHeader(const std::string &header, const std::string &value){};
+void HTTPRequestToBoostAdapter::setHeader(const std::string &header, const std::string &value) {
+    request_->set(header, value);
+};
 void HTTPRequestToBoostAdapter::setBody(const std::string &bytes){};
 std::string HTTPRequestToBoostAdapter::getURL(){
     return std::string(request_->target());

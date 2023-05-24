@@ -29,4 +29,8 @@ RUN cd /root && \
     cd build && \
     cmake -DREDIS_PLUS_PLUS_CXX_STANDARD=17 .. && \
     make && \
-    make install
+    make install && \
+    ldconfig
+COPY ./server/ /home/server/
+RUN cd /home/server && ./build.sh
+CMD cd /home/server && ./start.sh

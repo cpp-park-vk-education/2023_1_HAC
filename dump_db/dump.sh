@@ -1,1 +1,0 @@
-psql market_mentor < mmm_dump

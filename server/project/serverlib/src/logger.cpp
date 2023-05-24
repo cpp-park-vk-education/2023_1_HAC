@@ -31,7 +31,7 @@ void FileLogger::log(const std::string& message) {
     std::tm* local_time = std::localtime(&local_now);
 
     std::stringstream log_steam;
-    log_steam << "[" << std::put_time(local_time, "%Y-%m-%d %H:%M:%S") << "] " << message << std::endl;
+    std::cout << "[" << std::put_time(local_time, "%Y-%m-%d %H:%M:%S") << "] " << message << std::endl;
 
     file << log_steam.str();
     file.flush();

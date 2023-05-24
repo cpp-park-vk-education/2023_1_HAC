@@ -28,7 +28,7 @@ const std::string HEADER_JSON_LEN_LAGS = "len_lags";
 const std::string HEADER_JSON_LENPREDICT = "lenpredict";
 const std::string HEADER_JSON_DATA = "data";
 const std::string HEADER_JSON_TOKEN = "token";
-const std::string HEADER_JSON_TIME_LIFE = "time_life";
+const std::string HEADER_JSON_TIME_LIFE = "time_live";
 
 const std::string HEADER_JSON_STATUS = "status";
 const std::string HEADER_JSON_SERVER_ERROR = "server_error";
@@ -54,13 +54,21 @@ Json::Value makeJsonError(const std::string& error_mes, bool server_error) {
 }
 
 std::string makeCookie() {
-    int outf;
-    unsigned char buf[1024];
-    if (!RAND_bytes(buf, sizeof(buf))) { /* 1 succes, 0 otherwise */
+  
+    unsigned char buffer[2048];
+
+    if (RAND_bytes(buffer, sizeof(buffer)) != 1) {
         throw market_mentor::CreateCookieError();
     }
 
-    return std::string(reinterpret_cast<char*>(buf), 1024);
+    unsigned int randomNum = 0;
+    for (int i = 0; i < sizeof(buffer); ++i) {
+        randomNum <<= 8;
+        randomNum |= buffer[i];
+    }
+
+    return hashing(std::to_string(randomNum));
+
 }
 
 Json::Value makeProtocolSendCookie(const std::string& cookie, const std::string& login) {
@@ -203,6 +211,7 @@ Json::Value RegisterController::registration(Json::Value& request) {
 
     if (response_db[HEADER_JSON_STATUS].asBool()) {
         std::string cookie = makeCookie();
+        std::cout << "COOKIE: " << cookie << std::endl;
         logger.log("Make protocol for cookie... : registration controller");
         Json::Value coockei_to_db = makeProtocolSendCookie(cookie, request[HEADER_JSON_LOGIN].asString());
         logger.log("DB request for cookie... : registration controller");

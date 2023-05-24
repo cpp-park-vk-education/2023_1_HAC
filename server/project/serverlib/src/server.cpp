@@ -82,6 +82,7 @@ Server::Server(const std::string& path_to_config_file) {
     setHandlers("POST:DELETECOOKIE",  exit_handler.get());
     setHandlers("GET:PREDICT",  predict_handler.get());
     setHandlers("GET:PLOT",  show_plot_handler.get());
+    setHandlers("POST:CHECKCOOKIE", nullptr);
 
     prtToIHandler global_router = std::make_unique<handlers::Router>(handlers_, middleware_controller.get());
 

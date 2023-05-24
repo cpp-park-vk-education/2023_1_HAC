@@ -12,6 +12,10 @@ TokenRepository::TokenRepository (const std::shared_ptr<IMemoryDataBase>& db): d
 
 
 bool TokenRepository::Insert(const TokenData& data) {
+    if (!database_->IsOpen()) {
+        return false;
+    }
+
     std::string key = data.token;
     std::string value = data.login;
     size_t ttl = data.time_live;

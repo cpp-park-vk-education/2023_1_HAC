@@ -13,6 +13,10 @@ PostgresServer::PostgresServer(const std::string&  addr, const std::string&  por
 
 
 bool PostgresServer::IsOpen() {
+    if (conn_ == nullptr) {
+        return false;
+    }
+
     return conn_->is_open();
 }
 

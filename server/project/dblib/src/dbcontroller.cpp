@@ -56,20 +56,36 @@ void DataBaseController::SetMemoryDatabaseConfig(const std::string& addr, const 
 
 }
 
-
-Json::Value DataBaseController::DataRequest(const Json::Value& request) noexcept {
-    Json::Value response; 
+bool DataBaseController::DatabaseIsOpen() {
     if (!postgres_database_.get()) {
-        response["DatabaseIsOpen"] = false;
-        response["status"] = false;
-        return response;
+        return false;
+
     }
 
     if (!postgres_database_->IsOpen()) {  
-        response["DatabaseIsOpen"] = false;
-        response["status"] = false;
-        return response;
+        return false;
     }
+
+    return true;
+}
+
+
+bool DataBaseController::MemoryDatabaseIsOpen() {
+    if (!redis_database_.get()) {
+        return false;
+
+    }
+
+    if (!redis_database_->IsOpen()) {  
+        return false;
+    }
+
+    return true;
+}
+
+
+Json::Value DataBaseController::DataRequest(const Json::Value& request) noexcept {
+    Json::Value response; 
 
     if (request["Type"] == GET_REQUEST) {
         GetRequestRouter(request, response);
@@ -79,7 +95,6 @@ Json::Value DataBaseController::DataRequest(const Json::Value& request) noexcept
         PostRequestRouter(request, response);
     }
     
-    response["DatabaseIsOpen"] = true;
     return response;
 }
 
@@ -97,9 +112,6 @@ void DataBaseController::GetRequestRouter(const Json::Value& request, Json::Valu
 
     // Получить токен
     if (request["TypeData"] == SESSION_REQUEST) {
-        // std::string key = response["token"].asString();
-        // TypeData type = SESSION_REQUEST;
-        // response = ClientRequestGet(type, key);
         response = TokenRequestGet(request);
     }  
 
@@ -144,10 +156,15 @@ void DataBaseController::PostRequestRouter(const Json::Value& request, Json::Val
 // Таймсерии и акции 
 Json::Value DataBaseController::TimeSeriesPost(const Json::Value& data) {
     Json::Value response; 
+    if (!DatabaseIsOpen()) {
+        response["status"] = false;
+        response["DatabaseIsOpen"] = false;
+        return response;
+    }
 
     auto timeseries_data = std::make_shared<TimeSeriesData>();
     timeseries_data->name_stock = data["name_stock"].asString();
-    timeseries_data->date = data["date"].asString();
+    timeseries_data->date = data["date"];
     timeseries_data->param = data["param"];
 
     response["status"] = timeseries_rep_->Insert(timeseries_data);
@@ -157,8 +174,30 @@ Json::Value DataBaseController::TimeSeriesPost(const Json::Value& data) {
 
 Json::Value DataBaseController::TimeSeriesGet(const Json::Value& data) {
     Json::Value response;
+    if (!DatabaseIsOpen()) {
+        response["status"] = false;
+        response["DatabaseIsOpen"] = false;
+        return response;
+    }
+    
+    response["DatabaseIsOpen"] = true;
+
     std::string name_stock = data["name_stock"].asString();
-    size_t len_lags = std::stoi(data["len_lags"].asString());
+    size_t len_lags;
+    try {
+        if (data["len_lags"] != Json::Value::null) {
+            len_lags = std::stoi(data["len_lags"].asString());
+        }
+        else {
+            len_lags = 0;
+        }
+    }
+    catch (const std::exception& e) {
+        std::cerr << e.what() << std::endl;
+        response["status"] = false;
+        return response;
+    }
+
     auto time_series = std::make_shared<TimeSeriesData>();
 
     if (data["start_date"] == Json::Value::null || data["finish_date"] == Json::Value::null) {
@@ -183,6 +222,13 @@ Json::Value DataBaseController::TimeSeriesGet(const Json::Value& data) {
 
 Json::Value DataBaseController::StocksGet() {
     Json::Value response;
+    if (!DatabaseIsOpen()) {
+        response["status"] = false;
+        response["DatabaseIsOpen"] = false;
+        return response;
+    }
+    
+    response["DatabaseIsOpen"] = true;
     auto data = timeseries_rep_->GetAllStocks();
     if (data == nullptr) {
         response["status"] = false;
@@ -198,15 +244,17 @@ Json::Value DataBaseController::StocksGet() {
 // Клиент
 Json::Value DataBaseController::ClientRequestPost(const Json::Value& data) {
     Json::Value response;
-
+    if (!DatabaseIsOpen()) {
+        response["status"] = false;
+        response["DatabaseIsOpen"] = false;
+        return response;
+    }
+    
+    response["DatabaseIsOpen"] = true;
     auto client_data = std::make_shared<ClientData>();
     client_data->login = data["login"].asString();
     client_data->hash = data["password"].asString();
     client_data->email = data["email"].asString();
-    // client_data->session_id = std::stoi(data["session_id"].asString());
-    // client_data->token = data["token"].asString();
-    // client_data->token_start_date = data["token_start_data"].asString();
-    // client_data->token_finish_date = data["token_finish_data"].asString();
 
     response["status"] = clien_rep_->Insert(client_data);
     return response;
@@ -215,10 +263,14 @@ Json::Value DataBaseController::ClientRequestPost(const Json::Value& data) {
 
 Json::Value DataBaseController::ClientRequestGet(const TypeData& request_type, const std::string& key) {
     Json::Value response;
+    if (!DatabaseIsOpen()) {
+        response["status"] = false;
+        response["DatabaseIsOpen"] = false;
+        return response;
+    }
+    
+    response["DatabaseIsOpen"] = true;
     ClientGetType type;
-    // if (request_type == SESSION_REQUEST) {
-    //     type = TOKEN_KEY;
-    // }
     if (request_type == AUTHORIZATION) {
         type = LOGIN_KEY;
     }
@@ -232,11 +284,6 @@ Json::Value DataBaseController::ClientRequestGet(const TypeData& request_type, c
         response["login"] = data->login;
         response["password"] = data->hash;                
         response["email"] = data->email;    
-        // response["session_id"] = data->session_id;
-        // response["token"] = data->token;
-        // response["token_start_date"] = data->token_start_date;
-        // response["token_finish_date"] = data->token_finish_date;
-
     }
 
     return response;
@@ -244,6 +291,13 @@ Json::Value DataBaseController::ClientRequestGet(const TypeData& request_type, c
 
 Json::Value DataBaseController::ClientRequestUpdate(const Json::Value& data) {
     Json::Value response;
+    if (!DatabaseIsOpen()) {
+        response["status"] = false;
+        response["DatabaseIsOpen"] = false;
+        return response;
+    }
+    
+    response["DatabaseIsOpen"] = true;
     ClientUpdateType type;
     auto client_data = std::make_shared<ClientData>(); 
     client_data->login = data["login"].asString();
@@ -255,13 +309,6 @@ Json::Value DataBaseController::ClientRequestUpdate(const Json::Value& data) {
         type = UPDATE_PASSWORD;  
         client_data->hash = data["hash"].asString();
     }   
-    // if (data["TypeData"] == CHANGE_USER_SESSION) {
-    //     type = UPDATE_SESSION;  
-    //     client_data->token = data["token"].asString();
-    //     client_data->session_id = std::stoi(data["session_id"].asString());
-    //     client_data->token_start_date = data["token_start_date"].asString();
-    //     client_data->token_finish_date = data["token_finish_date"].asString();
-    // }
 
     response["status"] = clien_rep_->Update(type, client_data->login, client_data);
     return response;
@@ -271,6 +318,13 @@ Json::Value DataBaseController::ClientRequestUpdate(const Json::Value& data) {
 
 Json::Value DataBaseController::TokenRequestGet(const Json::Value& request) {
     Json::Value response;
+    if (!MemoryDatabaseIsOpen()) {
+        response["status"] = false;
+        response["DatabaseIsOpen"] = false;
+        return response;
+    }
+    
+    response["DatabaseIsOpen"] = true;
     if (!redis_database_.get()) {
         response["DatabaseIsOpen"] = false;
         response["status"] = false;
@@ -299,6 +353,13 @@ Json::Value DataBaseController::TokenRequestGet(const Json::Value& request) {
 
 Json::Value DataBaseController::TokenRequestPost(const Json::Value& request) {
     Json::Value response;
+    if (!MemoryDatabaseIsOpen()) {
+        response["status"] = false;
+        response["DatabaseIsOpen"] = false;
+        return response;
+    }
+    
+    response["DatabaseIsOpen"] = true;
     if (!redis_database_.get()) {
         response["DatabaseIsOpen"] = false;
         response["status"] = false;
@@ -315,7 +376,7 @@ Json::Value DataBaseController::TokenRequestPost(const Json::Value& request) {
     token_data.login = request["login"].asString();
     token_data.token = request["password"].asString();
     try {
-        token_data.time_live = std::stoi(request["email"].asString());
+        token_data.time_live = std::stoi(request["time_live"].asString());
 
     }
     catch (const std::exception& e) {
@@ -330,6 +391,13 @@ Json::Value DataBaseController::TokenRequestPost(const Json::Value& request) {
 
 Json::Value DataBaseController::TokenRequestDelete(const std::string& key) {
     Json::Value response;
+    if (!MemoryDatabaseIsOpen()) {
+        response["status"] = false;
+        response["DatabaseIsOpen"] = false;
+        return response;
+    }
+    
+    response["DatabaseIsOpen"] = true;
     if (!redis_database_.get()) {
         response["DatabaseIsOpen"] = false;
         response["status"] = false;

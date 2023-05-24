@@ -34,3 +34,4 @@ RUN cd /root && \
 COPY ./server/ /home/server/
 RUN cd /home/server && ./build.sh
 CMD cd /home/server && ./start.sh
+

@@ -23,15 +23,15 @@ bool RedisServer::IsOpen() {
 
 bool RedisServer::Connect() {
     sw::redis::ConnectionOptions connection_options;
-    connection_options.host = "62.84.127.93"; 
-    connection_options.port = 6379; 
+    connection_options.host = host_; 
+    connection_options.port = port_;
 //  connection_options.password = "auth"; 
     redis_ = std::make_shared<sw::redis::Redis>(connection_options);
     return IsOpen();
 }
 
 bool RedisServer::Insert(const std::string& key, const std::string& value, const size_t& ttl) {
-    if (!IsOpen() || Has(key)) {
+    if (Has(key)) {
         return false;
     }
 
@@ -49,7 +49,7 @@ bool RedisServer::Insert(const std::string& key, const std::string& value, const
 
 
 bool RedisServer::Delete(const std::string& key) {
-    if (!IsOpen() || !Has(key)) {
+    if (!Has(key)) {
         return false;
     }
 
@@ -67,7 +67,7 @@ bool RedisServer::Delete(const std::string& key) {
 
 
 bool RedisServer::Update(const std::string& key, const std::string& value, const size_t& ttl){
-    if (!IsOpen() || !Has(key)) {
+    if (!Has(key)) {
         return false;
     }
 

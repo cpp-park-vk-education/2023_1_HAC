@@ -1,6 +1,6 @@
 version: '3'
 
-# To start: 
+# To start:
 # - docker-compose up
 # To finish:
 # - docker-compose down
@@ -43,4 +43,3 @@ services:
     volumes:
       - ./db/data:/var/lib/postgresql/data
       - ./db/schema/:/docker-entrypoint-initdb.d
-

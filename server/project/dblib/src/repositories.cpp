@@ -22,9 +22,8 @@ bool ClientRepository::Insert(const std::shared_ptr<ClientData>& data) {
         return false;
     }
 
-    std::string query = "INSERT into client(login,password, email, session_id, token, token_date) VALUES ('" + 
-        data->login + "', '" + data->hash + "', '" + data->email +"', '" + std::to_string(data->session_id) + "', '" + 
-                    data->token + "', '" + data->token_start_date + "', '" + data->token_finish_date + "')";
+    std::string query = "INSERT into client(login,password, email) VALUES ('" + 
+        data->login + "', '" + data->hash + "', '" + data->email + "')";
 
     bool result = database_->SendQuery(query);
     if (result) {
@@ -39,19 +38,11 @@ std::shared_ptr<ClientData> ClientRepository::DatabaseResponseParse(const Json::
     const int kLoginId = 1;
     const int kEmailId = 2;
     const int kPasswordId = 3;
-   // const int kSessionId = 7;
-   // const int kTokenId = 8;
-   // const int kTokenStartDateId = 9;
-   // const int kTokenFinishDateId = 9;
 
     auto result = std::make_shared<ClientData>();
     result->login = db_response[kLoginId].asString();
     result->email = db_response[kEmailId].asString();
     result->hash = db_response[kPasswordId].asString();
- //   result->session_id = std::stoi(db_response[kSessionId].asString());
- //   result->token = db_response[kTokenId].asString();
-  //  result->token_start_date = db_response[kTokenStartDateId].asString();
-  //  result->token_finish_date = db_response[kTokenFinishDateId].asString();
 
     return result;
 }
@@ -72,9 +63,6 @@ std::shared_ptr<ClientData> ClientRepository::GetByKey(const ClientGetType& type
     case LOGIN_KEY:
         query = "SELECT * from client where login = '" + key + "'";
         break;
-    // case TOKEN_KEY: 
-    //     query = "SELECT * from client where token = '" + key + "'";
-    //     break;
             
     default:
         return nullptr;
@@ -133,18 +121,6 @@ bool ClientRepository::Update(const ClientUpdateType& type, const std::string& k
         query = "UPDATE client SET password = '" + data->hash + "' WHERE login = '" + key + "'";    
         break;
 
-    // case UPDATE_SESSION:
-    //     if (data->token == "NULL") {
-    //         query = "UPDATE client SET session_id = NULL, token = NULL, token_date = NULL WHERE login = '" + key + "'";              
-    //     }
-    //     else {
-    //         query = "UPDATE client SET session_id = '" + std::to_string(data->session_id) + "', token = '" + 
-    //                     data->token + "', token_start_date = '" + data->token_start_date + "', token_finish_date = '"  + 
-    //                     data->token_finish_date + "' WHERE login = '" + key + "'";                     
-    //     }
-
-    //     break;
-
     default:
         return false;
     }
@@ -169,14 +145,6 @@ void ClientRepository::CacheUpdate(const ClientUpdateType& type, const std::stri
 
     case UPDATE_PASSWORD:
         cache_data->hash = data->hash;
-        break;
-
-    // case UPDATE_SESSION:
-    //     cache_data->session_id = data->session_id;
-    //     cache_data->token = data->token;
-    //     cache_data->token_start_date = data->token_start_date;
-    //     cache_data->token_finish_date = data->token_finish_date;
-
         break;
 
     default:
@@ -204,7 +172,7 @@ TimeSeriesRepository::TimeSeriesRepository(const std::shared_ptr<IDataBase>& db)
 bool TimeSeriesRepository::Insert(const std::shared_ptr<TimeSeriesData>& data){
     Json::FastWriter json_to_string;
     std::string query = "INSERT into timeseries(name,date, param) VALUES ('" + 
-        data->name_stock + "', '" + data->date + "', " + data->param[0].asString() + ")";
+        data->name_stock + "', '" + data->date[0].asString() + "', " + data->param[0].asString() + ")";
 
     if (!database_->IsOpen()) {
         return false;
@@ -228,17 +196,25 @@ std::shared_ptr<TimeSeriesData> TimeSeriesRepository::TimeSeriesResponseParse(co
     auto result = std::make_shared<TimeSeriesData>();
 
     result->date = "";
-    Json::Value json_param;
+    Json::Value json_param, json_date;
     Json::Reader reader;
     std::string number;
     for (int i = 0; i < db_response.size(); i++) {  
         if (db_response[i][kParamId] != Json::Value::null) {
+            json_date[i] = db_response[i][kDateId].asString();
             number = db_response[i][kParamId].asString();
-            json_param[i] = std::stod(number);
+            try {
+               json_param[i] = std::stod(number);
+            }
+            catch (const std::exception& e) {
+                std::cerr << e.what() << std::endl;
+                return nullptr;
+            }
         }
     };
 
     result->param = json_param;
+    result->date = json_date;
     return result;
 }
 

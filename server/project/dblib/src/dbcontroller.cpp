@@ -374,7 +374,7 @@ Json::Value DataBaseController::TokenRequestPost(const Json::Value& request) {
 
     TokenData token_data;
     token_data.login = request["login"].asString();
-    token_data.token = request["password"].asString();
+    token_data.token = request["token"].asString();
     try {
         token_data.time_live = std::stoi(request["time_live"].asString());
 

@@ -67,7 +67,7 @@ std::string makeCookie() {
         randomNum |= buffer[i];
     }
 
-    return hashing(std::to_string(randomNum));
+    return hashing(std::to_string(randomNum)).substr(0, 100);
 
 }
 
@@ -211,7 +211,6 @@ Json::Value RegisterController::registration(Json::Value& request) {
 
     if (response_db[HEADER_JSON_STATUS].asBool()) {
         std::string cookie = makeCookie();
-        std::cout << "COOKIE: " << cookie << std::endl;
         logger.log("Make protocol for cookie... : registration controller");
         Json::Value coockei_to_db = makeProtocolSendCookie(cookie, request[HEADER_JSON_LOGIN].asString());
         logger.log("DB request for cookie... : registration controller");
@@ -361,6 +360,24 @@ Json::Value ExitController::makeDBProtocol(const Json::Value& request) {
 }
 
 
+// class GetStocksController
+GetStocksController::GetStocksController(const ptrToDBController db_controller)
+    : db_controller_(db_controller) {}
+
+Json::Value GetStocksController::getNameStocks(const Json::Value& request) {
+    Json::Value request_to_db = makeDBProtocol(request);
+    logger.log("Request to DB... : getStocks controller");
+    return db_controller_->DataRequest(request_to_db);
+}
+
+Json::Value GetStocksController::makeDBProtocol(const Json::Value& request) {
+    Json::Value db_protocol;
+    db_protocol[HEADER_JSON_TYPE] = TypeRequest::GET_REQUEST;
+    db_protocol[HEADER_JSON_TYPEDATA] = TypeData::SESSION_DELETE;
+    db_protocol[HEADER_JSON_TOKEN] = request[HEADER_JSON_TOKEN];
+    logger.log("Json DP prtocol completed successfully: getStocks controller");
+    return db_protocol;
+}
 
 
 } // namespace controllers 

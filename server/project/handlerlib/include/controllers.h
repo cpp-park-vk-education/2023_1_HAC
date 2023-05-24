@@ -112,6 +112,18 @@ class ExitController : public IExitController {
 };
 
 
+// GetStocksController
+class GetStocksController : public IGetStocksController {
+ public:
+  explicit GetStocksController(const ptrToDBController db_controller);
+  Json::Value getNameStocks(const Json::Value& request) override;
+ private:
+  Json::Value makeDBProtocol(const Json::Value& request) override;
+
+  ptrToDBController db_controller_;
+};
+
+
 // class MiddleWare
 class MiddleWare : public IMiddleWare {
  public:

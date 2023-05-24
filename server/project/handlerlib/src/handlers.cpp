@@ -338,10 +338,10 @@ void Router::handle(IHTTPRequest_ request, IHTTPResponse_ response) {
         response->setBody("Not found key METHOD:ACTIONS");
         return;
     }
-
+    cookie_map cookies;
     if (key != POST_AUTHORIZATION && key != POST_REGISTRATION) {
         try {
-            cookie_map cookies = middleware_->checkCookieFile(header[COOKIE]);
+            cookies = middleware_->checkCookieFile(header[COOKIE]);
             for (auto it : cookies) {
                 request->setHeader(it.first, it.second);
             }
@@ -361,7 +361,7 @@ void Router::handle(IHTTPRequest_ request, IHTTPResponse_ response) {
     }
     if (key == POST_CHECKCOOKIE) {
         response->setStatus(OK);
-        response->setBody(request->getHeaders().begin()->first);
+        response->setBody(cookies.begin()->first);
         return;         
     }
     handlers_[key]->handle(request, response);
@@ -377,10 +377,11 @@ void ExitHandler::handle(IHTTPRequest_ request, IHTTPResponse_ response) {
     // post / body
     try {
         Json::Value request_json = parseInputHttpRequest(request->getBoby());
-        if (request->getHeaders().begin()->first != request_json[HEADER_JSON_LOGIN].asString()) {
-            response->setStatus(FORBIDDEN);
-            return;
-        }
+        request_json[HEADER_JSON_TOKEN] = request->getHeaders()[request_json[HEADER_JSON_LOGIN].asString()];
+        // if (request->getHeaders().begin()->first != request_json[HEADER_JSON_LOGIN].asString()) {
+        //     response->setStatus(FORBIDDEN);
+        //     return;
+        // }
         Json::Value response_json = controller_->deleteCookie(request_json);
         makeResponse(response, response_json);
 
@@ -416,6 +417,8 @@ void ExitHandler::makeResponse(IHTTPResponse_ response, const Json::Value& respo
     response->setStatus(OK);
 }
 
+
+// class GetStocksHandler
 
 
 } // namespace handlers 

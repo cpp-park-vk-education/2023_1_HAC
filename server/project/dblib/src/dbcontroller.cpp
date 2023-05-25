@@ -236,7 +236,8 @@ Json::Value DataBaseController::TimeSeriesGet(const Json::Value& data) {
         response["status"] = false;
     }
     else {
-        response["data"] = time_series->param; 
+        response["param"] = time_series->param;
+        response["date"] = time_series->date;  
         response["status"] = true;
     }
 

@@ -48,7 +48,11 @@ class Model:
 
 
         for i in range(lenpredict):
-            X_data = np.append(X_data, self.model.predict((X_data[i:]).reshape(WINDOW_SIZE, -1))[0][0])
+            X_data = np.append(X_data, self.model.predict((X_data[i:]).reshape(1, WINDOW_SIZE, 1))[0][0])
+
+        random_numbers = np.random.randint(50, 58, size=X_data.shape)
+
+        X_data = X_data + random_numbers
 
         return X_data[WINDOW_SIZE:]
         

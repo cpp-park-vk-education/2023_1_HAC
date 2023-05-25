@@ -6,7 +6,7 @@ Json::Value api::APIModelRequest::getData(const controllers::TimeSeriesPredicts&
     boost::asio::io_service io_service;
     boost::asio::ip::tcp::socket socket(io_service);
 
-    boost::asio::ip::tcp::endpoint endpoint(boost::asio::ip::address_v4::from_string("25.21.238.202"), 9950);
+    boost::asio::ip::tcp::endpoint endpoint(boost::asio::ip::address_v4::from_string("62.84.127.93"), 9950);
 
     socket.connect(endpoint);
 
@@ -56,22 +56,17 @@ Json::Value api::APIModelRequest::getData(const controllers::TimeSeriesPredicts&
     std::vector<double> parsed_data;
     std::string now_value;
     for (size_t i = 1; i < data_string.length()-1; ++i){
-        if(data_string[i] == '['){
+      
+        if (data_string[i] == ' ' && now_value.length()) {
+            std::cerr << now_value << std::endl;
+            parsed_data.push_back(std::stod(now_value));
             now_value = "";
-        } else {
-            if (data_string[i] == ' '){
-                parsed_data.push_back(std::stod(now_value));
-                now_value = "";
-            } else {
-                now_value += data_string[i]; 
-            }
+        } else if (data_string[i] != ' ' ) {
+            now_value += data_string[i]; 
         }
+        
     }
-    parsed_data.push_back(std::stod(now_value));
-
-    for (auto i : parsed_data){
-    //    std::cout << i << " ";
-    }
+    //parsed_data.push_back(std::stod(now_value));
 
     Json::Value json_resp;
     json_resp["status"] = true;
@@ -80,7 +75,8 @@ Json::Value api::APIModelRequest::getData(const controllers::TimeSeriesPredicts&
     for (int i = 0; i < parsed_data.size(); i++) {  
        json_param[i] = parsed_data[i];
     };
-    json_resp["data"] = json_param;  
+    json_resp["param"] = json_param;
+    std::cerr << json_resp.toStyledString() << std::endl;
     return json_resp;
 };
 

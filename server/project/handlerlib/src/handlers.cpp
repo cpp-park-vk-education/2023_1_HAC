@@ -36,6 +36,7 @@ const std::string HEADER_JSON_NAME_STOCK = "name_stock";
 const std::string HEADER_JSON_LEN_LAGS = "len_lags";
 const std::string HEADER_JSON_LENPREDICT = "lenpredict";
 const std::string HEADER_JSON_DATA = "data";
+const std::string HEADER_JSON_DATE = "date";
 const std::string HEADER_JSON_STATUS = "status";
 const std::string HEADER_JSON_TOKEN = "token";
 
@@ -234,10 +235,10 @@ void ShowPlotHandler::makeResponse(IHTTPResponse_ response, const Json::Value& r
         return;
     }
     std::string plot_data_ = response_json[HEADER_JSON_DATA].toStyledString();
-
+    std::string date_ = response_json[HEADER_JSON_DATE].toStyledString();
     response->setStatus(OK);
     response->setHeader(PLOT_DATA, PLOT_DATA);
-    response->setBody(plot_data_);
+    response->setBody(plot_data_ + "\n" + date_);
 }
 
 // class RegisterHandler

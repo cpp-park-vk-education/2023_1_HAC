@@ -82,6 +82,12 @@ class IExitController {
 };
 
 
+class IGetStocksController {
+ public:
+  virtual Json::Value getNameStocks() = 0;
+ protected:
+  virtual Json::Value makeDBProtocol() = 0;  
+};
 
 class IMiddleWare {
  public:

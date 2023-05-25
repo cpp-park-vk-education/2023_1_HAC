@@ -40,6 +40,7 @@ const std::string HEADER_JSON_TOKEN = "token";
 const std::string HEADER_JSON_PASSWORD = "password";
 const std::string HEADER_JSON_EMAIL = "email";
 const std::string HEADER_JSON_LOGIN = "login";
+const std::string HEADER_JSON_PARAM = "param";
 
 const std::string POST_AUTHORIZATION = "POST:AUTHORIZATION";
 const std::string POST_REGISTRATION = "POST:REGISTRATION";
@@ -338,10 +339,10 @@ void Router::handle(IHTTPRequest_ request, IHTTPResponse_ response) {
         response->setBody("Not found key METHOD:ACTIONS");
         return;
     }
-
+    cookie_map cookies;
     if (key != POST_AUTHORIZATION && key != POST_REGISTRATION) {
         try {
-            cookie_map cookies = middleware_->checkCookieFile(header[COOKIE]);
+            cookies = middleware_->checkCookieFile(header[COOKIE]);
             for (auto it : cookies) {
                 request->setHeader(it.first, it.second);
             }
@@ -361,7 +362,7 @@ void Router::handle(IHTTPRequest_ request, IHTTPResponse_ response) {
     }
     if (key == POST_CHECKCOOKIE) {
         response->setStatus(OK);
-        response->setBody(request->getHeaders().begin()->first);
+        response->setBody(cookies.begin()->first);
         return;         
     }
     handlers_[key]->handle(request, response);
@@ -377,10 +378,7 @@ void ExitHandler::handle(IHTTPRequest_ request, IHTTPResponse_ response) {
     // post / body
     try {
         Json::Value request_json = parseInputHttpRequest(request->getBoby());
-        if (request->getHeaders().begin()->first != request_json[HEADER_JSON_LOGIN].asString()) {
-            response->setStatus(FORBIDDEN);
-            return;
-        }
+        request_json[HEADER_JSON_TOKEN] = request->getHeaders()[request_json[HEADER_JSON_LOGIN].asString()];
         Json::Value response_json = controller_->deleteCookie(request_json);
         makeResponse(response, response_json);
 
@@ -417,5 +415,36 @@ void ExitHandler::makeResponse(IHTTPResponse_ response, const Json::Value& respo
 }
 
 
+// class GetStocksHandler
+
+GetStocksHandler::GetStocksHandler(ptrToGetStocksController controller)
+    : controller_(controller) {}
+
+void GetStocksHandler::handle(IHTTPRequest_ request, IHTTPResponse_ response) {
+    // post / body
+    try {
+        Json::Value response_json = controller_->getNameStocks();
+        makeResponse(response, response_json);
+
+    } catch (market_mentor::MarketMentorException &e) {
+        response->setStatus(INTERNAL_SERVER_ERROR);
+        response->setBody(e.what());
+    } catch (std::exception &e) {
+        response->setStatus(INTERNAL_SERVER_ERROR);
+        response->setBody(e.what());
+    }
+}
+
+Json::Value GetStocksHandler::parseInputHttpRequest(const std::string& message) {}
+
+void GetStocksHandler::makeResponse(IHTTPResponse_ response, const Json::Value& response_json) {
+    if (!response_json[HEADER_JSON_STATUS].asBool()) {
+        response->setStatus(NOT_FOUND);
+        return;
+    }
+    response->setStatus(OK);
+    std::string names_stock = response_json[HEADER_JSON_PARAM].toStyledString();
+    response->setBody(names_stock);
+}
 
 } // namespace handlers 

@@ -123,7 +123,7 @@
 запрос:
 request["Type"] = GET_REQUEST;
 request["TypeData"] = SESSION_DELETE;
-request["token"] = "test";
+request["token"] = "token";
 
 ответ 
 

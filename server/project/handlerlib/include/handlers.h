@@ -21,6 +21,7 @@ using ptrToModelController = controllers::IModelController*;
 using ptrToUpdateDataController = controllers::IUpdateDataController*;
 using ptrToMiddleWare = controllers::IMiddleWare*;
 using ptrToExitController = controllers::IExitController*;
+using ptrToGetStocksController = controllers::IGetStocksController*;
 
 
 class PredictHandler : public IHandler, public IHTTPParser {
@@ -79,6 +80,18 @@ class ExitHandler : public IHandler, public IHTTPParser  {
   void makeResponse(IHTTPResponse_ response, const Json::Value& response_json) override;
 
   ptrToExitController controller_; 
+};
+
+class GetStocksHandler : public IHandler, public IHTTPParser  {
+ public:
+  explicit GetStocksHandler(ptrToGetStocksController controller); 
+  void handle(IHTTPRequest_ request, IHTTPResponse_ response) override;
+ private:
+
+  Json::Value parseInputHttpRequest(const std::string& message) override;
+  void makeResponse(IHTTPResponse_ response, const Json::Value& response_json) override;
+
+  ptrToGetStocksController controller_; 
 };
 
 

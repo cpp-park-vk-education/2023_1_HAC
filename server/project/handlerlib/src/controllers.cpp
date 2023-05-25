@@ -28,7 +28,7 @@ const std::string HEADER_JSON_LEN_LAGS = "len_lags";
 const std::string HEADER_JSON_LENPREDICT = "lenpredict";
 const std::string HEADER_JSON_DATA = "data";
 const std::string HEADER_JSON_TOKEN = "token";
-const std::string HEADER_JSON_TIME_LIFE = "time_life";
+const std::string HEADER_JSON_TIME_LIFE = "time_live";
 
 const std::string HEADER_JSON_STATUS = "status";
 const std::string HEADER_JSON_SERVER_ERROR = "server_error";
@@ -54,13 +54,21 @@ Json::Value makeJsonError(const std::string& error_mes, bool server_error) {
 }
 
 std::string makeCookie() {
-    int outf;
-    unsigned char buf[1024];
-    if (!RAND_bytes(buf, sizeof(buf))) { /* 1 succes, 0 otherwise */
+  
+    unsigned char buffer[2048];
+
+    if (RAND_bytes(buffer, sizeof(buffer)) != 1) {
         throw market_mentor::CreateCookieError();
     }
 
-    return std::string(reinterpret_cast<char*>(buf), 1024);
+    unsigned int randomNum = 0;
+    for (int i = 0; i < sizeof(buffer); ++i) {
+        randomNum <<= 8;
+        randomNum |= buffer[i];
+    }
+
+    return hashing(std::to_string(randomNum)).substr(0, 100);
+
 }
 
 Json::Value makeProtocolSendCookie(const std::string& cookie, const std::string& login) {
@@ -338,6 +346,7 @@ ExitController::ExitController(const ptrToDBController db_controller)
 
 Json::Value ExitController::deleteCookie(const Json::Value& request) {
     Json::Value request_to_db = makeDBProtocol(request);
+
     logger.log("Request to DB... : exit controller");
     return db_controller_->DataRequest(request_to_db);
 }
@@ -352,6 +361,23 @@ Json::Value ExitController::makeDBProtocol(const Json::Value& request) {
 }
 
 
+// class GetStocksController
+GetStocksController::GetStocksController(const ptrToDBController db_controller)
+    : db_controller_(db_controller) {}
+
+Json::Value GetStocksController::getNameStocks() {
+    Json::Value request_to_db = makeDBProtocol();
+    logger.log("Request to DB... : getStocks controller");
+    return db_controller_->DataRequest(request_to_db);
+}
+
+Json::Value GetStocksController::makeDBProtocol() {
+    Json::Value db_protocol;
+    db_protocol[HEADER_JSON_TYPE] = TypeRequest::GET_REQUEST;
+    db_protocol[HEADER_JSON_TYPEDATA] = TypeData::STOCKS_REQUEST;
+    logger.log("Json DP prtocol completed successfully: getStocks controller");
+    return db_protocol;
+}
 
 
 } // namespace controllers 

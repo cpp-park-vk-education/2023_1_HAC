@@ -58,6 +58,8 @@ Server::Server(const std::string& path_to_config_file) {
                    = std::make_unique<controllers::MiddleWare>(database_controller.get());
     std::unique_ptr<controllers::IExitController> exit_controller 
                    = std::make_unique<controllers::ExitController>(database_controller.get());
+    std::unique_ptr<controllers::IGetStocksController> getstocks_controller
+                   = std::make_unique<controllers::GetStocksController>(database_controller.get());
 
     if (!show_plot_controller || !register_contoller || !aurhorize_controller || !model_controller || !predict_controller) {
         throw market_mentor::CreatingNullptr("Creating server error");
@@ -72,8 +74,9 @@ Server::Server(const std::string& path_to_config_file) {
     prtToIHandler authorize_handler = std::make_unique<handlers::AuthorizeHandler>(aurhorize_controller.get());
     prtToIHandler show_plot_handler = std::make_unique<handlers::ShowPlotHandler>(show_plot_controller.get());
     prtToIHandler exit_handler = std::make_unique<handlers::ExitHandler>(exit_controller.get());
+    prtToIHandler getname_stoks_handler = std::make_unique<handlers::GetStocksHandler>(getstocks_controller.get());
     
-    if (!predict_handler || !register_handler || !authorize_handler || !show_plot_handler || !exit_handler) {
+    if (!predict_handler || !register_handler || !authorize_handler || !show_plot_handler || !exit_handler || !getname_stoks_handler) {
         throw market_mentor::CreatingNullptr("Creating server error");
     }
 
@@ -82,6 +85,8 @@ Server::Server(const std::string& path_to_config_file) {
     setHandlers("POST:DELETECOOKIE",  exit_handler.get());
     setHandlers("GET:PREDICT",  predict_handler.get());
     setHandlers("GET:PLOT",  show_plot_handler.get());
+    setHandlers("POST:CHECKCOOKIE", nullptr);
+    setHandlers("GET:NAME_STOCKS", getname_stoks_handler.get());
 
     prtToIHandler global_router = std::make_unique<handlers::Router>(handlers_, middleware_controller.get());
 

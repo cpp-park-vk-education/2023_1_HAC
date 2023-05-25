@@ -293,7 +293,7 @@ UpdateDataController::UpdateDataController(const ptrToDBController db_controller
     : db_controller_(db_controller), api_stock_(api_stock) {}
 
 bool UpdateDataController::updateData(const handlers::ProtocolAPI& protocol) {
-    Json::Value response_model = api_stock_->getData(protocol); // json
+    Json::Value response_model = api_stock_->getOneStockPrise(protocol); // json
     Json::Value db_protocol = makeDBProtocol(response_model);
     Json::Value json_response_db = db_controller_->DataRequest(db_protocol);
     return json_response_db[HEADER_JSON_STATUS].asBool();

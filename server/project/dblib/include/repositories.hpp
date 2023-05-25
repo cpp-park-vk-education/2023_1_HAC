@@ -64,6 +64,8 @@ namespace repository {
     private:
         std::shared_ptr<ClientData> DatabaseResponseParse(const Json::Value& db_response);
         void CacheUpdate(const ClientUpdateType& type, const std::string& key, const std::shared_ptr<ClientData>& data);
+        bool SpecialCharacterCheck(const std::string& word);
+
         std::shared_ptr<IDataBase> database_;
         std::shared_ptr<IRepositoryCache<std::string, ClientData>> client_cache_;
     };

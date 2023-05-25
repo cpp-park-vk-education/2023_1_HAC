@@ -12,6 +12,14 @@ ClientRepository::ClientRepository(const std::shared_ptr<IDataBase>& db): databa
          client_cache_(std::make_shared<RepositoryCache<std::string, ClientData>>(20)) {
 }
 
+bool ClientRepository::SpecialCharacterCheck(const std::string& word) {
+    // Если символ найден, то возвращаем true
+    if (word.find('\'') != std::string::npos) {
+        return true;
+    }
+
+    return false;
+}
 
 bool ClientRepository::Insert(const std::shared_ptr<ClientData>& data) {
     if (client_cache_->Has(data->login)) {
@@ -19,6 +27,10 @@ bool ClientRepository::Insert(const std::shared_ptr<ClientData>& data) {
     }
 
     if (!database_->IsOpen()) {
+        return false;
+    }
+
+    if (SpecialCharacterCheck(data->email) || SpecialCharacterCheck(data->login)) {
         return false;
     }
 
@@ -48,12 +60,16 @@ std::shared_ptr<ClientData> ClientRepository::DatabaseResponseParse(const Json::
 }
 
 std::shared_ptr<ClientData> ClientRepository::GetByKey(const ClientGetType& type, const std::string& key){
-    if (client_cache_->Has(key) && type == LOGIN_KEY) {
+    if (client_cache_->Has(key)) {
         std::shared_ptr<ClientData> result = std::make_shared<ClientData>(client_cache_->Get(key));
         return result;
     }
 
     if (!database_->IsOpen()) {
+        return nullptr;
+    }
+
+    if (SpecialCharacterCheck(key)) {
         return nullptr;
     }
 
@@ -92,7 +108,11 @@ bool ClientRepository::Delete(const std::string& key) {
     if (!database_->IsOpen()) {
         return false;
     }
-    
+
+    if (SpecialCharacterCheck(key)) {
+        return false;
+    }
+
     client_cache_->Delete(key);
 
     std::string query = "DELETE from client where login = '" + key + "'";
@@ -111,9 +131,17 @@ bool ClientRepository::Update(const ClientUpdateType& type, const std::string& k
         cache_data = std::make_shared<ClientData>(client_cache_->Get(key));        
     }
 
+    if (SpecialCharacterCheck(key)) {
+        return false;
+    }
+
     std::string query;
     switch (type) {
     case UPDATE_EMAIL:
+        if (SpecialCharacterCheck(data->email)) {
+            return false;
+        }
+
         query = "UPDATE client SET email =  '" + data->email + "' WHERE login = '" + key + "'"; 
         break;
 
@@ -315,7 +343,7 @@ std::shared_ptr<AllStocks> TimeSeriesRepository::GetAllStocks() {
 }
 
 
-// Subscription
+// Subscription. dbcontoroller не вызывает данный репозиторий, так как пока не реализована система подписок
 
 SubscriptionRepository::SubscriptionRepository(): database_(nullptr), 
         subscription_cache_(std::make_shared<RepositoryCache<std::string, SubscriptionData>>(5)) {

@@ -25,7 +25,7 @@ bool RedisServer::Connect() {
     sw::redis::ConnectionOptions connection_options;
     connection_options.host = host_; 
     connection_options.port = port_;
-//  connection_options.password = "auth"; 
+//  connection_options.password = password_; 
     redis_ = std::make_shared<sw::redis::Redis>(connection_options);
     return IsOpen();
 }

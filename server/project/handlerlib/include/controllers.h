@@ -112,6 +112,34 @@ class ExitController : public IExitController {
 };
 
 
+
+// class ChangeEmailController
+class ChangeEmailController : public IChangeEmailController {
+ public:
+  explicit ChangeEmailController(const ptrToDBController db_controller);
+  Json::Value changeEmail(const Json::Value& request) override;
+ private:
+  Json::Value makeProtocolAuthor(const Json::Value& request) override;
+  Json::Value makeDBProtocol(const Json::Value& request) override;
+
+  ptrToDBController db_controller_;
+};
+
+
+
+// class ChangePasswordController
+class ChangePasswordController : public IChangePasswordController {
+ public:
+  explicit ChangePasswordController(const ptrToDBController db_controller);
+  Json::Value changePassword(const Json::Value& request) override;
+ private:
+  Json::Value makeProtocolAuthor(const Json::Value& request) override;
+  Json::Value makeDBProtocol(const Json::Value& request) override;
+
+  ptrToDBController db_controller_;
+};
+
+
 // GetStocksController
 class GetStocksController : public IGetStocksController {
  public:

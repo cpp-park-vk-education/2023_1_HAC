@@ -22,7 +22,8 @@ using ptrToUpdateDataController = controllers::IUpdateDataController*;
 using ptrToMiddleWare = controllers::IMiddleWare*;
 using ptrToExitController = controllers::IExitController*;
 using ptrToGetStocksController = controllers::IGetStocksController*;
-
+using ptrToChangePasswordController = controllers::IChangePasswordController*;
+using ptrToChangeEmailController = controllers::IChangeEmailController*;
 
 class PredictHandler : public IHandler, public IHTTPParser {
  public:
@@ -94,6 +95,30 @@ class GetStocksHandler : public IHandler, public IHTTPParser  {
   ptrToGetStocksController controller_; 
 };
 
+
+class ChangePasswordHandler : public IHandler, public IHTTPParser  {
+ public:
+  explicit ChangePasswordHandler(ptrToChangePasswordController controller); 
+  void handle(IHTTPRequest_ request, IHTTPResponse_ response) override;
+ private:
+
+  Json::Value parseInputHttpRequest(const std::string& message) override;
+  void makeResponse(IHTTPResponse_ response, const Json::Value& response_json) override;
+
+  ptrToChangePasswordController controller_; 
+};
+
+class ChangeEmailHandler : public IHandler, public IHTTPParser  {
+ public:
+  explicit ChangeEmailHandler(ptrToChangeEmailController controller); 
+  void handle(IHTTPRequest_ request, IHTTPResponse_ response) override;
+ private:
+
+  Json::Value parseInputHttpRequest(const std::string& message) override;
+  void makeResponse(IHTTPResponse_ response, const Json::Value& response_json) override;
+
+  ptrToChangeEmailController controller_; 
+};
 
 
 

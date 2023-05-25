@@ -81,12 +81,27 @@ class IExitController {
   virtual Json::Value makeDBProtocol(const Json::Value& request) = 0;
 };
 
-
 class IGetStocksController {
  public:
   virtual Json::Value getNameStocks() = 0;
  protected:
   virtual Json::Value makeDBProtocol() = 0;  
+};
+
+class IChangePasswordController {
+ public:
+  virtual Json::Value changePassword(const Json::Value& request) = 0;
+ protected:
+  virtual Json::Value makeProtocolAuthor(const Json::Value& request) = 0;
+  virtual Json::Value makeDBProtocol(const Json::Value& request) = 0;  
+};
+
+class IChangeEmailController {
+ public:
+  virtual Json::Value changeEmail(const Json::Value& request) = 0;
+ protected:
+  virtual Json::Value makeProtocolAuthor(const Json::Value& request) = 0;
+  virtual Json::Value makeDBProtocol(const Json::Value& request) = 0;  
 };
 
 class IMiddleWare {

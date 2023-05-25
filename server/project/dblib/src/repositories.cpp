@@ -199,7 +199,7 @@ TimeSeriesRepository::TimeSeriesRepository(const std::shared_ptr<IDataBase>& db)
 
 bool TimeSeriesRepository::Insert(const std::shared_ptr<TimeSeriesData>& data){
     Json::FastWriter json_to_string;
-    std::string query = "INSERT into timeseries(name,date, param) VALUES ('" + 
+    std::string query = "INSERT into timeseries(name, date_, param) VALUES ('" + 
         data->name_stock + "', '" + data->date[0].asString() + "', " + data->param[0].asString() + ")";
 
     if (!database_->IsOpen()) {
@@ -212,6 +212,33 @@ bool TimeSeriesRepository::Insert(const std::shared_ptr<TimeSeriesData>& data){
     }
 
     return result;    
+}
+
+bool TimeSeriesRepository::InsertArray(const std::shared_ptr<TimeSeriesData>& data) {
+    std::string query = "INSERT into timeseries(name, date_, param) VALUES";
+    std::string values;
+
+    if (!database_->IsOpen()) {
+        return false;
+    }
+
+    for (int i = 0; i < data->param.size(); i++) {
+        if (data->date[i] == Json::Value::null || data->param[i] == Json::Value::null) {
+            return false;
+        }
+
+        values = "( '" + data->name_stock + "' , '" + data->date[i].asString() + "' , " + data->param[i].asString() + " ) ";
+        if (i != data->param.size() - 1) {
+            values += ",";  
+        }
+        else{
+            values += ";";
+        }
+
+        query += values;
+    }
+
+    return database_->SendQuery(query);
 }
 
 
@@ -265,7 +292,7 @@ std::shared_ptr<TimeSeriesData> TimeSeriesRepository::GetByKey(const std::string
         query = "SELECT * FROM timeseries where name = '" + name_stock 
                 + "' ORDER by timeseries_id DESC LIMIT " + std::to_string(len_lags);
     else {
-        query = " SELECT * FROM timeseries where name = '" + name_stock + "' and date > '" + start_date + "' and date < '" +
+        query = " SELECT * FROM timeseries where name = '" + name_stock + "' and date_ > '" + start_date + "' and date_ < '" +
                 finish_date + "' ORDER by timeseries_id DESC LIMIT " + std::to_string(len_lags);       
     }
 

@@ -22,6 +22,7 @@ enum TypeData {
     CHANGE_USER_SESSION,
     CHANGE_USER_PASSWORD_SETTINGS,
     TIMESERIES_REQUEST,
+    TIMESERIES_FILL,
     STOCKS_REQUEST, 
     SESSION_REQUEST,
     SESSION_DELETE
@@ -41,6 +42,8 @@ namespace dbcontroller {
         virtual Json::Value TimeSeriesPost(const Json::Value& data) = 0;
         virtual Json::Value TimeSeriesGet(const Json::Value& data) = 0;
         virtual Json::Value StocksGet() = 0;
+        virtual Json::Value TimeSeriesFill(const Json::Value& data) = 0;
+
         // Client
         virtual Json::Value ClientRequestPost(const Json::Value& data) = 0;
         virtual Json::Value ClientRequestGet(const TypeData& request_type, const std::string& key) = 0;
@@ -80,7 +83,8 @@ namespace dbcontroller {
         // TimeSeries
         Json::Value TimeSeriesPost(const Json::Value& data) override;
         Json::Value TimeSeriesGet(const Json::Value& data) override;
-        virtual Json::Value StocksGet() override;
+        Json::Value StocksGet() override;
+        Json::Value TimeSeriesFill(const Json::Value& data) override;
         
         // Client
         Json::Value ClientRequestPost(const Json::Value& data) override;

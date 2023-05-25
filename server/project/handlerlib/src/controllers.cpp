@@ -346,6 +346,7 @@ ExitController::ExitController(const ptrToDBController db_controller)
 
 Json::Value ExitController::deleteCookie(const Json::Value& request) {
     Json::Value request_to_db = makeDBProtocol(request);
+
     logger.log("Request to DB... : exit controller");
     return db_controller_->DataRequest(request_to_db);
 }
@@ -364,17 +365,16 @@ Json::Value ExitController::makeDBProtocol(const Json::Value& request) {
 GetStocksController::GetStocksController(const ptrToDBController db_controller)
     : db_controller_(db_controller) {}
 
-Json::Value GetStocksController::getNameStocks(const Json::Value& request) {
-    Json::Value request_to_db = makeDBProtocol(request);
+Json::Value GetStocksController::getNameStocks() {
+    Json::Value request_to_db = makeDBProtocol();
     logger.log("Request to DB... : getStocks controller");
     return db_controller_->DataRequest(request_to_db);
 }
 
-Json::Value GetStocksController::makeDBProtocol(const Json::Value& request) {
+Json::Value GetStocksController::makeDBProtocol() {
     Json::Value db_protocol;
     db_protocol[HEADER_JSON_TYPE] = TypeRequest::GET_REQUEST;
-    db_protocol[HEADER_JSON_TYPEDATA] = TypeData::SESSION_DELETE;
-    db_protocol[HEADER_JSON_TOKEN] = request[HEADER_JSON_TOKEN];
+    db_protocol[HEADER_JSON_TYPEDATA] = TypeData::STOCKS_REQUEST;
     logger.log("Json DP prtocol completed successfully: getStocks controller");
     return db_protocol;
 }

@@ -116,9 +116,9 @@ class ExitController : public IExitController {
 class GetStocksController : public IGetStocksController {
  public:
   explicit GetStocksController(const ptrToDBController db_controller);
-  Json::Value getNameStocks(const Json::Value& request) override;
+  Json::Value getNameStocks() override;
  private:
-  Json::Value makeDBProtocol(const Json::Value& request) override;
+  Json::Value makeDBProtocol() override;
 
   ptrToDBController db_controller_;
 };

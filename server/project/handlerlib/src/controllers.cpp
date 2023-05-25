@@ -250,6 +250,9 @@ Json::Value AuthorizeController::authorization(Json::Value& request) {
     Json::Value request_to_db = makeDBProtocol(request);
     logger.log("Request to DB for auth data... : authorization controller");
     Json::Value response_db = db_controller_->DataRequest(request_to_db);
+    if (!response_db[HEADER_JSON_STATUS].asBool()) {
+        return response_db;
+    }
     logger.log("Hashing... : authorization controller");
     request[HEADER_JSON_PASSWORD] = hashing(request[HEADER_JSON_PASSWORD].asString());
     
@@ -368,7 +371,12 @@ ChangeEmailController::ChangeEmailController(const ptrToDBController db_controll
 Json::Value ChangeEmailController::changeEmail(const Json::Value& request) {
     Json::Value request_to_db_author = makeProtocolAuthor(request);
     logger.log("Request to DB auth. : change email controller");
+    
     Json::Value response_db_auth = db_controller_->DataRequest(request_to_db_author);
+    if (!response_db_auth[HEADER_JSON_STATUS].asBool()) {
+        return response_db_auth;
+    }
+    response_db_auth[HEADER_JSON_STATUS] = (response_db_auth[HEADER_JSON_PASSWORD].asString() == hashing(request[HEADER_JSON_PASSWORD].asString()));
     if (!response_db_auth[HEADER_JSON_STATUS].asBool()) {
         return response_db_auth;
     }
@@ -380,9 +388,9 @@ Json::Value ChangeEmailController::changeEmail(const Json::Value& request) {
 Json::Value ChangeEmailController::makeDBProtocol(const Json::Value& request) {
     Json::Value db_protocol;
     db_protocol[HEADER_JSON_TYPE] = TypeRequest::POST_REQUEST;
-    db_protocol[HEADER_JSON_TYPEDATA] = TypeData::CHANGE_USER_PASSWORD_SETTINGS;
+    db_protocol[HEADER_JSON_TYPEDATA] = TypeData::CHANGE_USER_EMAIL_SETTINGS;
     db_protocol[HEADER_JSON_LOGIN] = request[HEADER_JSON_LOGIN].asString();
-    db_protocol[HEADER_JSON_PASSWORD] = hashing(request[HEADER_JSON_PASSWORD].asString());
+    db_protocol[HEADER_JSON_EMAIL] = request[HEADER_JSON_EMAIL].asString();
     logger.log("Json DP prtocol completed successfully: change email controller");
     return db_protocol;
 }
@@ -392,7 +400,6 @@ Json::Value ChangeEmailController::makeProtocolAuthor(const Json::Value& request
     db_protocol[HEADER_JSON_TYPE] = TypeRequest::POST_REQUEST;
     db_protocol[HEADER_JSON_TYPEDATA] = TypeData::AUTHORIZATION;
     db_protocol[HEADER_JSON_LOGIN] = request[HEADER_JSON_LOGIN].asString();
-    db_protocol[HEADER_JSON_EMAIL] = request[HEADER_JSON_EMAIL].asString();
     logger.log("Json DP prtocol auth completed successfully: change email controller");
     return db_protocol;
 }
@@ -403,11 +410,17 @@ ChangePasswordController::ChangePasswordController(const ptrToDBController db_co
 
 Json::Value ChangePasswordController::changePassword(const Json::Value& request) {
     Json::Value request_to_db_author = makeProtocolAuthor(request);
-    logger.log("Request to DB auth. : change passowrd controller");
+    logger.log("Request to DB auth. : change email controller");
+    
     Json::Value response_db_auth = db_controller_->DataRequest(request_to_db_author);
     if (!response_db_auth[HEADER_JSON_STATUS].asBool()) {
         return response_db_auth;
     }
+    response_db_auth[HEADER_JSON_STATUS] = (response_db_auth[HEADER_JSON_PASSWORD].asString() == hashing(request[HEADER_JSON_OLD_PASSWORD].asString()));
+    if (!response_db_auth[HEADER_JSON_STATUS].asBool()) {
+        return response_db_auth;
+    }
+
     Json::Value request_to_db = makeDBProtocol(request);
     logger.log("Request to DB... : change passowrd controller");
     return db_controller_->DataRequest(request_to_db);
@@ -428,7 +441,6 @@ Json::Value ChangePasswordController::makeProtocolAuthor(const Json::Value& requ
     db_protocol[HEADER_JSON_TYPE] = TypeRequest::POST_REQUEST;
     db_protocol[HEADER_JSON_TYPEDATA] = TypeData::AUTHORIZATION;
     db_protocol[HEADER_JSON_LOGIN] = request[HEADER_JSON_LOGIN].asString();
-    db_protocol[HEADER_JSON_PASSWORD] = hashing(request[HEADER_JSON_OLD_PASSWORD].asString());
     logger.log("Json DP prtocol auth completed successfully: change passowrd controller");
     return db_protocol;
 }

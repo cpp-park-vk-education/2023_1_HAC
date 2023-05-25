@@ -235,10 +235,12 @@ void ShowPlotHandler::makeResponse(IHTTPResponse_ response, const Json::Value& r
         return;
     }
     std::string plot_data_ = response_json[HEADER_JSON_DATA].toStyledString();
+
     std::string date_ = response_json[HEADER_JSON_DATE].toStyledString();
+    std::string result = plot_data_ + " " + date_;
     response->setStatus(OK);
     response->setHeader(PLOT_DATA, PLOT_DATA);
-    response->setBody(plot_data_ + "\n" + date_);
+    response->setBody(result);
 }
 
 // class RegisterHandler

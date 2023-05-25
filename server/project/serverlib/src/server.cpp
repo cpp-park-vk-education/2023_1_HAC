@@ -60,14 +60,18 @@ Server::Server(const std::string& path_to_config_file) {
                    = std::make_unique<controllers::ExitController>(database_controller.get());
     std::unique_ptr<controllers::IGetStocksController> getstocks_controller
                    = std::make_unique<controllers::GetStocksController>(database_controller.get());
+    std::unique_ptr<controllers::IChangeEmailController> change_email_controller
+                   = std::make_unique<controllers::ChangeEmailController>(database_controller.get());
+    std::unique_ptr<controllers::IChangePasswordController> change_password_controller
+                   = std::make_unique<controllers::ChangePasswordController>(database_controller.get());
 
     if (!show_plot_controller || !register_contoller || !aurhorize_controller || !model_controller || !predict_controller) {
         throw market_mentor::CreatingNullptr("Creating server error");
     }
 
     std::unique_ptr<IColdStartHelper> cold_start_helper
-                   = std::make_unique<ColdStartHelper>(database_controller.get());
-    cold_start_helper->updateData(getstocks_controller.get(), api_stock.get());
+                   = std::make_unique<ColdStartHelper>(database_controller.get(), api_stock.get());
+    // cold_start_helper->updateData(getstocks_controller.get());
 
 
     std::thread jobThread([update_controller = std::move(update_controller)]() {
@@ -80,7 +84,9 @@ Server::Server(const std::string& path_to_config_file) {
     prtToIHandler show_plot_handler = std::make_unique<handlers::ShowPlotHandler>(show_plot_controller.get());
     prtToIHandler exit_handler = std::make_unique<handlers::ExitHandler>(exit_controller.get());
     prtToIHandler getname_stoks_handler = std::make_unique<handlers::GetStocksHandler>(getstocks_controller.get());
-    
+    prtToIHandler change_email_handler = std::make_unique<handlers::ChangeEmailHandler>(change_email_controller.get());
+    prtToIHandler change_password_handler = std::make_unique<handlers::ChangePasswordHandler>(change_password_controller.get());
+
     if (!predict_handler || !register_handler || !authorize_handler || !show_plot_handler || !exit_handler || !getname_stoks_handler) {
         throw market_mentor::CreatingNullptr("Creating server error");
     }
@@ -90,6 +96,8 @@ Server::Server(const std::string& path_to_config_file) {
     setHandlers("POST:DELETECOOKIE",  exit_handler.get());
     setHandlers("GET:PREDICT",  predict_handler.get());
     setHandlers("GET:PLOT",  show_plot_handler.get());
+    setHandlers("POST:CHANGE_USER_EMAIL_SETTINGS", change_email_handler.get());
+    setHandlers("POST:CHANGE_USER_PASSWORD_SETTINGS", change_password_handler.get());
     setHandlers("POST:CHECKCOOKIE", nullptr);
     setHandlers("GET:NAME_STOCKS", getname_stoks_handler.get());
 

@@ -9,7 +9,7 @@ Json::Value api::APIStockRequest::getData(const handlers::ProtocolAPI& protocol)
     http::response<http::string_body> res;
 
     parseApiProtocol(protocol);
-    std::cerr << "---------------------" << target << "---------------------"  << std::endl;
+    std::cout << "---------------------" << target << "---------------------"  << std::endl;
     int version =  11;
     boost::asio::io_context ioc;
 
@@ -40,7 +40,7 @@ Json::Value api::APIStockRequest::getData(const handlers::ProtocolAPI& protocol)
 
     http::read(stream, buffer, res);
     
-    std::cout << res.body() << std::endl;
+    //std::cout << res.body() << std::endl;
 
     boost::system::error_code ec;
     stream.shutdown(ec);
@@ -51,7 +51,7 @@ Json::Value api::APIStockRequest::getData(const handlers::ProtocolAPI& protocol)
     Json::Value completeJson_data;
     Json::Reader reader;
     auto epoch_seconds = reader.parse(res.body(), completeJson_data);
-    std::cerr << completeJson_data["c"].toStyledString();
+    //std::cerr << completeJson_data["c"].toStyledString();
     return completeJson_data;
 };
 
@@ -79,18 +79,27 @@ Json::Value api::APIStockRequest::getOneStockPrise(const handlers::ProtocolAPI& 
 };
 
 Json::Value api::APIStockRequest::getSeveralStockPrice(const handlers::ProtocolAPI& protocol){
+    std::cout <<"!!!";
     Json::Value data_from_srock = getData(protocol);
     Json::Value json_resp;
-    json_resp["data"] = data_from_srock["c"]; 
+    json_resp["data"] = data_from_srock["c"];
+    int j = 0; 
+    for (auto i : data_from_srock["t"]){
+        json_resp["date"][j] = convertIntToDateTime(i.asInt());
+        ++j;
+    }
     return json_resp;
 };
 
 std::string api::APIStockRequest::convertIntToDateTime(int unixTime) {
     std::time_t time = static_cast<std::time_t>(unixTime);
+    std::chrono::seconds utc_offset(0);
+    utc_offset = std::chrono::hours(3);
+    time += utc_offset.count();
     std::tm* tm = std::localtime(&time);
     std::ostringstream ss;
 
-    // Установка формата вывода
+    
     ss << std::put_time(tm, "%Y-%m-%d %H:%M:%S");
 
     return ss.str();

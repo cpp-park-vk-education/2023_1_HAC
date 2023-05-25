@@ -18,6 +18,12 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->widget->xAxis->setRange(0,10);
     ui->widget->yAxis->setRange(0, 10);
 
+    ui->btnRad1->setChecked(true);
+    if (ui->btnRad1->isChecked()) {
+        predict_parm = 8;
+    }
+
+     mapper = new QSignalMapper(this);
 
     connect(this->get_apple_btn(),SIGNAL(clicked(bool)),this, SLOT(start_apple_plot()));
     connect(this->get_predict_btn(),SIGNAL(clicked(bool)),this, SLOT(start_predict()));
@@ -37,11 +43,27 @@ MainWindow::~MainWindow()
 
 void MainWindow::start_apple_plot() {
     stock_name = "apple";
+    std::cout <<"stock_name" <<std::endl;
     main_handler_ptr->stockSelectHandler("apple");
 }
 
+void MainWindow::start_plot(const std::string& stock) {
+    std::cout << stock <<std::endl;
+    main_handler_ptr->stockSelectHandler(stock);
+}
+
 void MainWindow::start_predict() {
-    main_handler_ptr->predictHandler(stock_name);
+    if (ui->btnRad1->isChecked()) {
+        predict_parm = 8;
+    } else if (ui->btnRad2->isChecked()) {
+        predict_parm = 12;
+    } else if (ui->btnRad3->isChecked()) {
+        predict_parm = 36;
+    } else if (ui->btnRad4->isChecked()) {
+        predict_parm = 60;
+    }
+
+    main_handler_ptr->predictHandler(stock_name, predict_parm);
 }
 
 void MainWindow::open_user_set() {
@@ -65,6 +87,8 @@ void MainWindow::drawPlot() {
     ui->widget->clearGraphs();
     QVector<double> x, x_new;
     double max_element =*std::max_element(y.begin(), y.end());
+    double max_element_new =*std::max_element(y_new.begin(), y_new.end());
+    max_element_new = std::max(max_element, max_element_new);
     ui->widget->xAxis->setRange(0, y.size()+2);
     ui->widget->yAxis->setRange(0, max_element+2);
     for (size_t i = 0; i < y.size(); ++i) {
@@ -95,15 +119,24 @@ void MainWindow::drawPlot() {
     ui->widget->graph(0)->addData(x, y);
     ui->widget->replot();*/
     if (y_new.size() != 0) {
+        ui->widget->xAxis->setRange(0, y.size() +y_new.size()+2);
+        ui->widget->yAxis->setRange(0, max_element_new+2);
         //ui->widget->graph(0)->setPen(QPen(Qt::green));
         //ui->widget->graph(0)->setBrush(QBrush(QColor(qrand() % 256, qrand() % 256, qrand() % 256, 70)));
         x_new.push_back(y.size()-1);
         y_new.push_front(y[y.size()-1]);
+        std::cout <<"**"<< y_new.size() <<"**"<< std::endl;
         for (size_t i = 1; i < y_new.size(); ++i) {
             //std::cout <<
             x_new.push_back(y.size() + i);
             std::cout << x_new[i] << ' ';
         }
+
+        for (size_t i = 0; i < y_new.size(); ++i) {
+            //std::cout <<
+            std::cout << y_new[i] << ' ';
+        }
+
         //ui->widget->graph(0)->setPen(QPen(Qt::green));
 
         //ui->widget->addGraph(); // red line
@@ -166,5 +199,42 @@ void MainWindow::createErrorMessage(const Error& error_message) {
     error_message_ = new QString(error_message.message.c_str());
     std::cout << "created error message"<<std::endl;
 }
+
+void MainWindow::start_actions(const std::vector<std::string>& action_strs) {
+    for (size_t i = 0; i < action_strs.size(); ++i) {
+        QPushButton *button = new QPushButton(this);            // Создаём кнопку
+        button->setText(action_strs[i].c_str());  // Устанавливаем в неё текст
+        //counter++;                                              // Инкрементируем счётчик
+
+        std::cout <<"(" <<i<<")"<<std::endl;
+
+        actions.push_back(button);
+        ui->verticalLayout->addWidget(actions[i]);
+        //ui->verticalLayout->addWidget(button);                  // Помещаем кнопку в vertical layout
+
+        // подключаем сигнал клика кнопки к мапперу
+
+
+
+        connect(button, &QPushButton::clicked, [this, button](){
+            //ui->label->setText(button->text());
+            std::cout <<"@" << button->text().toStdString() <<std::endl;
+            start_plot(button->text().toStdString());
+        });
+
+        //mapper->removeMappings(actions[i]);
+    }
+    //start_apple_plot();
+    /*Error error;
+    error.message = "09";
+    error.type = "aaa";
+    createErrorMessage(error);
+    showErrorMessage();*/
+}
+
+void MainWindow::get_actions_data() {
+    main_handler_ptr->getActionsDataHandler();
+}
+
 
 

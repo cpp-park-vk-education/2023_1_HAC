@@ -27,12 +27,14 @@ void UseCaseMainWindow::setMainNetwork(ptr_to_imain_network main_net_ptr) {
 
 void UseCaseMainWindow::drawPlotHandler(std::istream& network_output) {
     //распарсить
+    //setlocale(LC_ALL,"en_us");
     std::vector<double> new_y;
     std::string s;
     std::string status;
     std::getline(network_output, status);
     std::cout << "*" <<status <<"*" <<std::endl;
     while(std::getline(network_output, s, '\n')) {
+        replace(s, ".", ",");
         //std::string a ="100.1";
         std::cout << "^" <<std::stod(s)<<"^";
         new_y.push_back(std::stod(s));
@@ -67,14 +69,14 @@ void UseCaseMainWindow::stockSelectHandler(const std::string& stock_name) {
     stock_data.window_size = 8;
     main_network_ptr->getPlotData(stock_data);
 }
-void UseCaseMainWindow::predictHandler(const std::string& stock_name) {
+void UseCaseMainWindow::predictHandler(const std::string& stock_name, int wind_size) {
     std::cout << "In predict Handler: " <<stock_name<< std::endl;
     stockSelectHandler(stock_name);
     MainData stock_data;
     stock_data.operation_title = "predict";
     stock_data.stock_name = stock_name;
     stock_data.lag = 8;
-    stock_data.window_size = 8;
+    stock_data.window_size = wind_size;
     main_network_ptr->getPredictData(stock_data);
 }
 
@@ -88,3 +90,26 @@ void UseCaseMainWindow::openUserSettings() {
     std::cout <<"handler" <<std::endl;
     window_manager_ptr->openUserSettingsWindow();
 }
+
+bool UseCaseMainWindow::replace(std::string& str, const std::string& from, const std::string& to) {
+    size_t start_pos = str.find(from);
+    if(start_pos == std::string::npos)
+        return false;
+    str.replace(start_pos, from.length(), to);
+    return true;
+}
+
+void  UseCaseMainWindow::getActionsDataHandler() {
+    main_network_ptr->getActionsData();
+}
+
+void  UseCaseMainWindow::setActionsDataHandler(std::istream& network_output) {
+    std::vector<std::string> stocks;
+    std::string s;
+    while(std::getline(network_output, s, '\n')) {
+        stocks.push_back(s);
+    }
+    main_window_ptr->start_actions(stocks);
+    return;
+}
+

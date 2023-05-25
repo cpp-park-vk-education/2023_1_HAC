@@ -18,6 +18,9 @@ public:
     virtual void setMainNetwork(ptr_to_inetwork net_ptr) = 0;
     virtual void getPlotData(const MainData& plot_data) = 0;
     virtual void getPredictData(const MainData& plot_data) = 0;
+    virtual void getActionsData() = 0;
+    virtual void onGetActionsData(std::istream& network_output,
+                                  const Error& error_state) = 0;
     virtual void onGetPredictData(std::istream& network_output,
                                   const Error& error_state) = 0;
     virtual void onGetPlotData(std::istream& network_output,

@@ -25,12 +25,14 @@
 
 #include "../include/ionetwork.h"
 
+#include <QTimer>
+
 GUIController::GUIController(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::GUIController)
 {
-    url_ = "http://25.21.238.202:9988/";
-    //url_ = "http://25.21.238.202:8081/";
+    //url_ = "http://25.21.238.202:9988/";
+    url_ = "http://62.84.127.93:9988/";
 
     ui->setupUi(this);
     pages = new QStackedWidget(this);
@@ -48,6 +50,7 @@ GUIController::GUIController(QWidget *parent)
     authorization_network_ptr->setAuthorizationHandler(authorization_handler_ptr);
     authorization_network_ptr->setUrl(url_);
     network_ptr = std::make_shared<IONetwork>();
+    network_ptr->setWindowManager(window_manager_ptr);
     authorization_network_ptr->setAuthorizationNetwork(network_ptr);
 
     main_window = new MainWindow(this);
@@ -84,6 +87,7 @@ GUIController::GUIController(QWidget *parent)
     // user_settings_handler_ptr->setUserSettingsNetwork(user_settings_network_ptr);
     
     user_settings_network_ptr = std::make_shared<NetworkUserSettingsWindow>();
+    user_settings_handler_ptr->setUserSettingsNetwork(user_settings_network_ptr);
     password_settings_handler_ptr = std::make_shared<UseCasePasswordSettingsWindow>();
     email_settings_handler_ptr = std::make_shared<UseCaseEmailSettingsWindow>();
 
@@ -119,8 +123,21 @@ GUIController::GUIController(QWidget *parent)
     registration_network_ptr->setRegistrationHandler(registration_handler_ptr);
     registration_network_ptr->setRegistrationNetwork(network_ptr);
 
+    load_window = new LoadingWindow(this);
+    load_window->setWindowManager(window_manager_ptr);
+    pages->addWidget(load_window);
+
+    first_time_in_main = true;
+
+    //check needed
+    //getting stocks from db
+    //main_window->get_actions_data();
+
     setCentralWidget(pages);
-    pages->setCurrentIndex(0);
+    //pages->setCurrentIndex(0);
+    pages->setCurrentIndex(6);
+    //authorization_handler_ptr->check_cookie();
+    openLoadWindow();
     //pages->setCurrentIndex(1);
 }
 
@@ -132,5 +149,55 @@ GUIController::~GUIController()
     delete main_window;
     delete reg_window;
     delete user_settings_window;
+}
+
+void GUIController::openAuthorizationWindow() {
+    auth_window->clean_input_lines();
+    pages->setCurrentIndex(0);
+};
+
+void GUIController::openRegistrationWindow() {
+    reg_window->clean_input_lines();
+    pages->setCurrentIndex(5);
+};
+
+void GUIController::stop_timer() {
+    timer->stop();
+}
+
+void GUIController::openLoadWindow() {
+    pages->setCurrentIndex(6);
+    timer = new QTimer(this);
+    //load_window->perform_progress();
+    connect(timer,SIGNAL(timeout()), load_window, SLOT(perform_progress()));
+    timer->start(10);
+    authorization_handler_ptr->check_cookie();
+    //load_window->perform_progress();
+
+    //check needed
+    //getting stocks from db
+    //main_window->get_actions_data();
+
+    QTimer::singleShot(2000, this, SLOT(change_windows()));
+    //authorization_handler_ptr->check_cookie();
+}
+
+void GUIController::change_windows() {
+    if (start_status == "good") {
+        start_status = "";
+        //check needed
+        //getting stocks from db
+        //main_window->get_actions_data();
+        openMainWindow();
+    } else {
+        std::vector<std::string> vec_tmp;
+        vec_tmp.push_back("sum");
+        vec_tmp.push_back("here");
+        //main_window->get_actions_data();
+        openAuthorizationWindow();
+        //openMainWindow();//temprorary
+        //main_window->start_actions(vec_tmp);//temprorary
+        start_status = "";
+    }
 }
 

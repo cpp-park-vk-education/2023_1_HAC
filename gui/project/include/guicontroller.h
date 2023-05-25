@@ -13,6 +13,8 @@
 #include "../include/settings/passwordsettingswindow.h"
 #include "../include/settings/emailsettingswindow.h"
 
+#include "../include/loadingwindow.h"
+
 class AuthorizationWindow;
 
 class IWindowManager;
@@ -64,14 +66,14 @@ public:
     ~GUIController();
 
     void openMainWindow() override {
+        if (first_time_in_main) {
+            main_window->get_actions_data();
+            first_time_in_main = false;
+        }
         pages->setCurrentIndex(1);
     };
-    void openAuthorizationWindow() override {
-        pages->setCurrentIndex(0);
-    };
-    void openRegistrationWindow() override {
-        pages->setCurrentIndex(5);
-    };
+    void openAuthorizationWindow() override;
+    void openRegistrationWindow() override;
     void openUserSettingsWindow() override {
         pages->setCurrentIndex(2);
     };
@@ -84,13 +86,23 @@ public:
     }
 
 
-    virtual std::string getUser() override {
+    std::string getUser() override {
         return user_;
     };
-    virtual std::string getUrl() override {};
-    virtual void setUser(const std::string user) override {
+    std::string getUrl() override {};
+    void setUser(const std::string user) override {
         user_ = user;
     };
+
+    void stop_timer() override;
+    void set_start_status(const std::string& status) override {
+        start_status = status;
+    }
+
+    void openLoadWindow();
+
+public slots:
+    void change_windows();
 
 private:
     Ui::GUIController *ui;
@@ -102,6 +114,7 @@ private:
     UserSettingsWindow* user_settings_window;
     PasswordSettingsWindow* password_settings_window;
     EmailSettingsWindow* email_settings_window;
+    LoadingWindow* load_window;
 
     ptr_to_inetwork network_ptr;
 
@@ -123,6 +136,11 @@ private:
 
     std::string user_;
     std::string url_;
+
+    std::string start_status;
+    bool first_time_in_main;
+
+    QTimer* timer;
 
     //созданние usecase and network_inner as well
 };

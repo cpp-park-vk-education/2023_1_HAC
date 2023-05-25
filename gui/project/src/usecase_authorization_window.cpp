@@ -54,3 +54,12 @@ void UseCaseAuthorizationWindow::sendError(const Error& error_message) {
 void UseCaseAuthorizationWindow::openRegistrationWindow() {
     window_manager_ptr->openRegistrationWindow();
 }
+
+void UseCaseAuthorizationWindow::checked_cookie(const std::string& user, const std::string& status) {
+    std::cout << "In checked cookie" <<' ' << user <<std::endl;
+    if (status == "good") {
+        window_manager_ptr->setUser(user);
+        std::cout << window_manager_ptr->getUser() <<std::endl;
+    }
+    window_manager_ptr->set_start_status(status);
+}

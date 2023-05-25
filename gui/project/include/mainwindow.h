@@ -7,6 +7,10 @@
 #include <QErrorMessage>
 #include <QDebug>
 #include <vector>
+#include <iostream>
+#include <QSignalMapper>
+#include <QVector>
+//#include <QList>
 
 #include "../include/mainwindow_interface.h"
 
@@ -31,6 +35,11 @@ public:
     QPushButton* get_predict_btn();
     QPushButton* get_user_set_btn();
 
+    void start_actions(const std::vector<std::string>& action_strs) override;
+    void get_actions_data() override;
+
+    void start_plot(const std::string& stock);
+
 public slots:
     void start_apple_plot();
     void start_predict();
@@ -48,6 +57,11 @@ private:
     QString* error_message_;
     QString* error_type_;
 
+    int predict_parm;
+
+    QSignalMapper *mapper;
+    QVector<QPushButton*> actions;
+    int counter;
 
     std::string stock_name;
 };

@@ -26,12 +26,14 @@ public:
                                      override {
         url_ = url;
     }
-    void GetRequest(const std::string& url, const MainData& body,
+    void GetRequest(const std::string& url, std::istream& body,
                             std::function<void(
                                     std::istream& network_output,
                                     const Error& error_state)> callback)
                                     override {}
     void setConfig(const std::string& host) override {}
+    void setCookie(const std::string& cookie_data) override {}
+    void setWindowManager(ptr_to_iwindow_manager wind_manager_ptr) override {}
     std::string url_;
 };
 

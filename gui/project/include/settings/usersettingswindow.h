@@ -24,6 +24,7 @@ public slots:
     void PasswordChange();
     void EmailChange();
     void returnToMain();
+    void startExiting();
 
 private:
     Ui::UserSettingsWindow *ui;
@@ -32,6 +33,7 @@ private:
     QPushButton* btn_password;
     QPushButton* btn_email;
     QPushButton* btn_return;
+    QPushButton* btn_exit;
 };
 
 #endif // USERSETTINGSWINDOW_H

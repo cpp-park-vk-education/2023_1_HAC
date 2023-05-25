@@ -34,6 +34,8 @@ public:
     QPushButton* get_enter_btn();
     QPushButton* get_back_btn();
 
+    void clean_input_lines();
+
 public slots:
     void start_reg();
     void open_auth_window();

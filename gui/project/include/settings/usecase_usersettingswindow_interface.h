@@ -39,10 +39,11 @@ public:
     virtual void OpenPasswordWindow() = 0;
     virtual void OpenEmailWindow() = 0;
 
-//     virtual void setUserSettingsNetwork(ptr_to_isettings_network settings_net_ptr) = 0;
+    virtual void setUserSettingsNetwork(ptr_to_isettings_network settings_net_ptr) = 0;
 //    virtual void sendError(const Error& error_message) = 0;
 
 //     virtual void ConfirmHandler(const std::string& old_password,const std::string& new_password, const std::string& repeat_password) = 0;
+    virtual void UserExitHandler() = 0;
     virtual std::string getUser() = 0;
     virtual void setUser(const std::string& user) = 0;
 };

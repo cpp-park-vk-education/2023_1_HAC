@@ -13,6 +13,9 @@ public:
     void getPlotData(const MainData& plot_data) override {
         stock_ = plot_data.stock_name;
     }
+    void getActionsData() override {}
+    void onGetActionsData(std::istream& network_output,
+                          const Error& error_state) override {}
     void getPredictData(const MainData& plot_data) override {}
     void onGetPredictData(std::istream& network_output,
                           const Error& error_state) override {}
@@ -30,6 +33,9 @@ public:
     void getPredictData(const MainData& plot_data) override {
         stock_ = plot_data.stock_name;
     }
+    void getActionsData() override {}
+    void onGetActionsData(std::istream& network_output,
+                          const Error& error_state) override {}
     void onGetPredictData(std::istream& network_output,
                           const Error& error_state) override {}
     void onGetPlotData(std::istream& network_output,
@@ -43,13 +49,15 @@ public:
     void PostRequest(const std::string &url, const std::string &body,
                      std::function<void(const Error &error_state)>
                      callback) override {}
-    void GetRequest(const std::string &url, const MainData &body,
+    void GetRequest(const std::string &url, std::istream& body,
                     std::function<void(std::istream &network_output,
                                        const Error &error_state)> callback)
     override {
         url_ = url;
     }
     void setConfig(const std::string &host) override {}
+    void setCookie(const std::string& cookie_data) override {}
+    void setWindowManager(ptr_to_iwindow_manager wind_manager_ptr) override {}
     std::string url_;
 };
 
@@ -58,13 +66,15 @@ public:
     void PostRequest(const std::string &url, const std::string &body,
                      std::function<void(const Error &error_state)>
                      callback) override {}
-    void GetRequest(const std::string &url, const MainData &body,
+    void GetRequest(const std::string &url, std::istream& body,
                     std::function<void(std::istream &network_output,
                                        const Error &error_state)> callback)
     override {
         url_ = url;
     }
     void setConfig(const std::string &host) override {}
+    void setCookie(const std::string& cookie_data) override {}
+    void setWindowManager(ptr_to_iwindow_manager wind_manager_ptr) override {}
     std::string url_;
 };
 
@@ -88,7 +98,9 @@ public:
         out = output.str();
     }
     void stockSelectHandler(const std::string &stock_name) override {}
-    void predictHandler(const std::string &stock_name) override {}
+    void predictHandler(const std::string &stock_name, int wind_size) override {}
+    void getActionsDataHandler() override {}
+    void setActionsDataHandler(std::istream& network_output) override {}
     void sendError(const Error &error_message) override {}
     std::string getUrl() override {}
     void setUrl(const std::string& url) override {}
@@ -104,7 +116,9 @@ public:
     void setMainNetwork(ptr_to_imain_network main_net_ptr) override {}
     void drawPlotHandler(std::istream &network_output) override {}
     void stockSelectHandler(const std::string &stock_name) override {}
-    void predictHandler(const std::string &stock_name) override {}
+    void predictHandler(const std::string &stock_name, int wind_size) override {}
+    void getActionsDataHandler() override {}
+    void setActionsDataHandler(std::istream& network_output) override {}
     void sendError(const Error &error_message) override {
         error_type = error_message.type;
     }
@@ -135,7 +149,7 @@ TEST(MainQtLogicTest, TestMainPredictHandler) {
             std::make_shared<MockNetworkMainWindow>(net_main);
     check_handler_auth.setMainNetwork(ptr_to_net);
     std::string input = "stock";
-    check_handler_auth.predictHandler(input);
+    check_handler_auth.predictHandler(input, 8);
     std::string expected = "stock";
     EXPECT_EQ(expected, ptr_to_net->stock_);
 }

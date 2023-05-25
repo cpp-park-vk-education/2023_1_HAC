@@ -64,5 +64,13 @@ void NetworkUserSettingsWindow::setUrl(const std::string& url) {
     url_ = url;
 }
 
+void NetworkUserSettingsWindow::getUserExit(const std::string& user) {
+    std::cout << "in us net exit" <<std::endl;
+    network_ptr->setConfig("DELETECOOKIE");
+    network_ptr->PostRequest(url_, user,
+                                [this](const Error& error_state)
+                                {onGetExitResponse(error_state);});
+}
+
 
 

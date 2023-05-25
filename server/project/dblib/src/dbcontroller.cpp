@@ -331,7 +331,7 @@ Json::Value DataBaseController::ClientRequestUpdate(const Json::Value& data) {
     }
     if (data["TypeData"] == CHANGE_USER_PASSWORD_SETTINGS) {
         type = UPDATE_PASSWORD;  
-        client_data->hash = data["hash"].asString();
+        client_data->hash = data["password"].asString();
     }   
 
     response["status"] = clien_rep_->Update(type, client_data->login, client_data);

@@ -141,6 +141,11 @@ void DataBaseController::PostRequestRouter(const Json::Value& request, Json::Val
         response = TimeSeriesPost(request);
     }       
     
+    // Добавить массив таймсерий 
+    if (request["TypeData"] == TIMESERIES_FILL) {
+        response = TimeSeriesFill(request);
+    } 
+
     // Обновить пользователя
     if (request["TypeData"] == CHANGE_USER_EMAIL_SETTINGS || 
                 request["TypeData"] == CHANGE_USER_PASSWORD_SETTINGS) {
@@ -162,12 +167,31 @@ Json::Value DataBaseController::TimeSeriesPost(const Json::Value& data) {
         return response;
     }
 
+    response["DatabaseIsOpen"] = true;
     auto timeseries_data = std::make_shared<TimeSeriesData>();
     timeseries_data->name_stock = data["name_stock"].asString();
     timeseries_data->date = data["date"];
     timeseries_data->param = data["param"];
 
     response["status"] = timeseries_rep_->Insert(timeseries_data);
+    return response;
+}
+
+Json::Value DataBaseController::TimeSeriesFill(const Json::Value& data) {
+    Json::Value response; 
+    if (!DatabaseIsOpen()) {
+        response["status"] = false;
+        response["DatabaseIsOpen"] = false;
+        return response;
+    }
+
+    response["DatabaseIsOpen"] = true;
+    auto timeseries_data = std::make_shared<TimeSeriesData>();
+    timeseries_data->name_stock = data["name_stock"].asString();
+    timeseries_data->date = data["date"];
+    timeseries_data->param = data["param"];
+
+    response["status"] = timeseries_rep_->InsertArray(timeseries_data);
     return response;
 }
 
@@ -181,7 +205,6 @@ Json::Value DataBaseController::TimeSeriesGet(const Json::Value& data) {
     }
     
     response["DatabaseIsOpen"] = true;
-
     std::string name_stock = data["name_stock"].asString();
     size_t len_lags;
     try {

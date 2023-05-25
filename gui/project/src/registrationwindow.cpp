@@ -15,6 +15,11 @@ RegistrationWindow::RegistrationWindow(QWidget *parent) :
     btn_enter = ui->btnEnter;
     btn_back = ui->btnBack;
 
+    ui->lePassword->setText("");
+    ui->leLogin->setText("");
+    ui->lePassConfirm->setText("");
+    ui->leEmail->setText("");
+
     connect(this->get_enter_btn(),SIGNAL(clicked(bool)),this, SLOT(start_reg()));
     connect(this->get_back_btn(),SIGNAL(clicked(bool)),this, SLOT(open_auth_window()));
 }
@@ -83,5 +88,15 @@ void RegistrationWindow::start_reg() {
 void RegistrationWindow::open_auth_window() {
     std::cout << "In start reg" <<std::endl;
     registration_handler_ptr->openAuthorizationWindow();
+    /*ui->lePassword->setText("");
+    ui->leLogin->setText("");
+    ui->lePassConfirm->setText("");
+    ui->leEmail->setText("");*/
+}
+void RegistrationWindow::clean_input_lines() {
+    ui->lePassword->setText("");
+    ui->leLogin->setText("");
+    ui->lePassConfirm->setText("");
+    ui->leEmail->setText("");
 }
 

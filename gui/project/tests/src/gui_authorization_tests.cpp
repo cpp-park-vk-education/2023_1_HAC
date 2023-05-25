@@ -18,6 +18,8 @@ public:
         auth_params_.password = auth_params.password;
     }
     void onGetAuthorizationResponse(const Error& error_state) override {}
+    void setCookie(const std::string& user,const std::string& cookie_line) override {};
+    void onSetCookieResponse(const Error& error_state) override {};
     void setUrl(const std::string& url) override {}
 public:
     AuthInput auth_params_;
@@ -30,11 +32,13 @@ public:
                                      const Error& error_state)> callback) {
         url_ = url;
     }
-    void GetRequest(const std::string& url, const MainData& body,
+    void GetRequest(const std::string& url, std::istream&  body,
                             std::function<void(
                                     std::istream& network_output,
                                     const Error& error_state)> callback) {}
-    virtual void setConfig(const std::string& host) { }
+    virtual void setConfig(const std::string& host) {}
+    void setCookie(const std::string& cookie_data) override {}
+    void setWindowManager(ptr_to_iwindow_manager wind_manager_ptr) override {}
     std::string url_;
 };
 
@@ -79,6 +83,9 @@ public:
     }
     std::string getUser() override { return user_; }
     void openRegistrationWindow() override {}
+
+    void check_cookie() override {}
+    void checked_cookie(const std::string& user, const std::string& status) override {}
     std::string error_type;
     std::string user_;
 };

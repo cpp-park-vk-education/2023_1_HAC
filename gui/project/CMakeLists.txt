@@ -94,9 +94,11 @@ set(PROJECT_SOURCES
         include/settings/emailsettingswindow_interface.h
         include/settings/usecase_emailsettingswindow.h
         include/settings/usersettingswindow_network.h
-        include/settings/usersettingswindow_network_interface.h)
+        include/settings/usersettingswindow_network_interface.h
 
-
+        include/loadingwindow.h
+        src/loadingwindow.cpp
+        src/loadingwindow.ui)
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
     qt_add_executable(test_vk_project
@@ -117,7 +119,8 @@ endif()
 
 target_link_libraries(test_vk_project PRIVATE Qt${QT_VERSION_MAJOR}::Widgets
     Qt${QT_VERSION_MAJOR}::Network
-    Qt${QT_VERSION_MAJOR}::PrintSupport)
+    Qt${QT_VERSION_MAJOR}::PrintSupport
+)
 
 set_target_properties(test_vk_project PROPERTIES
         MACOSX_BUNDLE_GUI_IDENTIFIER my.example.com

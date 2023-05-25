@@ -11,6 +11,9 @@ public:
     void setMainNetwork(ptr_to_inetwork net_ptr) override;
     void getPlotData(const MainData& plot_data) override;
     void getPredictData(const MainData& plot_data) override;
+    void getActionsData() override;
+    void onGetActionsData(std::istream& network_output,
+                          const Error& error_state) override;
     void onGetPredictData(std::istream& network_output,
                           const Error& error_state) override;
     void onGetPlotData(std::istream& network_output,

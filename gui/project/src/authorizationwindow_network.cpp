@@ -32,6 +32,24 @@ void NetworkAuthorizationWindow::onGetAuthorizationResponse(
     }
 }
 
+void NetworkAuthorizationWindow::setCookie(const std::string& user, const std::string& cookie_line) {
+    std::cout <<"here I am in COOKIE: "<< cookie_line <<std::endl;
+
+    network_ptr->setConfig("CHECKCOOKIE");
+    network_ptr->setCookie(cookie_line);
+    network_ptr->PostRequest(url_, user,
+                             [this](const Error& error_state)
+                             {onSetCookieResponse(error_state);});
+};
+void NetworkAuthorizationWindow::onSetCookieResponse(const Error& error_state) {
+    std::cout << "In Cookie Response" <<std::endl;
+    if (error_state.type == "0") {
+        authorization_handler_ptr->checked_cookie(error_state.message, "good");
+    } else {
+        authorization_handler_ptr->checked_cookie(error_state.message, "bad");
+    }
+};
+
 void NetworkAuthorizationWindow::setUrl(const std::string& url) {
     url_ = url;
 }

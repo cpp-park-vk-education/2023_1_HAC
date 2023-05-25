@@ -13,6 +13,8 @@ public:
     virtual std::string getUser() = 0;
     virtual std::string getUrl() = 0;
     virtual void setUser(const std::string user) = 0;
+    virtual void stop_timer() = 0;
+    virtual void set_start_status(const std::string& status) = 0;
 };
 
 #endif // GUICONTROLLER_INTERFACE_H

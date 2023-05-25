@@ -3,6 +3,7 @@
 
 #include "../../include/guicontroller.h"
 #include <memory>
+#include <iostream>
 
 UserSettingsWindow::UserSettingsWindow(QWidget *parent) :
     QWidget(parent),
@@ -13,9 +14,11 @@ UserSettingsWindow::UserSettingsWindow(QWidget *parent) :
     btn_password = ui->btnPassword;
     btn_email = ui->btnEmail;
     btn_return = ui->btnReturn;
+    btn_exit = ui->btnExit;
     connect(btn_password,SIGNAL(clicked(bool)),this, SLOT(PasswordChange()));
     connect(btn_email,SIGNAL(clicked(bool)),this, SLOT(EmailChange()));
     connect(btn_return,SIGNAL(clicked(bool)),this, SLOT(returnToMain()));
+    connect(btn_exit,SIGNAL(clicked(bool)),this, SLOT(startExiting()));
 
 }
 
@@ -39,5 +42,10 @@ void UserSettingsWindow::PasswordChange() {
 
 void UserSettingsWindow::EmailChange() {
     settings_handler_ptr->OpenEmailWindow();
+}
+
+void UserSettingsWindow::startExiting() {
+    std::cout <<"in start exit" <<std::endl;
+    settings_handler_ptr->UserExitHandler();
 }
 

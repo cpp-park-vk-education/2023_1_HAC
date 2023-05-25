@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>860</width>
+    <width>800</width>
     <height>600</height>
    </rect>
   </property>
@@ -68,6 +68,19 @@
    </property>
    <property name="text">
     <string>Настройки пользователя</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="btnExit">
+   <property name="geometry">
+    <rect>
+     <x>600</x>
+     <y>10</y>
+     <width>191</width>
+     <height>71</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Выйти из учётной записи</string>
    </property>
   </widget>
  </widget>

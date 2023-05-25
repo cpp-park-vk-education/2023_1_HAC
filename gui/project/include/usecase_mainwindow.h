@@ -14,11 +14,17 @@ public:
     void setMainNetwork(ptr_to_imain_network main_net_ptr) override;
     void drawPlotHandler(std::istream& network_output) override;
     void stockSelectHandler(const std::string& stock_name) override;
-    void predictHandler(const std::string& stock_name) override;
+    void predictHandler(const std::string& stock_name, int wind_size) override;
     void sendError(const Error& error_message) override;
-    std::string getUrl() override {};
-    void setUrl(const std::string& url) override {};
+    std::string getUrl() override {}
+    void setUrl(const std::string& url) override {}
     void openUserSettings() override;
+
+    void getActionsDataHandler() override;
+    void setActionsDataHandler(std::istream& network_output) override;
+
+    bool replace(std::string& str, const std::string& from, const std::string& to);
+
 private:
     ptr_to_imain_window main_window_ptr;
     ptr_to_iwindow_manager window_manager_ptr;

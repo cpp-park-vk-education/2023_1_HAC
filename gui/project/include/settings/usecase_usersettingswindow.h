@@ -13,11 +13,13 @@ public:
     void setUserSettingsWindow(
             ptr_to_isettings_window user_set_ptr) override;
 
-    //void setUserSettingsNetwork(ptr_to_isettings_network settings_net_ptr)override;
+    void setUserSettingsNetwork(ptr_to_isettings_network settings_net_ptr) override;
     //ptr_to_isettings_window getUserSettingsWindow() override;
    // void sendError(const Error& error_message) override;
     // void ConfirmHandler(const std::string& old_password,
     //                              const std::string& new_password, const std::string& repeat_password) override;
+
+    void UserExitHandler() override;
 
     void OpenPasswordWindow() override;
     void OpenEmailWindow() override;

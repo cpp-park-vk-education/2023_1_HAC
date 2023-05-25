@@ -24,8 +24,12 @@ public:
     virtual void setMainNetwork(ptr_to_imain_network main_net_ptr) = 0;
     virtual void drawPlotHandler(std::istream& network_output) = 0;
     virtual void stockSelectHandler(const std::string& stock_name) = 0;
-    virtual void predictHandler(const std::string& stock_name) = 0;
+    virtual void predictHandler(const std::string& stock_name, int wind_size) = 0;
     virtual void sendError(const Error& error_message) = 0;
+
+    virtual void getActionsDataHandler() = 0;
+    virtual void setActionsDataHandler(std::istream& network_output) = 0;
+
     virtual std::string getUrl() = 0;
     virtual void setUrl(const std::string& url) = 0;
     virtual void openUserSettings() = 0;

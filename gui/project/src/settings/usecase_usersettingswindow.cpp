@@ -39,3 +39,16 @@ std::string UseCaseUserSettingsWindow::getUser() {
 void UseCaseUserSettingsWindow::setUser(const std::string& user) {
     user_ = user;
 }
+
+void  UseCaseUserSettingsWindow::setUserSettingsNetwork(ptr_to_isettings_network settings_net_ptr) {
+    settings_network_ptr = settings_net_ptr;
+}
+
+void UseCaseUserSettingsWindow::UserExitHandler() {
+    std::cout << "in handler exit" <<std::endl;
+    if (user_.empty()) {
+        setUser(window_manager_ptr->getUser());
+    }
+    std::cout << "user = " <<user_ <<std::endl;
+    settings_network_ptr->getUserExit(user_);
+}

@@ -18,6 +18,10 @@ public:
     void getUserEmailSettings(const ConfirmEdit& confirm_email) override;
     void onGetUserPasswordSettingsResponse(const Error& error_state) override;
     void onGetUserEmailSettingsResponse(const Error& error_state) override;
+
+    void getUserExit(const std::string& user) override;
+    void onGetExitResponse(const Error& error_state) {}
+
     void setUrl(const std::string& url) override;
     
 private:

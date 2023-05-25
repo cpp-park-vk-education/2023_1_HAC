@@ -13,6 +13,8 @@ public:
     void setAuthorizationNetwork(ptr_to_inetwork net_ptr) override;
     void getAuthorization(const AuthInput& auth_params) override;
     void onGetAuthorizationResponse(const Error& error_state) override;
+    void setCookie(const std::string& user, const std::string& cookie_line) override;
+    void onSetCookieResponse(const Error& error_state) override;
     void setUrl(const std::string& url) override;
 private:
     ptr_to_inetwork network_ptr;

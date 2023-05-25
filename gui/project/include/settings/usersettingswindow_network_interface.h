@@ -34,6 +34,7 @@ public:
     //virtual void onGetUserSettingsResponse(const Error& error_state) = 0;
     virtual void onGetUserPasswordSettingsResponse(const Error& error_state) = 0;
     virtual void onGetUserEmailSettingsResponse(const Error& error_state) = 0;
+    virtual void getUserExit(const std::string& user) = 0;
     virtual void setUrl(const std::string& url) = 0;
 };
 

@@ -13,6 +13,9 @@ AuthorizationWindow::AuthorizationWindow(QWidget *parent) :
     btn_enter = ui->btnEnter;
     btn_reg = ui->btnReg;
 
+    ui->lePassword->setText("");
+    ui->leLogin->setText("");
+
     connect(this->get_enter_btn(),SIGNAL(clicked(bool)),this, SLOT(start_auth()));
     connect(this->get_reg_btn(),SIGNAL(clicked(bool)),this, SLOT(open_reg_window()));
 
@@ -58,6 +61,8 @@ void AuthorizationWindow::start_auth() {
 
 void AuthorizationWindow::open_reg_window() {
     authorization_handler_ptr->openRegistrationWindow();
+    //ui->lePassword->setText("");
+    //ui->leLogin->setText("");
 }
 
 void AuthorizationWindow::showErrorMessage() {
@@ -76,4 +81,9 @@ void AuthorizationWindow::createErrorMessage(const Error& error_message) {
         error_message_ = new QString(error_message.message.c_str());
     }
     std::cout << "created error message"<<std::endl;
+}
+
+void AuthorizationWindow::clean_input_lines() {
+    ui->lePassword->setText("");
+    ui->leLogin->setText("");
 }

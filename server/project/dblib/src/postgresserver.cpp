@@ -2,7 +2,7 @@
 
 using namespace database;
 
-PostgresServer::PostgresServer(): host_addr_("62.84.127.93"), port_("5433"), db_name_("marketmentor"),
+PostgresServer::PostgresServer(): host_addr_("0.0.0.0"), port_("5433"), db_name_("marketmentor"),
      user_("marketmentor_server"), password_("marketmentor_password") {
 }
 

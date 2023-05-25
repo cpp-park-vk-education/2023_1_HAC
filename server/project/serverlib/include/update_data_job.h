@@ -1,3 +1,4 @@
+#pragma once // NO_LINT
 #include <iostream>
 #include <thread>
 #include <chrono>

@@ -33,17 +33,23 @@ using ptrToAPIStock = IAPIStockRequest*;
 
 class IAPIStockRequest {
  public:
+    virtual Json::Value getOneStockPrise(const handlers::ProtocolAPI& protocol) = 0;
+    virtual Json::Value getSeveralStockPrice(const handlers::ProtocolAPI& protocol) = 0;
+ protected:
     virtual Json::Value getData(const handlers::ProtocolAPI& protocol) = 0; 
 };
 
 class APIStockRequest : public IAPIStockRequest{
  public:
     APIStockRequest();
-    Json::Value getData(const handlers::ProtocolAPI& protocol) override;
+    Json::Value getOneStockPrise(const handlers::ProtocolAPI& protocol) override;
+    Json::Value getSeveralStockPrice(const handlers::ProtocolAPI& protocol) override;
  private:
+    Json::Value getData(const handlers::ProtocolAPI& protocol) override;
     void parseApiProtocol(const handlers::ProtocolAPI& protocol);
     void doConnect(const handlers::ProtocolAPI& protocol);
     IHTTPResponse* onConnect(ssl::stream<tcp::socket> stream);
+    std::string convertIntToDateTime(int unixTime);
     std::string host;
     std::string port = "443";
     std::string target;

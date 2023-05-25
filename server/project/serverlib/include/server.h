@@ -26,6 +26,7 @@
 #include "api_stock.h"
 #include "server_exception.h"
 #include "update_data_job.h"
+#include "cold_start_helper.h"
 
 using prtToIHandler = std::unique_ptr<handlers::IHandler>;
 using IDatabaseController = std::string;

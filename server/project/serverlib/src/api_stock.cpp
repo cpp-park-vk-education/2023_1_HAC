@@ -1,4 +1,7 @@
 #include "api_stock.h"
+#include <ctime>
+#include <sstream>
+#include <iomanip>
 #include <string>
 
 api::APIStockRequest::APIStockRequest(){};
@@ -6,6 +9,7 @@ Json::Value api::APIStockRequest::getData(const handlers::ProtocolAPI& protocol)
     http::response<http::string_body> res;
 
     parseApiProtocol(protocol);
+    std::cerr << "---------------------" << target << "---------------------"  << std::endl;
     int version =  11;
     boost::asio::io_context ioc;
 
@@ -48,10 +52,6 @@ Json::Value api::APIStockRequest::getData(const handlers::ProtocolAPI& protocol)
     Json::Reader reader;
     auto epoch_seconds = reader.parse(res.body(), completeJson_data);
     std::cerr << completeJson_data["c"].toStyledString();
-    Json::Value json_resp;
-    json_resp["name_stock"] = protocol.name_packet_stock;
-    json_resp["date"] = protocol.end_time;
-    json_resp["data"] = completeJson_data["c"][0];
     return completeJson_data;
 };
 
@@ -59,14 +59,42 @@ void api::APIStockRequest::parseApiProtocol(const handlers::ProtocolAPI& protoco
     host = protocol.name_stock_hub;
     target = "/api/v1/stock/candle?symbol=";
     target += protocol.name_packet_stock;
-    target += "&resolution=1&from=";
+    target += "&resolution=60&from=";
     target += protocol.start_time;
     target += "&to=";
     target += protocol.end_time;
     target += "&token=";
     target += protocol.token;
-}
+};
 
+Json::Value api::APIStockRequest::getOneStockPrise(const handlers::ProtocolAPI& protocol){
+    Json::Value data_from_srock = getData(protocol);
+    Json::Value json_resp;
+    json_resp["name_stock"] = protocol.name_packet_stock;
+    int date = data_from_srock["t"][0].asInt();
+    json_resp["date"] = convertIntToDateTime(date);
+    json_resp["data"] = data_from_srock["c"][0].asDouble();
+    std::cout << "from api--------------------" << json_resp.toStyledString() <<  "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!";
+    return json_resp;
+};
+
+Json::Value api::APIStockRequest::getSeveralStockPrice(const handlers::ProtocolAPI& protocol){
+    Json::Value data_from_srock = getData(protocol);
+    Json::Value json_resp;
+    json_resp["data"] = data_from_srock["c"]; 
+    return json_resp;
+};
+
+std::string api::APIStockRequest::convertIntToDateTime(int unixTime) {
+    std::time_t time = static_cast<std::time_t>(unixTime);
+    std::tm* tm = std::localtime(&time);
+    std::ostringstream ss;
+
+    // Установка формата вывода
+    ss << std::put_time(tm, "%Y-%m-%d %H:%M:%S");
+
+    return ss.str();
+}
 
 void api::APIStockRequest::doConnect(const handlers::ProtocolAPI& protocol){
 };

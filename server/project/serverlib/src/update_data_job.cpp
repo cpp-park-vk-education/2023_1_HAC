@@ -22,7 +22,7 @@ void getNewDataByTimer(controllers::IUpdateDataController* update_controller){
     protocol.token = "chmd799r01qjapkrdjngchmd799r01qjapkrdjo0";
     while (true) {
         std::time_t current_time = std::time(nullptr);
-        std::time_t two_minutes_ago = current_time - 2 * 60;
+        std::time_t two_minutes_ago = current_time - 8* 60 * 60;
 
         protocol.start_time = std::to_string(two_minutes_ago);
         protocol.end_time = std::to_string(current_time);

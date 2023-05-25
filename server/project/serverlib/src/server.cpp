@@ -65,6 +65,11 @@ Server::Server(const std::string& path_to_config_file) {
         throw market_mentor::CreatingNullptr("Creating server error");
     }
 
+    std::unique_ptr<IColdStartHelper> cold_start_helper
+                   = std::make_unique<ColdStartHelper>(database_controller.get());
+    cold_start_helper->updateData(getstocks_controller.get(), api_stock.get());
+
+
     std::thread jobThread([update_controller = std::move(update_controller)]() {
         getNewDataByTimer(update_controller.get());
     });

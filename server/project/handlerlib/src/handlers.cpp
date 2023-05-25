@@ -12,6 +12,8 @@ const std::string HANDLERS_REGISTRATION = "registration";
 const std::string HANDLERS_AUTHORIZATION = "authorization";
 const std::string HANDLERS_EXIT = "exit";
 const std::string HANDLERS_CHECK_COOKIE = "check cookie";
+const std::string HANDLERS_CHANGE_EMAIL = "change email";
+const std::string HANDLERS_CHANGE_PASSWORD = "change password";
 
 const std::string ERROR_MESSAGE = "Error-Message";
 const std::string PREDICT_DATA = "Predict-Data";
@@ -38,6 +40,7 @@ const std::string HEADER_JSON_STATUS = "status";
 const std::string HEADER_JSON_TOKEN = "token";
 
 const std::string HEADER_JSON_PASSWORD = "password";
+const std::string HEADER_JSON_OLD_PASSWORD = "old_password";
 const std::string HEADER_JSON_EMAIL = "email";
 const std::string HEADER_JSON_LOGIN = "login";
 const std::string HEADER_JSON_PARAM = "param";
@@ -64,6 +67,8 @@ const uint SIZE_URL_GET_PLOT = 2;
 const uint SIZE_BODY_POST_REGISTRATION = 3;
 const uint SIZE_BODY_POST_AUTHORIZATION = 2;
 const uint SIZE_BODY_POST_USER_SETTINGS = 4;
+const uint SIZE_BODY_CHANGE_EMAIL = 3;
+const uint SIZE_BODY_CHANGE_PASSWORD = 3;
 
 const uint URL_SPECIAL_SYMBOL = 2;
 
@@ -74,6 +79,12 @@ const uint LENPREDICT_ORDER = 1;
 const uint LOGIN_ORDER = 0;
 const uint PASSWORD_ORDER = 1;
 const uint EMAIL_ORDER = 2;
+
+const uint CHANGE_ORDER_EMAIL = 1;
+const uint CHANGE_ORDER_PASSWORD = 2;
+
+const uint CHANGE_ORDER_OLD_PASSWORD = 1;
+const uint CHANGE_ORDER_NEW_PASSWORD = 2;
 
 namespace handlers {
 
@@ -378,10 +389,16 @@ void ExitHandler::handle(IHTTPRequest_ request, IHTTPResponse_ response) {
     // post / body
     try {
         Json::Value request_json = parseInputHttpRequest(request->getBoby());
+        if (request->getHeaders().find(request_json[HEADER_JSON_LOGIN].asString()) == request->getHeaders().end()) {
+            throw market_mentor::InvalidCookieError();
+        }
         request_json[HEADER_JSON_TOKEN] = request->getHeaders()[request_json[HEADER_JSON_LOGIN].asString()];
         Json::Value response_json = controller_->deleteCookie(request_json);
         makeResponse(response, response_json);
 
+    } catch (market_mentor::InvalidCookieError &e) {
+        response->setStatus(FORBIDDEN);
+        response->setBody(e.what());
     } catch (market_mentor::InvalidHttpRequestError &e) {
         response->setStatus(BAD_REQUEST);
         response->setBody(e.what());
@@ -400,7 +417,7 @@ Json::Value ExitHandler::parseInputHttpRequest(const std::string& message) {
     std::vector<std::string> tokens = splitMessage(message, SEPARATOR_BODY);
 
     if (tokens.size() != SIZE_BODY_EXIT) {
-        throw market_mentor::InvalidHttpRequestError(HANDLERS_AUTHORIZATION);
+        throw market_mentor::InvalidHttpRequestError(HANDLERS_EXIT);
     }
     result[HEADER_JSON_LOGIN] = tokens[LOGIN_ORDER];
     return result;
@@ -414,6 +431,108 @@ void ExitHandler::makeResponse(IHTTPResponse_ response, const Json::Value& respo
     response->setStatus(OK);
 }
 
+
+// class ChangeEmailHandler
+ChangeEmailHandler::ChangeEmailHandler(ptrToChangeEmailController controller)
+    : controller_(controller) {}
+
+void ChangeEmailHandler::handle(IHTTPRequest_ request, IHTTPResponse_ response) {
+    // post / body
+    try {
+        Json::Value request_json = parseInputHttpRequest(request->getBoby());
+        if (request->getHeaders().find(request_json[HEADER_JSON_LOGIN].asString()) == request->getHeaders().end()) {
+            throw market_mentor::InvalidCookieError();
+        }
+        Json::Value response_json = controller_->changeEmail(request_json);
+        makeResponse(response, response_json);
+
+    } catch (market_mentor::InvalidCookieError &e) {
+        response->setStatus(FORBIDDEN);
+        response->setBody(e.what());
+    } catch (market_mentor::InvalidHttpRequestError &e) {
+        response->setStatus(BAD_REQUEST);
+        response->setBody(e.what());
+    } catch (market_mentor::MarketMentorException &e) {
+        response->setStatus(INTERNAL_SERVER_ERROR);
+        response->setBody(e.what());
+    } catch (std::exception &e) {
+        response->setStatus(INTERNAL_SERVER_ERROR);
+        response->setBody(e.what());
+    }
+}
+
+Json::Value ChangeEmailHandler::parseInputHttpRequest(const std::string& message) {
+    // Username/newemail/password
+    Json::Value result;
+    std::vector<std::string> tokens = splitMessage(message, SEPARATOR_BODY);
+
+    if (tokens.size() != SIZE_BODY_CHANGE_EMAIL) {
+        throw market_mentor::InvalidHttpRequestError(HANDLERS_CHANGE_EMAIL);
+    }
+    result[HEADER_JSON_LOGIN] = tokens[LOGIN_ORDER];
+    result[HEADER_JSON_EMAIL] = tokens[CHANGE_ORDER_EMAIL];
+    result[HEADER_JSON_PASSWORD] = tokens[CHANGE_ORDER_PASSWORD];
+    return result;
+}
+
+void ChangeEmailHandler::makeResponse(IHTTPResponse_ response, const Json::Value& response_json) {
+    if (!response_json[HEADER_JSON_STATUS].asBool()) {
+        response->setStatus(UNAUTHORIZED);
+        return;
+    }
+    response->setStatus(OK);
+}
+
+// class ChangePasswordHandlers
+ChangePasswordHandler::ChangePasswordHandler(ptrToChangePasswordController controller)
+    : controller_(controller) {}
+
+void ChangePasswordHandler::handle(IHTTPRequest_ request, IHTTPResponse_ response) {
+    // post / body
+    try {
+        Json::Value request_json = parseInputHttpRequest(request->getBoby());
+        if (request->getHeaders().find(request_json[HEADER_JSON_LOGIN].asString()) == request->getHeaders().end()) {
+            throw market_mentor::InvalidCookieError();
+        }
+        Json::Value response_json = controller_->changePassword(request_json);
+        makeResponse(response, response_json);
+
+    } catch (market_mentor::InvalidCookieError &e) {
+        response->setStatus(FORBIDDEN);
+        response->setBody(e.what());
+    } catch (market_mentor::InvalidHttpRequestError &e) {
+        response->setStatus(BAD_REQUEST);
+        response->setBody(e.what());
+    } catch (market_mentor::MarketMentorException &e) {
+        response->setStatus(INTERNAL_SERVER_ERROR);
+        response->setBody(e.what());
+    } catch (std::exception &e) {
+        response->setStatus(INTERNAL_SERVER_ERROR);
+        response->setBody(e.what());
+    }
+}
+
+Json::Value ChangePasswordHandler::parseInputHttpRequest(const std::string& message) {
+    // Username/oldpassword/newpassword
+    Json::Value result;
+    std::vector<std::string> tokens = splitMessage(message, SEPARATOR_BODY);
+
+    if (tokens.size() != SIZE_BODY_CHANGE_PASSWORD) {
+        throw market_mentor::InvalidHttpRequestError(HANDLERS_CHANGE_PASSWORD);
+    }
+    result[HEADER_JSON_LOGIN] = tokens[LOGIN_ORDER];
+    result[HEADER_JSON_OLD_PASSWORD] = tokens[CHANGE_ORDER_OLD_PASSWORD];
+    result[HEADER_JSON_PASSWORD] = tokens[CHANGE_ORDER_NEW_PASSWORD];
+    return result;
+}
+
+void ChangePasswordHandler::makeResponse(IHTTPResponse_ response, const Json::Value& response_json) {
+    if (!response_json[HEADER_JSON_STATUS].asBool()) {
+        response->setStatus(UNAUTHORIZED);
+        return;
+    }
+    response->setStatus(OK);
+}
 
 // class GetStocksHandler
 

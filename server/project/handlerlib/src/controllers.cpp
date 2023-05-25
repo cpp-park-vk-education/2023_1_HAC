@@ -34,6 +34,7 @@ const std::string HEADER_JSON_STATUS = "status";
 const std::string HEADER_JSON_SERVER_ERROR = "server_error";
 
 const std::string HEADER_JSON_PASSWORD = "password";
+const std::string HEADER_JSON_OLD_PASSWORD = "old_password";
 const std::string HEADER_JSON_EMAIL = "email";
 const std::string HEADER_JSON_LOGIN = "login";
 const std::string HEADER_JSON_DATE = "date";
@@ -355,8 +356,80 @@ Json::Value ExitController::makeDBProtocol(const Json::Value& request) {
     Json::Value db_protocol;
     db_protocol[HEADER_JSON_TYPE] = TypeRequest::GET_REQUEST;
     db_protocol[HEADER_JSON_TYPEDATA] = TypeData::SESSION_DELETE;
-    db_protocol[HEADER_JSON_TOKEN] = request[HEADER_JSON_TOKEN];
+    db_protocol[HEADER_JSON_TOKEN] = request[HEADER_JSON_TOKEN].asString();
     logger.log("Json DP prtocol completed successfully: exit controller");
+    return db_protocol;
+}
+
+// class ChangeEmailController
+ChangeEmailController::ChangeEmailController(const ptrToDBController db_controller)
+    : db_controller_(db_controller) {}
+
+Json::Value ChangeEmailController::changeEmail(const Json::Value& request) {
+    Json::Value request_to_db_author = makeProtocolAuthor(request);
+    logger.log("Request to DB auth. : change email controller");
+    Json::Value response_db_auth = db_controller_->DataRequest(request_to_db_author);
+    if (!response_db_auth[HEADER_JSON_STATUS].asBool()) {
+        return response_db_auth;
+    }
+    Json::Value request_to_db = makeDBProtocol(request);
+    logger.log("Request to DB... : change email controller");
+    return db_controller_->DataRequest(request_to_db);
+}
+
+Json::Value ChangeEmailController::makeDBProtocol(const Json::Value& request) {
+    Json::Value db_protocol;
+    db_protocol[HEADER_JSON_TYPE] = TypeRequest::POST_REQUEST;
+    db_protocol[HEADER_JSON_TYPEDATA] = TypeData::CHANGE_USER_PASSWORD_SETTINGS;
+    db_protocol[HEADER_JSON_LOGIN] = request[HEADER_JSON_LOGIN].asString();
+    db_protocol[HEADER_JSON_PASSWORD] = hashing(request[HEADER_JSON_PASSWORD].asString());
+    logger.log("Json DP prtocol completed successfully: change email controller");
+    return db_protocol;
+}
+
+Json::Value ChangeEmailController::makeProtocolAuthor(const Json::Value& request) {
+    Json::Value db_protocol;
+    db_protocol[HEADER_JSON_TYPE] = TypeRequest::POST_REQUEST;
+    db_protocol[HEADER_JSON_TYPEDATA] = TypeData::AUTHORIZATION;
+    db_protocol[HEADER_JSON_LOGIN] = request[HEADER_JSON_LOGIN].asString();
+    db_protocol[HEADER_JSON_EMAIL] = request[HEADER_JSON_EMAIL].asString();
+    logger.log("Json DP prtocol auth completed successfully: change email controller");
+    return db_protocol;
+}
+
+// class ChangePasswordController
+ChangePasswordController::ChangePasswordController(const ptrToDBController db_controller)
+    : db_controller_(db_controller) {}
+
+Json::Value ChangePasswordController::changePassword(const Json::Value& request) {
+    Json::Value request_to_db_author = makeProtocolAuthor(request);
+    logger.log("Request to DB auth. : change passowrd controller");
+    Json::Value response_db_auth = db_controller_->DataRequest(request_to_db_author);
+    if (!response_db_auth[HEADER_JSON_STATUS].asBool()) {
+        return response_db_auth;
+    }
+    Json::Value request_to_db = makeDBProtocol(request);
+    logger.log("Request to DB... : change passowrd controller");
+    return db_controller_->DataRequest(request_to_db);
+}
+
+Json::Value ChangePasswordController::makeDBProtocol(const Json::Value& request) {
+    Json::Value db_protocol;
+    db_protocol[HEADER_JSON_TYPE] = TypeRequest::POST_REQUEST;
+    db_protocol[HEADER_JSON_TYPEDATA] = TypeData::CHANGE_USER_PASSWORD_SETTINGS;
+    db_protocol[HEADER_JSON_LOGIN] = request[HEADER_JSON_LOGIN].asString();
+    db_protocol[HEADER_JSON_PASSWORD] = hashing(request[HEADER_JSON_PASSWORD].asString());
+    logger.log("Json DP prtocol completed successfully: change passowrd controller");
+    return db_protocol;
+}
+
+Json::Value ChangePasswordController::makeProtocolAuthor(const Json::Value& request) {
+    Json::Value db_protocol;
+    db_protocol[HEADER_JSON_TYPE] = TypeRequest::POST_REQUEST;
+    db_protocol[HEADER_JSON_TYPEDATA] = TypeData::AUTHORIZATION;
+    db_protocol[HEADER_JSON_LOGIN] = request[HEADER_JSON_LOGIN].asString();
+    db_protocol[HEADER_JSON_PASSWORD] = hashing(request[HEADER_JSON_OLD_PASSWORD].asString());
+    logger.log("Json DP prtocol auth completed successfully: change passowrd controller");
     return db_protocol;
 }
 

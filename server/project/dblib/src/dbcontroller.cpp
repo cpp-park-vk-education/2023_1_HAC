@@ -86,7 +86,7 @@ bool DataBaseController::MemoryDatabaseIsOpen() {
 
 Json::Value DataBaseController::DataRequest(const Json::Value& request) noexcept {
     Json::Value response; 
-
+    //std::cout << request.toStyledString();
     if (request["Type"] == GET_REQUEST) {
         GetRequestRouter(request, response);
     }

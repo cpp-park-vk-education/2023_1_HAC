@@ -318,18 +318,18 @@ std::shared_ptr<TimeSeriesData> TimeSeriesRepository::GetByKey(const std::string
 }
 
 std::shared_ptr<AllStocks> TimeSeriesRepository::StocksResponseParse(const Json::Value& db_response) {
-    const int kTimeSeriesId = 0;
-    const int kNameId = 1;
-    const int kParamId = 3;
-    const int kDateId = 2;
 
     auto result = std::make_shared<AllStocks>();
 
     Json::Value json_param;
     Json::Reader reader;
+    if (db_response.size() == 0) {
+        return nullptr;
+    }
+
     for (int i = 0; i < db_response.size(); i++) {  
-        if (db_response[i][kNameId] != Json::Value::null) {
-            json_param[i] = db_response[i][kNameId].asString();
+        if (db_response[i] != Json::Value::null) {
+            json_param[i] = db_response[i][0].asString();
         }
     };
 
@@ -365,7 +365,10 @@ std::shared_ptr<AllStocks> TimeSeriesRepository::GetAllStocks() {
     }
 
     auto result = StocksResponseParse(buffer);
-    stocks_cache_->Insert(key, *result);
+    if (result != nullptr) {
+        stocks_cache_->Insert(key, *result);
+    }
+    
     return result;
 }
 

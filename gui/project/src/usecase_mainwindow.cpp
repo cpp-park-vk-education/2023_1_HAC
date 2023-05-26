@@ -29,16 +29,27 @@ void UseCaseMainWindow::drawPlotHandler(std::istream& network_output) {
     //распарсить
     //setlocale(LC_ALL,"en_us");
     std::vector<double> new_y;
+    std::vector<std::string> new_dates;
     std::string s;
     std::string status;
     std::getline(network_output, status);
     std::cout << "*" <<status <<"*" <<std::endl;
     while(std::getline(network_output, s, '\n')) {
+        if (s.empty())
+            break;
         replace(s, ".", ",");
         //std::string a ="100.1";
         std::cout << "^" <<std::stod(s)<<"^";
         new_y.push_back(std::stod(s));
     }
+    while(std::getline(network_output, s, '\n')) {
+        replace(s, "\"", "");
+        replace(s, "\"", "");
+        std::cout << "^" << s <<"^";
+        new_dates.push_back(s);
+        //new_y.push_back(s);
+    }
+    std::cout <<"pred dates size = " <<new_dates.size() <<"!" <<std::endl;
     /*if (status == "predict") {
         //y.insert(y.end(), new_y.begin(), new_y.end());
     } else {
@@ -48,11 +59,13 @@ void UseCaseMainWindow::drawPlotHandler(std::istream& network_output) {
     }*/
     if (status == "plot") {
         y = new_y;
+        dates = new_dates;
+        std::cout <<"size dates = " << dates.size() <<std::endl;
         //new_y.clear();
        // new_y.erase(new_y.begin(), new_y.end());
-        main_window_ptr->createPlot(y, std::vector<double>());
+        main_window_ptr->createPlot(y, std::vector<double>(), dates, new_dates);
     } else {
-        main_window_ptr->createPlot(y, new_y);
+        main_window_ptr->createPlot(y, new_y, dates, new_dates);
     }
     //main_window_ptr->createPlot(y, new_y);
     main_window_ptr->drawPlot();
@@ -65,7 +78,7 @@ void UseCaseMainWindow::stockSelectHandler(const std::string& stock_name) {
     stock_data.operation_title = "plot";
     stock_data.stock_name = stock_name;
     //stock_data.lag = 7 * 24;
-    stock_data.lag = 20;
+    stock_data.lag = 80;
     stock_data.window_size = 8;
     main_network_ptr->getPlotData(stock_data);
 }
@@ -107,6 +120,8 @@ void  UseCaseMainWindow::setActionsDataHandler(std::istream& network_output) {
     std::vector<std::string> stocks;
     std::string s;
     while(std::getline(network_output, s, '\n')) {
+        replace(s, "\"", "");
+        replace(s, "\"", "");
         stocks.push_back(s);
     }
     main_window_ptr->start_actions(stocks);

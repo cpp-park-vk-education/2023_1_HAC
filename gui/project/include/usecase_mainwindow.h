@@ -30,6 +30,7 @@ private:
     ptr_to_iwindow_manager window_manager_ptr;
     ptr_to_imain_network main_network_ptr;
     std::vector<double> y;
+    std::vector<std::string> dates;
 
     //std::string stock_name_;
 };

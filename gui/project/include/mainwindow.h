@@ -12,6 +12,8 @@
 #include <QVector>
 //#include <QList>
 
+#include <qcustomplot.h>
+
 #include "../include/mainwindow_interface.h"
 
 namespace Ui {
@@ -27,11 +29,13 @@ public:
     void setMainWindowHandler(ptr_to_main_handler handler_main_ptr) override;
     void drawPlot() override;
     void createPlot(const std::vector<double>& y_plot_data,
-                    const std::vector<double>& y_predict_data) override;
+                    const std::vector<double>& y_predict_data,
+                    const std::vector<std::string>& x_plot,
+                    const std::vector<std::string>& x_predict) override;
     void showErrorMessage() override;
     void createErrorMessage(const Error& error_message) override;
 
-    QPushButton* get_apple_btn();
+    //QPushButton* get_apple_btn();
     QPushButton* get_predict_btn();
     QPushButton* get_user_set_btn();
 
@@ -41,19 +45,21 @@ public:
     void start_plot(const std::string& stock);
 
 public slots:
-    void start_apple_plot();
+    //void start_apple_plot();
     void start_predict();
     void open_user_set();
 private:
     Ui::MainWindow *ui;
     ptr_to_main_handler main_handler_ptr;
 
-    QPushButton* btn_apple;
+    //QPushButton* btn_apple;
     QPushButton* btn_predict;
     QPushButton* btn_user_set;
     QErrorMessage* errorMes;
     QVector<double> y;
     QVector<double> y_new;
+    QVector<std::string> x_dates;
+    QVector<std::string> x_new_dates;
     QString* error_message_;
     QString* error_type_;
 
@@ -62,6 +68,9 @@ private:
     QSignalMapper *mapper;
     QVector<QPushButton*> actions;
     int counter;
+
+    QCustomPlot *customPlot;    // Объявляем графическое полотно
+    QCPGraph *graphic;          // Объявляем график
 
     std::string stock_name;
 };

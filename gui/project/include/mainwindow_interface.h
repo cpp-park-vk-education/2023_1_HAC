@@ -13,7 +13,9 @@ public:
     virtual void setMainWindowHandler(ptr_to_main_handler handler_main_ptr) = 0;
     virtual void drawPlot() = 0;
     virtual void createPlot(const std::vector<double>& y_plot_data,
-                            const std::vector<double>& y_predict_data) = 0;
+                            const std::vector<double>& y_predict_data,
+                            const std::vector<std::string>& x_plot,
+                            const std::vector<std::string>& x_predict) = 0;
     virtual void showErrorMessage() = 0;
     virtual void createErrorMessage(const Error& error_message) = 0;
 

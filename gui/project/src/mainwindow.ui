@@ -26,19 +26,6 @@
     <property name="spacing">
      <number>5</number>
     </property>
-    <item>
-     <widget class="QPushButton" name="btnApple">
-      <property name="sizePolicy">
-       <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-        <horstretch>0</horstretch>
-        <verstretch>0</verstretch>
-       </sizepolicy>
-      </property>
-      <property name="text">
-       <string>Apple</string>
-      </property>
-     </widget>
-    </item>
    </layout>
   </widget>
   <widget class="QLabel" name="label">

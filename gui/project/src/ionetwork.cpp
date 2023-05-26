@@ -126,9 +126,9 @@ void IONetwork::onFinishedPost(QNetworkReply* reply, std::string user,
         cookie = "";
         of.open("../../project/auth_parm.txt");
         if (!of.is_open()) {
-            std::cout <<"not open of_403" <<std::endl;
+            std::cout <<"not open of_exit" <<std::endl;
         } else {
-            std::cout <<"open of_403" <<std::endl;
+            std::cout <<"open of_exit" <<std::endl;
             of.close();
         }
         reply->deleteLater();
@@ -191,7 +191,7 @@ void IONetwork::onFirstFinishedPost(QNetworkReply* reply, std::string user,
         cookie = qstr.toStdString();
         of.open("../../project/auth_parm.txt");
         if (!of.is_open()) {
-            std::cout <<"not open of" <<std::endl;
+            std::cout <<"not open of. PROBLEM!!!" <<std::endl;
         } else {
             of << user << '\t' << cookie;
             //of << user << '\t' << "567";
@@ -303,6 +303,7 @@ void IONetwork::GetRequest(const std::string& url, std::istream& body,
     request.setHeader(QNetworkRequest::ContentDispositionHeader, QVariant(an[0].c_str()));
     request.setHeader(QNetworkRequest::ContentTypeHeader, QVariant("GET"));
     request.setRawHeader("cookie", cookie.c_str());
+    std::cout <<"Cookie: "<< cookie  <<"finish"<<std::endl;
     auto reply = network_manager.get(request);
     connect(reply, &QNetworkReply::finished, [this, reply, callback]() {
         onFinishedGet(reply, callback);
@@ -321,7 +322,7 @@ void IONetwork::onFinishedGet(QNetworkReply* reply,
     std::cout<<"&&"<< status.toStdString() <<"&&"<<std::endl;
 
     //check lines
-    std::cout <<"bad cookie"<<std::endl;
+    //std::cout <<"bad cookie"<<std::endl;
     //window_manager_ptr->openAuthorizationWindow();
     //return window_manager_ptr->openAuthorizationWindow();;
 
@@ -335,6 +336,7 @@ void IONetwork::onFinishedGet(QNetworkReply* reply,
     } else if (status.toStdString() == "403") {
         //window_manager_ptr->openAuthorizationWindow();
         //have to clean cookie!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        std::cout <<"bad cookie"<<std::endl;
         std::ofstream of;
         cookie = "";
         of.open("../../project/auth_parm.txt");
@@ -379,6 +381,8 @@ std::string IONetwork::parseGetData(const std::string answer) {
     std::vector<std::string> cn = tokenize(sos, '\n');
     sos = "";
     for (size_t i = 1; i < cn.size() - 1; ++i) {
+        if (cn[i] == "]" or cn[i] == "[")
+            continue;
         sos+= cn[i] + '\n';
         std::cout <<"("<<cn[i] <<")" <<std::endl;
     }

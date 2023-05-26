@@ -130,7 +130,7 @@ void NetworkMainWindow::onGetActionsData(std::istream& network_output,
         //new_output <<network_answer;
         //std::cout <<"!!"<< &output<<"!!";
 
-        main_handler_ptr->setActionsDataHandler(network_output);
+        main_handler_ptr->setActionsDataHandler(output);
     } else {
         main_handler_ptr->sendError(error_state);
     }

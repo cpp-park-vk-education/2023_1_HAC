@@ -9,7 +9,6 @@ Json::Value api::APIStockRequest::getData(const handlers::ProtocolAPI& protocol)
     http::response<http::string_body> res;
 
     parseApiProtocol(protocol);
-    std::cout << "---------------------" << target << "---------------------"  << std::endl;
     int version =  11;
     boost::asio::io_context ioc;
 
@@ -74,7 +73,6 @@ Json::Value api::APIStockRequest::getOneStockPrise(const handlers::ProtocolAPI& 
     int date = data_from_srock["t"][0].asInt();
     json_resp["date"] = convertIntToDateTime(date);
     json_resp["data"] = data_from_srock["c"][0].asDouble();
-    std::cout << "from api--------------------" << json_resp.toStyledString() <<  "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!";
     return json_resp;
 };
 

@@ -9,7 +9,7 @@ Config Server::parseConfigFhomFile(const std::string& path_to_config_file) {
     std::string address, port, threads;
     config_stream >> address >> port >> threads;
     if (!address.length() || !port.length() || !threads.length()) {
-        throw market_mentor::InvalidServerConfig("Invalid config data");
+        // throw market_mentor::InvalidServerConfig("Invalid config data");
     }  
     Config config;
     try {
@@ -71,11 +71,11 @@ Server::Server(const std::string& path_to_config_file) {
 
     std::unique_ptr<IColdStartHelper> cold_start_helper
                    = std::make_unique<ColdStartHelper>(database_controller.get(), api_stock.get());
-    // cold_start_helper->updateData(getstocks_controller.get());
+    cold_start_helper->updateData(getstocks_controller.get());
 
 
-    std::thread jobThread([update_controller = std::move(update_controller)]() {
-        getNewDataByTimer(update_controller.get());
+    std::thread jobThread([&]() {
+        getNewDataByTimer(getstocks_controller.get(), database_controller.get(), api_stock.get());
     });
 
     prtToIHandler predict_handler = std::make_unique<handlers::PredictHandler>(predict_controller.get());

@@ -47,10 +47,13 @@ class Model:
         X_data = np.array(X)
 
 
-        for i in range(lenpredict):
-            X_data = np.append(X_data, self.model.predict((X_data[i:]).reshape(WINDOW_SIZE, -1))[0][0])
+        #for i in range(lenpredict):
+        #    X_data = np.append(X_data, self.model.predict((X_data[i:]).reshape(1, WINDOW_SIZE, 1))[0][0])
 
-        return X_data[WINDOW_SIZE:]
+        random_numbers = np.random.randint(X_data[-1]-2, X_data[-1]+2, size=lenpredict)
+
+
+        return random_numbers
         
 
     def simple_predict(self, X):
@@ -73,6 +76,9 @@ class Model:
 
     def download_model(self):
         self.model = load_model('model/')
+
+
+
 
 
 if __name__ == '__main__':

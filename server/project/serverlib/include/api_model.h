@@ -23,6 +23,9 @@ class IAPIModelRequest {
     virtual Json::Value getData(const controllers::TimeSeriesPredicts& samples_data) = 0;
 };
 
+
+
+
 using ptrToAPIModel = IAPIModelRequest*;
 
 class APIModelRequest : public IAPIModelRequest{

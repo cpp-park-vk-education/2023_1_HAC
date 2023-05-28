@@ -26,7 +26,7 @@ const std::string HEADER_JSON_TYPEDATA = "TypeData";
 const std::string HEADER_JSON_NAME_STOCK = "name_stock";
 const std::string HEADER_JSON_LEN_LAGS = "len_lags";
 const std::string HEADER_JSON_LENPREDICT = "lenpredict";
-const std::string HEADER_JSON_DATA = "data";
+const std::string HEADER_JSON_DATA = "param";
 const std::string HEADER_JSON_TOKEN = "token";
 const std::string HEADER_JSON_TIME_LIFE = "time_live";
 

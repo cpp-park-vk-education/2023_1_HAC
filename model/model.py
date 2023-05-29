@@ -19,7 +19,7 @@ from tensorflow.keras.optimizers import Adam
 WINDOW_SIZE = 300
 
 def stock_to_X_y(stock, window_size):
-    stock_as_np = stock.to_numpy()
+    stock_as_np = np.array(stock)
     X = []
     y = []
     for i in range(len(stock_as_np)-window_size):

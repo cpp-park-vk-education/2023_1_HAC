@@ -76,8 +76,8 @@ void ColdStartHelper::updateData(controllers::IGetStocksController* prt_to_getst
         std::this_thread::sleep_for(std::chrono::seconds(1));
     }
 
-    controllers::TimeSeriesPredicts samples_data;
     for (auto stock_name : stock_names) {
+        controllers::TimeSeriesPredicts* samples_data = new controllers::TimeSeriesPredicts;
         Json::Value db_protocol;
         db_protocol["Type"] = TypeRequest::GET_REQUEST;
         db_protocol["TypeData"] = TypeData::TIMESERIES_REQUEST;
@@ -85,12 +85,12 @@ void ColdStartHelper::updateData(controllers::IGetStocksController* prt_to_getst
         db_protocol["len_lags"] = 3945;
         Json::Value db_response = ptr_to_database_->DataRequest(db_protocol);
 
-        samples_data.stock_name = stock_name;
-        samples_data.action = "fit";
+        samples_data->stock_name = stock_name;
+        samples_data->action = "fit";
         for (int i = 0; i < db_response["param"].size(); ++i) {
-            samples_data.matrix_samples.push_back(std::stod(db_response["param"][i].asString()));
+            samples_data->matrix_samples.push_back(std::stod(db_response["param"][i].asString()));
         }
-        ptr_to_api_model_->getData(samples_data);
+        ptr_to_api_model_->getData(*samples_data);
     }
 };
 

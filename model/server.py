@@ -2,18 +2,54 @@ from http.server import HTTPServer, BaseHTTPRequestHandler
 
 from model import Model
 from model import parse_http_data_to_seq
+from model import stock_to_X_y
 
 HOST = "0.0.0.0"
 PORT = 9950
 
+WINDOW_SIZE = 300
+
 handles = {} # window_size, data
 
+def router(json):
+    if json["action"] == "predict":
+        return take_predict(json)
+    elif json["action"] == "fit":
+        return make_fit(json)
+    elif json["action"] == "refit":
+        return make_refit(json)
+
+
+def make_fit(json):
+    X = parse_http_data_to_seq(json)
+    X_ , y_ = stock_to_X_y(X, WINDOW_SIZE)
+    X_train, y_train = X_[:3000], y_[:3000]
+    X_val, y_val = X_[3000:], y_[3000:]
+    model = Model()
+    try:
+        model.fit(X_train, y_train, X_val, y_val, json["stock_name"])
+    except:
+        return "BAD"
+    return "OK"
+
+def make_refit(json):
+    X = parse_http_data_to_seq(json)
+    X_ , y_ = stock_to_X_y(X, WINDOW_SIZE)
+    X_train, y_train = X_[:500], y_[:500]
+    X_val, y_val = X_[:500:], y_[500:]
+    model = Model()
+    model.download_model(json["stock_name"])
+    try:
+        model.fit(X_train, y_train, X_val, y_val, json["stock_name"])
+    except:
+        return "BAD"
+    return "OK"
 
 def take_predict(json): # time solution
     lenpredict = int(json["lenpredict"])
     X = parse_http_data_to_seq(json)
     model = Model()
-    model.download_model()
+    model.download_model(json["stock_name"])
 
     return model.predict(X, lenpredict)
     
@@ -27,8 +63,9 @@ class NeuralHTTP(BaseHTTPRequestHandler):
         self.send_response(200)
         self.send_header("Content-type", "text/html")
         self.send_header("Connection", "close") # добавить заголовок Connection
-        self.send_header("Content-Length", str(len(str(take_predict(handles)))))
-        self.send_header("data", str(take_predict(handles)).replace("\n", ""))
+        result = str(router(handles))
+        self.send_header("Content-Length", str(len(result)))
+        self.send_header("data", result.replace("\n", ""))
 
         self.end_headers()
         self.wfile.write(bytes("OK", "utf-8")) 

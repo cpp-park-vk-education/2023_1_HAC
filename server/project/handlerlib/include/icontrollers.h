@@ -18,6 +18,7 @@ struct TimeSeriesPredicts {
 public:
     std::vector<double> matrix_samples;
     size_t lenpredict;
+    std::string stock_name;
 
     bool operator==(const TimeSeriesPredicts& other) const {
         return matrix_samples == other.matrix_samples && lenpredict == other.lenpredict;

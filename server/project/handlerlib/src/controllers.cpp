@@ -11,7 +11,7 @@
 #include <iostream>
 #include <vector>
 
-const size_t WINDOW_SIZE = 8;
+const size_t WINDOW_SIZE = 300;
 const size_t TIME_LIFE = 86400;
 
 const bool SERVER_ERROR = true;

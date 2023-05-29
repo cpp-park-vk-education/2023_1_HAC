@@ -152,6 +152,7 @@ std::vector<double> PredictController::parseDBProtocol(const Json::Value& respon
 
 TimeSeriesPredicts PredictController::makeTimeSeries(const std::vector<double>& samples_data, size_t lenpredict) {
     TimeSeriesPredicts ts;
+    ts.action = "predict";
     ts.lenpredict = lenpredict;
     ts.matrix_samples = samples_data;
     logger.log("Timeseries completed successfully: predict controller");

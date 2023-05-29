@@ -50,32 +50,35 @@ Json::Value api::APIModelRequest::getData(const controllers::TimeSeriesPredicts&
         }
     }
 
-    std::string data_string = headers["data"];
-
-    std::vector<double> parsed_data;
-    std::string now_value;
-    for (size_t i = 1; i < data_string.length()-1; ++i){
-      
-        if (data_string[i] == ' ' && now_value.length()) {
-            std::cerr << now_value << std::endl;
-            parsed_data.push_back(std::stod(now_value));
-            now_value = "";
-        } else if (data_string[i] != ' ' ) {
-            now_value += data_string[i]; 
-        }
-        
-    }
-    //parsed_data.push_back(std::stod(now_value));
-
     Json::Value json_resp;
-    json_resp["status"] = true;
-    Json::Value json_param;
-    std::string number;
-    for (int i = 0; i < parsed_data.size(); i++) {  
-       json_param[i] = parsed_data[i];
-    };
-    json_resp["param"] = json_param;
-    std::cerr << json_resp.toStyledString() << std::endl;
+    if (samples_data.action == "predict") {
+        std::string data_string = headers["data"];
+
+        std::vector<double> parsed_data;
+        std::string now_value;
+        for (size_t i = 1; i < data_string.length()-1; ++i){
+        
+            if (data_string[i] == ' ' && now_value.length()) {
+                std::cerr << now_value << std::endl;
+                parsed_data.push_back(std::stod(now_value));
+                now_value = "";
+            } else if (data_string[i] != ' ' ) {
+                now_value += data_string[i]; 
+            }
+            
+        }
+        //parsed_data.push_back(std::stod(now_value));
+
+        json_resp["status"] = true;
+        Json::Value json_param;
+        std::string number;
+        for (int i = 0; i < parsed_data.size(); i++) {  
+        json_param[i] = parsed_data[i];
+        };
+        json_resp["param"] = json_param;
+        std::cerr << json_resp.toStyledString() << std::endl;
+    }
+    std::cerr << "$$$$$$$$$$$$";
     return json_resp;
 };
 

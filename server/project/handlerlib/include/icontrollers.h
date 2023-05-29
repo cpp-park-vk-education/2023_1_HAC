@@ -19,6 +19,7 @@ public:
     std::vector<double> matrix_samples;
     size_t lenpredict;
     std::string stock_name;
+    std::string action;
 
     bool operator==(const TimeSeriesPredicts& other) const {
         return matrix_samples == other.matrix_samples && lenpredict == other.lenpredict;

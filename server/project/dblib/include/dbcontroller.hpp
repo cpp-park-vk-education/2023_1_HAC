@@ -61,15 +61,13 @@ namespace dbcontroller {
         DataBaseController();
         DataBaseController(const std::shared_ptr<IDataBase>& sql_db, const std::shared_ptr<IMemoryDataBase>& no_sqldb,
                      const std::shared_ptr<IClientRepository>& client_rep, const std::shared_ptr<ITimeSeriesRepository>& timeseries_rep, 
-                     const std::shared_ptr<ISubscriptionRepository>& subscription_rep);
+                     const std::shared_ptr<ISubscriptionRepository>& subscription_rep,
+                     const std::shared_ptr<ITokenRepository>& token_rep);
 
         bool ConnectToDatabase() override;
         void SetDatabaseConfig(const std::string&  addr, const std::string&  port,
-            const std::string&  db_name, const std::string&  user, const std::string&  pass) override; 
-
+                const std::string&  db_name, const std::string&  user, const std::string&  pass) override; 
         void SetMemoryDatabaseConfig(const std::string& addr, const std::string&  port, const std::string&  pass) override; 
-
-
         Json::Value DataRequest(const Json::Value& request) noexcept override;
 
     private:
@@ -108,6 +106,7 @@ namespace dbcontroller {
         int redis_port_ = 6379;
         std::string redis_password_ = "marketmentor_password";
 
+        // pointers
         std::shared_ptr<IDataBase> postgres_database_;
         std::shared_ptr<IMemoryDataBase> redis_database_;
         std::shared_ptr<ISubscriptionRepository> subscription_rep_;

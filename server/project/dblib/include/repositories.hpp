@@ -17,11 +17,13 @@ enum ClientUpdateType {
 };
 
 enum ClientGetType {
-  //  TOKEN_KEY,
     LOGIN_KEY
 };
 
 namespace repository {
+
+    // Интерфейсы
+
     class IClientRepository {
     public:
         virtual ~IClientRepository() {};
@@ -52,6 +54,7 @@ namespace repository {
         virtual std::shared_ptr<AllSubscription> GetAll() = 0;
     };
 
+    // Классы
 
     class ClientRepository: public IClientRepository{
     public:

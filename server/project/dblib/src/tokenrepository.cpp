@@ -23,6 +23,7 @@ bool TokenRepository::Insert(const TokenData& data) {
     return database_->Insert(key, value, ttl);
 }
 
+
 bool TokenRepository::Delete(const std::string& key) {
     if (!database_->IsOpen()) {
         return false;
@@ -46,6 +47,5 @@ std::shared_ptr<TokenData> TokenRepository::Get(const std::string& key) {
     result->token = key;
     result->login = value;
     result->time_live = 0;
-
     return result;
 }

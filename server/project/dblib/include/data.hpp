@@ -28,7 +28,7 @@ struct AllStocks {
 struct SubscriptionData {
     std::string name;
     size_t count;
-    size_t cost;
+    float cost;
 };
 
 struct AllSubscription {

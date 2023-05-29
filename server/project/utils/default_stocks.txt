@@ -1,4 +1,2 @@
-3
 AAPL
-NFLX
 TSLA

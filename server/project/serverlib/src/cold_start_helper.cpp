@@ -1,6 +1,7 @@
 #include "cold_start_helper.h"
 #include <jsoncpp/json/value.h>
 #include <fstream>
+#include <thread>
 
 ColdStartHelper::ColdStartHelper(dbcontroller::IDataBaseController* ptr_to_database,
                                 api::IAPIStockRequest* ptr_to_api_stock):
@@ -28,9 +29,7 @@ void ColdStartHelper::updateData(controllers::IGetStocksController* prt_to_getst
         std::ifstream config_stream (path_to_config_file);
         std::string n;
         std::string input;
-        config_stream >> n;
-        for (size_t i = 0; i < stoi(n); ++i){
-            config_stream >> input;
+        while (config_stream >> input){
             stock_names.push_back(input);
         }
     }
@@ -57,41 +56,36 @@ void ColdStartHelper::updateData(controllers::IGetStocksController* prt_to_getst
         }
         std::time_t stock_update_prev_time = convertDateTimeToTimeT(stock_time);
         protocol.name_packet_stock = stock_name;
-        protocol.start_time = std::to_string(stock_update_prev_time + 1);
-        protocol.end_time = std::to_string(std::mktime(local_time));
-        getAndInsertData(protocol, stock_name);
         // Апи биржи даёт вытащить значения только за последние 30 дней
-      /*  if (std::mktime(local_time) - stock_update_prev_time < 60 * 60 * 24 * 30){
-            std::cerr << "ABBA" << stock_update_prev_time - std::mktime(local_time);
+        auto p1 = std::chrono::system_clock::now();
+        auto now_time_unix = std::chrono::duration_cast<std::chrono::seconds>(
+                                                p1.time_since_epoch()).count(); 
+        if (now_time_unix - stock_update_prev_time < 60 * 60 * 24 * 30){
             protocol.start_time = std::to_string(stock_update_prev_time + 1);
-            protocol.end_time = std::to_string(std::mktime(local_time));
+            protocol.end_time = std::to_string(now_time_unix);
             getAndInsertData(protocol, stock_name);
         } else {
-            if (std::mktime(local_time) - stock_update_prev_time  < 60 * 60 * 24 * 60){
+            if (now_time_unix - stock_update_prev_time  < 60 * 60 * 24 * 60){
                 protocol.start_time = std::to_string(stock_update_prev_time);
                 protocol.end_time = std::to_string(stock_update_prev_time + 60 * 60 * 24 * 30);
                 getAndInsertData(protocol, stock_name);
                 protocol.start_time = std::to_string(stock_update_prev_time + 60 * 60 * 24 * 30);
-                protocol.end_time = std::to_string(std::mktime(local_time));
+                protocol.end_time = std::to_string(now_time_unix);
                 getAndInsertData(protocol, stock_name);
             } else {
-                protocol.start_time = std::to_string(std::mktime(local_time) - 60 * 60 * 24 * 90);
-                protocol.end_time = std::to_string(std::mktime(local_time) - 60 * 60 * 24 * 60);
-                 std::cerr << "@@@" << std::ctime(&now_time) << " - " <<  60 * 60 * 24 * 90 << " = "<< protocol.start_time << " " << protocol.end_time << "@@@"<< std::endl;
-                 std::cerr << "@@@" << std::ctime(&now_time) << " - " <<  60 * 60 * 24 * 90 << " = "<< protocol.start_time << " " << protocol.end_time << "@@@"<< std::endl;
+                protocol.start_time = std::to_string(now_time_unix - 60 * 60 * 24 * 90);
+                protocol.end_time = std::to_string(now_time_unix - 60 * 60 * 24 * 60);
                 getAndInsertData(protocol, stock_name);
-                std::cerr << "@@@" << std::ctime(&now_time) << " - ";
-                protocol.start_time = std::to_string(std::mktime(local_time) - 60 * 60 * 24 * 60);
-                protocol.end_time = std::to_string(std::mktime(local_time) - 60 * 60 * 24 * 30);
-                std::cerr << "@@@" << std::mktime(local_time_UTC) << " - " <<  60 * 60 * 24 * 60 << " = "<< protocol.start_time << " " << protocol.end_time << "@@@"<< std::endl;
+                protocol.start_time = std::to_string(now_time_unix - 60 * 60 * 24 * 60);
+                protocol.end_time = std::to_string(now_time_unix - 60 * 60 * 24 * 30);
                 getAndInsertData(protocol, stock_name);
-                //protocol.start_time = std::to_string(std::mktime(local_time) - 60 * 60 * 24 * 30);
-                //protocol.end_time = std::to_string(std::mktime(local_time));
-                //getAndInsertData(protocol, stock_name);
+                protocol.start_time = std::to_string(now_time_unix - 60 * 60 * 24 * 30);
+                protocol.end_time = std::to_string(now_time_unix);
+                getAndInsertData(protocol, stock_name);
             }
         }
         // У одного токена максимум 10 запросов в секунду
-        // std::sleep_for(std::chrono::seconds(1));*/
+        std::this_thread::sleep_for(std::chrono::seconds(1));
     }
 };
 
@@ -117,4 +111,8 @@ std::time_t ColdStartHelper::convertDateTimeToTimeT(const std::string& date_time
     std::time_t time = std::mktime(&tm)  + utc_offset.count();
 
     return time;
+};
+
+void parseStockConfig() {
+    std::string path_to_config_file = "../../project/utils/stock_config.txt";
 }

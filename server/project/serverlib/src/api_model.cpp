@@ -15,14 +15,13 @@ Json::Value api::APIModelRequest::getData(const controllers::TimeSeriesPredicts&
     request_stream << "GET / HTTP/1.1\r\n";
     request_stream << "lenpredict: " + std::to_string(samples_data.lenpredict) + "\r\n";
     //request_stream << "data: " + std::to_string(samples_data.body) + "\r\n\r\n";
+    request_stream << "stock_name: " + samples_data.stock_name;
     std::string samples_data_body; 
-     for (auto i : samples_data.matrix_samples){
-         samples_data_body += std::to_string(i);
-         samples_data_body += " ";
-     }
+    for (auto i : samples_data.matrix_samples){
+        samples_data_body += std::to_string(i);
+        samples_data_body += " ";
+    }
     request_stream << "data: " + samples_data_body + "\r\n\r\n";    
-    //request_stream << "Window_size: " + std::to_string(samples_data.window_size) + "\r\n\r\n";
-    //std::cerr << "rewjr";
     boost::asio::write(socket, request);
 
     boost::asio::streambuf response;

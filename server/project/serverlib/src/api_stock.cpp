@@ -3,6 +3,7 @@
 #include <sstream>
 #include <iomanip>
 #include <string>
+#include <iostream>
 
 api::APIStockRequest::APIStockRequest(){};
 Json::Value api::APIStockRequest::getData(const handlers::ProtocolAPI& protocol){
@@ -39,8 +40,6 @@ Json::Value api::APIStockRequest::getData(const handlers::ProtocolAPI& protocol)
 
     http::read(stream, buffer, res);
     
-    //std::cout << res.body() << std::endl;
-
     boost::system::error_code ec;
     stream.shutdown(ec);
     if(ec == boost::asio::error::eof)
@@ -50,7 +49,6 @@ Json::Value api::APIStockRequest::getData(const handlers::ProtocolAPI& protocol)
     Json::Value completeJson_data;
     Json::Reader reader;
     auto epoch_seconds = reader.parse(res.body(), completeJson_data);
-    //std::cerr << completeJson_data["c"].toStyledString();
     return completeJson_data;
 };
 

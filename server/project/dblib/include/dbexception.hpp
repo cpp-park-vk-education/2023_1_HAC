@@ -25,16 +25,3 @@ class ElementNotExist: public market_mentor::MarketMentorException {
 public:
     ElementNotExist(const std::string& what): market_mentor::MarketMentorException{what}{} 
 };
-
-
-// Repository
-
-// class IncorrectData: public market_mentor::MarketMentorException {
-// public:
-//     IncorrectData(const std::string& what): market_mentor::MarketMentorException{what}{} 
-// };
-
-// class UnavailableDataBase: public market_mentor::MarketMentorException {
-// public:
-//     UnavailableDataBase(const std::string& what): market_mentor::MarketMentorException{what}{} 
-// };

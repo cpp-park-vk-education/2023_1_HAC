@@ -1,6 +1,7 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
 #include "repositories.hpp"
+#include "tokenrepository.hpp"
 
 using ::testing::Return;
 using ::testing::Throw;
@@ -19,16 +20,32 @@ public:
     MOCK_METHOD(bool, Connect,(), (override));
 };
 
+class MemoryDatabaseMock: public IMemoryDataBase {
+public:
+    ~MemoryDatabaseMock() = default;
+    MOCK_METHOD(bool, IsOpen, (),(override));
+    MOCK_METHOD(bool, Connect,(), (override));
+    MOCK_METHOD(bool, Insert,(const std::string& key, const std::string& value, const size_t& ttl), (override));
+    MOCK_METHOD(bool, Delete,(const std::string& key), (override));
+    MOCK_METHOD(bool, Update,(const std::string& key, const std::string& value, const size_t& ttl), (override));
+    MOCK_METHOD(bool, Has,(const std::string& key), (override));
+    MOCK_METHOD(std::string, Get, (const std::string& key), (override));
+
+};
+
+
 class RepositoryTest: public ::testing::Test {
 public:
-    RepositoryTest(): db(new DatabaseMock), client_rep(new ClientRepository(db)),
-         timeseries_rep(new TimeSeriesRepository(db)) , sub_rep(new SubscriptionRepository(db)) {}
+    RepositoryTest(): db(new DatabaseMock), redis(new MemoryDatabaseMock), client_rep(new ClientRepository(db)),
+         timeseries_rep(new TimeSeriesRepository(db)) , sub_rep(new SubscriptionRepository(db)), token_rep(new TokenRepository(redis)) {}
 
 protected:
     std::shared_ptr<DatabaseMock> db;
+    std::shared_ptr<MemoryDatabaseMock> redis;
     std::shared_ptr<IClientRepository> client_rep;
     std::shared_ptr<ITimeSeriesRepository> timeseries_rep;
     std::shared_ptr<ISubscriptionRepository> sub_rep;
+    std::shared_ptr<ITokenRepository> token_rep;
 };
 
 
@@ -39,8 +56,6 @@ TEST_F(RepositoryTest, InsertClientDataCase){
     client->login = "test";
     client->email = "test@email.com";
     client->hash = "pass";
-    client->session_id = 1;
-    client->token = "token";
 
     EXPECT_CALL(*db, IsOpen()).WillOnce(Return(true));
     EXPECT_CALL(*db, SendQuery(_)).WillOnce(Return(true)); 
@@ -60,8 +75,6 @@ TEST_F(RepositoryTest, ClientGetCase){
     row[1] = client->login;
     row[2] = client->email;
     row[3] = client->hash;
-    row[7] = "1";
-    row[8] = "token";
 
     EXPECT_CALL(*db, IsOpen()).WillOnce(Return(true));
     EXPECT_CALL(*db, GetRow(_)).WillOnce(Return(row)); 
@@ -78,19 +91,6 @@ TEST_F(RepositoryTest, DeleteClientDataCase){
 }
 
 
-TEST_F(RepositoryTest, UpdateEmailClientDataCase){
-    std::string key = "test";    
-
-    auto update_client = std::make_shared<ClientData>();
-    update_client->login = "login";
-    update_client->email = "new_test@email.com";
-
-    EXPECT_CALL(*db, IsOpen()).WillOnce(Return(true));
-    EXPECT_CALL(*db, SendQuery(_)).WillOnce(Return(true)); 
-    ClientUpdateType type = UPDATE_EMAIL;
-    EXPECT_TRUE(client_rep->Update(type, key, update_client));
-}
-
 TEST_F(RepositoryTest, UpdatePasswordClientDataCase){
     std::string key = "test";    
 
@@ -104,21 +104,18 @@ TEST_F(RepositoryTest, UpdatePasswordClientDataCase){
     EXPECT_TRUE(client_rep->Update(type, key, update_client));
 }
 
-TEST_F(RepositoryTest, UpdateSessionClientDataCase){
+TEST_F(RepositoryTest, UpdateEmailClientDataCase){
     std::string key = "test";    
 
     auto update_client = std::make_shared<ClientData>();
     update_client->login = "login";
-    update_client->session_id = 1;
-    update_client->token = "1";
+    update_client->email = "new_email";
 
     EXPECT_CALL(*db, IsOpen()).WillOnce(Return(true));
     EXPECT_CALL(*db, SendQuery(_)).WillOnce(Return(true)); 
-
-    ClientUpdateType type = UPDATE_SESSION;
+    ClientUpdateType type = UPDATE_EMAIL;
     EXPECT_TRUE(client_rep->Update(type, key, update_client));
 }
-
 
 TEST_F(RepositoryTest, BadQueryForPostUser){
     auto client = std::make_shared<ClientData>();
@@ -146,11 +143,12 @@ TEST_F(RepositoryTest, BadQueryForGetUser){
 // TimeSeries
 
 TEST_F(RepositoryTest, TimeSeriesInsertCase){
-    Json::Value value;
+    Json::Value value, date;
     value[0] = 1;
+    date[0] = "2021-01-02 19:00";
     auto time = std::make_shared<TimeSeriesData>();
     time->name_stock = "test";
-    time->date = "2021-01-02 19:00";
+    time->date = date;
     time->param = value;
 
     EXPECT_CALL(*db, IsOpen()).WillOnce(Return(true));
@@ -212,8 +210,9 @@ TEST_F(RepositoryTest, TimeSeriesGetCaseWithDate){
 
 TEST_F(RepositoryTest, BadQueryForPostTimeSeries){
     auto time = std::make_shared<TimeSeriesData>();
+    Json::Value date;
     time->name_stock = "test";
-    time->date = "2021-01-02";
+    time->date[0] ="2021-01-02";
     time->param[0] = 1;
 
     EXPECT_CALL(*db, IsOpen()).WillOnce(Return(true));
@@ -289,4 +288,24 @@ TEST_F(RepositoryTest, BadConnectForGetAllSubscription) {
 
     EXPECT_EQ(sub_rep->GetAll(), nullptr);
 
+}
+
+
+// Token
+
+TEST_F(RepositoryTest, GetTokenCase) {
+    auto data = std::make_shared<TokenData>();
+    data->token = "Key";
+    data->login = "login";
+    data->time_live = 0;
+
+    EXPECT_CALL(*redis, IsOpen()).WillOnce(Return(true));
+    EXPECT_CALL(*redis, Get(_)).WillOnce(Return("login")); 
+    EXPECT_EQ(token_rep->Get("Key")->login, data->login);
+}
+
+TEST_F(RepositoryTest, GetBadTokenCase) {
+    EXPECT_CALL(*redis, IsOpen()).WillOnce(Return(true));
+    EXPECT_CALL(*redis, Get(_)).WillOnce(Return("NULL")); 
+    EXPECT_EQ(token_rep->Get("Key"), nullptr);
 }

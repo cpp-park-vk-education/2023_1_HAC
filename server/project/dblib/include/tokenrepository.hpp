@@ -13,6 +13,7 @@ namespace repository {
         virtual std::shared_ptr<TokenData> Get(const std::string& key) = 0;
     };
 
+
     class TokenRepository: public ITokenRepository {
     public:
         TokenRepository();

@@ -9,7 +9,6 @@ namespace database {
     
     class IDataBase{
     public:
-        virtual ~IDataBase() {}; 
         virtual bool IsOpen() = 0;
         virtual bool SendQuery(const std::string& query) = 0;
         virtual bool Connect() = 0;

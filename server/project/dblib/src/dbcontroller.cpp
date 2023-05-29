@@ -9,12 +9,14 @@ DataBaseController::DataBaseController(): postgres_database_ (std::make_shared<P
                 redis_database_(std::make_shared<RedisServer>(redis_host_addr_, redis_port_, redis_password_)) {
 }
 
+
 DataBaseController::DataBaseController(const std::shared_ptr<IDataBase>& sql_db, const std::shared_ptr<IMemoryDataBase>& no_sqldb,
         const std::shared_ptr<IClientRepository>& client_rep, const std::shared_ptr<ITimeSeriesRepository>& timeseries_rep, 
-        const std::shared_ptr<ISubscriptionRepository>& subscription_rep): 
+        const std::shared_ptr<ISubscriptionRepository>& subscription_rep, const std::shared_ptr<ITokenRepository>& token_rep): 
         postgres_database_(sql_db), redis_database_(no_sqldb), clien_rep_(client_rep), timeseries_rep_(timeseries_rep), 
-        subscription_rep_(subscription_rep) {
+        subscription_rep_(subscription_rep), token_rep_(token_rep) {
 }
+
 
 bool DataBaseController::ConnectToDatabase() {
     if (!postgres_database_->Connect()) {
@@ -44,6 +46,7 @@ void DataBaseController::SetDatabaseConfig(const std::string&  addr, const std::
     postgres_password_ = pass;
 }
 
+
 void DataBaseController::SetMemoryDatabaseConfig(const std::string& addr, const std::string&  port, const std::string&  pass) {
     redis_host_addr_ = addr;
     redis_password_ = pass;
@@ -56,10 +59,10 @@ void DataBaseController::SetMemoryDatabaseConfig(const std::string& addr, const 
 
 }
 
+
 bool DataBaseController::DatabaseIsOpen() {
     if (!postgres_database_.get()) {
         return false;
-
     }
 
     if (!postgres_database_->IsOpen()) {  
@@ -73,7 +76,6 @@ bool DataBaseController::DatabaseIsOpen() {
 bool DataBaseController::MemoryDatabaseIsOpen() {
     if (!redis_database_.get()) {
         return false;
-
     }
 
     if (!redis_database_->IsOpen()) {  
@@ -86,7 +88,6 @@ bool DataBaseController::MemoryDatabaseIsOpen() {
 
 Json::Value DataBaseController::DataRequest(const Json::Value& request) noexcept {
     Json::Value response; 
-    //std::cout << request.toStyledString();
     if (request["Type"] == GET_REQUEST) {
         GetRequestRouter(request, response);
     }
@@ -244,6 +245,7 @@ Json::Value DataBaseController::TimeSeriesGet(const Json::Value& data) {
     return response;
 }
 
+
 Json::Value DataBaseController::StocksGet() {
     Json::Value response;
     if (!DatabaseIsOpen()) {
@@ -313,6 +315,7 @@ Json::Value DataBaseController::ClientRequestGet(const TypeData& request_type, c
     return response;
 }
 
+
 Json::Value DataBaseController::ClientRequestUpdate(const Json::Value& data) {
     Json::Value response;
     if (!DatabaseIsOpen()) {
@@ -338,7 +341,7 @@ Json::Value DataBaseController::ClientRequestUpdate(const Json::Value& data) {
     return response;
 }
 
-// Token
+// Токен
 
 Json::Value DataBaseController::TokenRequestGet(const Json::Value& request) {
     Json::Value response;
@@ -349,18 +352,6 @@ Json::Value DataBaseController::TokenRequestGet(const Json::Value& request) {
     }
     
     response["DatabaseIsOpen"] = true;
-    if (!redis_database_.get()) {
-        response["DatabaseIsOpen"] = false;
-        response["status"] = false;
-        return response;
-    }
-
-    if (!redis_database_->IsOpen()) {  
-        response["DatabaseIsOpen"] = false;
-        response["status"] = false;
-        return response;
-    }
-
     std::string key = request["token"].asString();
     auto token_data = token_rep_->Get(key);
 
@@ -384,18 +375,6 @@ Json::Value DataBaseController::TokenRequestPost(const Json::Value& request) {
     }
     
     response["DatabaseIsOpen"] = true;
-    if (!redis_database_.get()) {
-        response["DatabaseIsOpen"] = false;
-        response["status"] = false;
-        return response;
-    }
-
-    if (!redis_database_->IsOpen()) {  
-        response["DatabaseIsOpen"] = false;
-        response["status"] = false;
-        return response;
-    }
-
     TokenData token_data;
     token_data.login = request["login"].asString();
     token_data.token = request["token"].asString();
@@ -422,18 +401,6 @@ Json::Value DataBaseController::TokenRequestDelete(const std::string& key) {
     }
     
     response["DatabaseIsOpen"] = true;
-    if (!redis_database_.get()) {
-        response["DatabaseIsOpen"] = false;
-        response["status"] = false;
-        return response;
-    }
-
-    if (!redis_database_->IsOpen()) {  
-        response["DatabaseIsOpen"] = false;
-        response["status"] = false;
-        return response;
-    }
-
     response["status"] = token_rep_->Delete(key);
     return response;
 }

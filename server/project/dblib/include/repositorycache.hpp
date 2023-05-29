@@ -6,6 +6,8 @@
 #include "dbexception.hpp"
 
 namespace cache {
+
+    // Интерфейс
     template <typename Key, typename Data>
     class IRepositoryCache {
     public:
@@ -17,6 +19,7 @@ namespace cache {
         virtual void DeleteAll() = 0;
     };
 
+    // Объявление
     template <typename Key, typename Data>
     class RepositoryCache: public IRepositoryCache<Key,Data> {
     public:
@@ -39,6 +42,9 @@ namespace cache {
         std::unordered_map<Key, Data> cache_;
     };
 
+
+    // Реазизация шаблонного класса
+
     template <typename Key, typename Data>
     RepositoryCache<Key, Data>::RepositoryCache(): size_(0), max_size_ (10) {
     }
@@ -56,6 +62,7 @@ namespace cache {
             return true;
         }
     }
+
 
     template <typename Key, typename Data>
     bool RepositoryCache<Key, Data>::Insert(const Key& key, const Data& data) {
@@ -85,12 +92,14 @@ namespace cache {
         return true;
     }
 
+
     template <typename Key, typename Data>
     void RepositoryCache<Key, Data>::DeleteFirstElem() {
         cache_.erase(keys_list_.front());
         keys_list_.pop_front();
         size_--;
     }
+
 
     template <typename Key, typename Data>
     Data RepositoryCache<Key, Data>::Get(const Key& key) {
@@ -104,10 +113,12 @@ namespace cache {
         return result;
     }
 
+
     template <typename Key, typename Data>
     size_t RepositoryCache<Key, Data>::GetSize() {
         return size_;
     }
+
 
     template <typename Key, typename Data>
     void RepositoryCache<Key, Data>::DeleteAll() {

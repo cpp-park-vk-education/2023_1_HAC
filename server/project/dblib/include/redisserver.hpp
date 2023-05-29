@@ -17,6 +17,7 @@ namespace database {
         virtual std::string Get(const std::string& key) = 0;    
     };
 
+
     class RedisServer: public IMemoryDataBase {
     public:
         RedisServer();

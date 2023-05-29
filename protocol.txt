@@ -43,7 +43,8 @@
 
 Ответ:
     response["status"]: true;
-    response["data"]: json
+    response["param"]: json;
+    response["date"]: json;
 
 Если ["len_lags"] > чем в БД:
   Вернет сколько есть

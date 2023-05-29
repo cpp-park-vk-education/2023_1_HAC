@@ -8,6 +8,7 @@
 #include "icontrollers.h"
 #include "dbcontroller.hpp"
 #include "api_stock.h"
+#include "api_model.h"
 
 class IColdStartHelper{
  public:
@@ -16,7 +17,7 @@ class IColdStartHelper{
 
 class ColdStartHelper : public IColdStartHelper{
  public:
-    ColdStartHelper(dbcontroller::IDataBaseController* ptr_to_database, api::IAPIStockRequest* ptr_to_api_stock_);
+    ColdStartHelper(dbcontroller::IDataBaseController* ptr_to_database, api::IAPIStockRequest* ptr_to_api_stock, api::IAPIModelRequest* ptr_to_api_model);
     void updateData(controllers::IGetStocksController* prt_to_getstocks_controller) override;
  
  private:
@@ -24,4 +25,5 @@ class ColdStartHelper : public IColdStartHelper{
     void getAndInsertData(handlers::ProtocolAPI protocol, std::string stock_name);
     dbcontroller::IDataBaseController* ptr_to_database_;
     api::IAPIStockRequest* ptr_to_api_stock_;
+    api::IAPIModelRequest* ptr_to_api_model_;
 };

@@ -70,7 +70,7 @@ Server::Server(const std::string& path_to_config_file) {
     }
 
     std::unique_ptr<IColdStartHelper> cold_start_helper
-                   = std::make_unique<ColdStartHelper>(database_controller.get(), api_stock.get());
+                   = std::make_unique<ColdStartHelper>(database_controller.get(), api_stock.get(), api_model.get());
     cold_start_helper->updateData(getstocks_controller.get());
 
 

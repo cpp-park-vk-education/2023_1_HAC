@@ -3,7 +3,6 @@
 
 api::APIModelRequest::APIModelRequest(){};
 Json::Value api::APIModelRequest::getData(const controllers::TimeSeriesPredicts samples_data){ 
-    Json::Value json_resp;
     boost::asio::io_service io_service;
     boost::asio::ip::tcp::socket socket(io_service);
 
@@ -25,8 +24,6 @@ Json::Value api::APIModelRequest::getData(const controllers::TimeSeriesPredicts 
     request_stream << "data: " + samples_data_body + "\r\n\r\n";    
     boost::asio::write(socket, request);
 
-    return json_resp;
-/*
     boost::asio::streambuf response;
     boost::asio::read_until(socket, response, "\r\n");
     std::istream response_stream(&response);
@@ -83,7 +80,6 @@ Json::Value api::APIModelRequest::getData(const controllers::TimeSeriesPredicts 
     }
     std::cerr << "$$$$$$$$$$$$";
     return json_resp;
-    */
 };
 
 void api::APIModelRequest::doConnect(std::string path){};

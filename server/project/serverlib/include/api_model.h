@@ -20,7 +20,7 @@ namespace api {
 
 class IAPIModelRequest {
  public:
-    virtual Json::Value getData(const controllers::TimeSeriesPredicts& samples_data) = 0;
+    virtual Json::Value getData(const controllers::TimeSeriesPredicts samples_data) = 0;
 };
 
 
@@ -31,7 +31,7 @@ using ptrToAPIModel = IAPIModelRequest*;
 class APIModelRequest : public IAPIModelRequest{
  public:
     APIModelRequest();
-    Json::Value getData(const controllers::TimeSeriesPredicts& samples_data) override;
+    Json::Value getData(const controllers::TimeSeriesPredicts samples_data) override; // 
  private:
     void doConnect(std::string path);
     IHTTPResponse* onConnect(ssl::stream<tcp::socket> stream);

@@ -59,6 +59,7 @@ class NeuralHTTP(BaseHTTPRequestHandler):
     def do_GET(self):
         for header in self.headers:
             handles[header] = self.headers[header]
+            print(f"{header}: {self.headers[header]}")
         self.protocol_version = "HTTP/1.1" 
         self.send_response(200)
         self.send_header("Content-type", "text/html")

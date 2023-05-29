@@ -16,18 +16,18 @@ from tensorflow.keras.losses import MeanSquaredError
 from tensorflow.keras.metrics import RootMeanSquaredError
 from tensorflow.keras.optimizers import Adam
 
-WINDOW_SIZE = 8
+WINDOW_SIZE = 300
 
-def stock_to_X(stock, window_size=8):
-    #stock_as_np = stock.to_numpy()
+def stock_to_X_y(stock, window_size):
+    stock_as_np = stock.to_numpy()
     X = []
-    #y = []
-    for i in range(len(stock)+1-window_size):
-        row = [[a] for a in stock[i:i+window_size]]
+    y = []
+    for i in range(len(stock_as_np)-window_size):
+        row = [[a] for a in stock_as_np[i:i+window_size]]
         X.append(row)
-        # label = stock_as_np[i+window_size]
-        # y.append(label)
-    return np.array(X)
+        label = stock_as_np[i+window_size]
+        y.append(label)
+    return np.array(X), np.array(y)
 
 
 def parse_http_data_to_seq(json):
@@ -47,35 +47,31 @@ class Model:
         X_data = np.array(X)
 
 
-        #for i in range(lenpredict):
-        #    X_data = np.append(X_data, self.model.predict((X_data[i:]).reshape(1, WINDOW_SIZE, 1))[0][0])
+        for i in range(lenpredict):
+            X_data = np.append(X_data, model.predict((X_data[i:]).reshape(1, WINDOW_SIZE, 1))[0][0])
 
-        random_numbers = np.random.randint(X_data[-1]-2, X_data[-1]+2, size=lenpredict)
-
-
-        return random_numbers
+        return X_data[WINDOW_SIZE:]
         
 
     def simple_predict(self, X):
         return self.model.predict(X)
 
-    def fit(self, X_train, y_train, X_val, y_val, window_size):
+    def fit(self, X_train, y_train, X_val, y_val, name_stock):
         model = Sequential()
-        model.add(InputLayer((window_size, 1)))
-        model.add(LSTM(64))
-        model.add(Dense(32, 'relu'))
-        model.add(Dense(16, 'relu'))
+        model.add(InputLayer((WINDOW_SIZE, 1)))
+        model.add(LSTM(1200))
+        model.add(Dense(100, 'relu'))
         model.add(Dense(1, 'linear'))
 
         model.summary()
 
-        cp = ModelCheckpoint('model/', save_best_only=True)
+        cp = ModelCheckpoint('model_' + name_stock + '/', save_best_only=True)
         model.compile(loss=MeanSquaredError(), optimizer=Adam(learning_rate = 0.0001), metrics=[RootMeanSquaredError()])
 
-        model.fit(X_train, y_train, validation_data=(X_val, y_val), epochs = 100, callbacks=[cp])
+        model.fit(X_train, y_train, validation_data=(X_val, y_val), epochs = 10, callbacks=[cp])
 
-    def download_model(self):
-        self.model = load_model('model/')
+    def download_model(self, name_stock):
+        self.model = load_model('model_' + name_stock + '/')
 
 
 

@@ -10,12 +10,16 @@ RegistrationWindow::RegistrationWindow(QWidget *parent) :
     ui(new Ui::RegistrationWindow)
 {
     ui->setupUi(this);
-
-    //background color
     QPalette pal = QPalette();
     pal.setColor(QPalette::Window, QColor(242, 125, 15));
     this->setAutoFillBackground(true);
     this->setPalette(pal);
+
+    //background color
+    ui->lePassword->setStyleSheet("background-color:rgba(235, 175, 129, 1)");
+    ui->lePassConfirm->setStyleSheet("background-color:rgba(235, 175, 129, 1)");
+    ui->leLogin->setStyleSheet("background-color:rgba(235, 175, 129, 1)");
+    ui->leEmail->setStyleSheet("background-color:rgba(235, 175, 129, 1)");
 
     ui->lePassword->setEchoMode(QLineEdit::Password);
     ui->lePassConfirm->setEchoMode(QLineEdit::Password);

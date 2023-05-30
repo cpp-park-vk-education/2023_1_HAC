@@ -1,9 +1,10 @@
-#include "../../include/settings/emailsettingswindow.h"
-#include "ui_emailsettingswindow.h"
-
-#include "../../include/guicontroller.h"
 #include <memory>
 #include <iostream>
+
+#include "../../include/settings/emailsettingswindow.h"
+#include "ui_emailsettingswindow.h"
+#include "../../include/guicontroller.h"
+
 
 EmailSettingsWindow::EmailSettingsWindow(QWidget *parent) :
     QWidget(parent),
@@ -18,6 +19,9 @@ EmailSettingsWindow::EmailSettingsWindow(QWidget *parent) :
     this->setPalette(pal);
 
     ui->lePassword->setEchoMode(QLineEdit::Password);
+    ui->lePassword->setStyleSheet("background-color:rgba(235, 175, 129, 1)");
+    ui->leNewEmail->setStyleSheet("background-color:rgba(235, 175, 129, 1)");
+
     btn_enter = ui->btnEnter;
     btn_return = ui->btnReturn;
     connect(btn_enter,SIGNAL(clicked(bool)),this, SLOT(sendSetting()));
@@ -40,6 +44,7 @@ void EmailSettingsWindow::setEmailSettingsWindowHandler(ptr_to_emailsettings_han
     settings_handler_ptr = set_handler_ptr;
 }
 
+
 void EmailSettingsWindow::showErrorMessage() {
     errorMes = new QErrorMessage(this);
     errorMes->showMessage(*error_type_ + "! " + *error_message_);
@@ -47,6 +52,7 @@ void EmailSettingsWindow::showErrorMessage() {
     std::cout << "error shown"<<std::endl;
     std::cout << "created error message"<<std::endl;
 }
+
 
 void EmailSettingsWindow::createErrorMessage(const Error& error_message) {
     if (error_message.type == "401") {
@@ -59,19 +65,22 @@ void EmailSettingsWindow::createErrorMessage(const Error& error_message) {
     std::cout << "created error message"<<std::endl;
 }
 
+
 void EmailSettingsWindow::sendSetting() {
     settings_handler_ptr->ConfirmHandler(getNewEmail(), getPassword());
 }
+
 
 void EmailSettingsWindow::returnToMain() {
     settings_handler_ptr->passToMain();
 }
 
+
 std::string EmailSettingsWindow::getNewEmail() {
     new_email = ui->leNewEmail->text().toStdString();
     return new_email;
 }
-
+\
 std::string EmailSettingsWindow::getPassword() {
     password = ui->lePassword->text().toStdString();
     return password;

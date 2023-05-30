@@ -21,6 +21,8 @@ MainWindow::MainWindow(QWidget *parent) :
     btn_predict = ui->btnPredict;
     btn_user_set = ui->btnUserSet;
     //widget_graph = ui->widgetGraph;
+
+
     customPlot = ui->widget;
     ui->widget->xAxis->setRange(0,10);
     ui->widget->yAxis->setRange(0, 10);
@@ -30,6 +32,9 @@ MainWindow::MainWindow(QWidget *parent) :
         predict_parm = 8;
     }
 
+    QPalette palette = QPalette();
+    palette.setColor(QPalette::Window, QColor( Qt::red ));
+    customPlot->setPalette( palette );
     // Инициализируем вертикальную линию
     verticalLine = new QCPCurve(customPlot->xAxis, customPlot->yAxis);
 
@@ -42,6 +47,9 @@ MainWindow::MainWindow(QWidget *parent) :
     customPlot->setInteraction(QCP::iRangeDrag, true);  // Включаем взаимодействие перетаскивания графика
     customPlot->axisRect()->setRangeDrag(Qt::Horizontal);   // Включаем перетаскивание только по горизонтальной оси
     customPlot->axisRect()->setRangeZoom(Qt::Horizontal);   // Включаем удаление/приближение только по горизонтальной оси
+
+    //customPlot->setStyleSheet("color:rgba(235, 175, 129, 1)");
+
     //customPlot->xAxis->setTickLabelType(QCPAxis::ltDateTime);   // Подпись координат по Оси X в качестве Даты и Времени
     //customPlot->xAxis->setDateTimeFormat("hh:mm");  // Устанавливаем формат даты и времени
 
@@ -74,6 +82,8 @@ MainWindow::MainWindow(QWidget *parent) :
     customPlot->yAxis2->setTicks(false);
     customPlot->xAxis2->setTickLabels(false);
     customPlot->yAxis2->setTickLabels(false);
+
+    customPlot->setBackground(QColor(222, 105, 5));
 
     //customPlot->yAxis->setTickLabelColor(QColor(Qt::red)); // Красный цвет подписей тиков по Оси Y
 
@@ -538,6 +548,7 @@ void MainWindow::start_actions(const std::vector<std::string>& action_strs) {
         //counter++;                                              // Инкрементируем счётчик
 
         std::cout <<"(" <<i<<")"<<std::endl;
+        button->setStyleSheet("QPushButton { background-color:  rgb(44, 120, 14); color: rgb(255, 255, 255); } QPushButton:pressed { background-color:  rgb(32, 87, 10);}");
 
         actions.push_back(button);
         ui->verticalLayout->addWidget(actions[i]);

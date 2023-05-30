@@ -66,6 +66,22 @@
    <layout class="QVBoxLayout" name="verticalLayout_2">
     <item>
      <widget class="QPushButton" name="btnPredict">
+      <property name="font">
+       <font>
+        <weight>75</weight>
+        <bold>true</bold>
+       </font>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">QPushButton {
+    background-color:  rgb(44, 120, 14);
+	color: rgb(255, 255, 255);
+}
+
+QPushButton:pressed {
+    background-color:  rgb(32, 87, 10);
+}</string>
+      </property>
       <property name="text">
        <string>Предсказать</string>
       </property>
@@ -90,6 +106,9 @@
          <width>112</width>
          <height>20</height>
         </rect>
+       </property>
+       <property name="styleSheet">
+        <string notr="true"/>
        </property>
        <property name="text">
         <string>8</string>
@@ -144,6 +163,10 @@
         <verstretch>0</verstretch>
        </sizepolicy>
       </property>
+      <property name="styleSheet">
+       <string notr="true">color:
+rgba(235, 175, 129, 1);</string>
+      </property>
      </widget>
     </item>
    </layout>
@@ -156,6 +179,22 @@
      <width>111</width>
      <height>51</height>
     </rect>
+   </property>
+   <property name="font">
+    <font>
+     <weight>75</weight>
+     <bold>true</bold>
+    </font>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">QPushButton {
+    background-color:  rgb(44, 120, 14);
+	color: rgb(255, 255, 255);
+}
+
+QPushButton:pressed {
+    background-color:  rgb(32, 87, 10);
+}</string>
    </property>
    <property name="text">
     <string>Настройки

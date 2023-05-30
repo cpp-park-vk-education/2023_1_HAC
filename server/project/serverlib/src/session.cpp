@@ -17,7 +17,7 @@ handle_request(
     resp_params = "\nStatus Response: " + std::to_string(res.result_int());
     resp_params += "\nHeader: " + std::to_string(res.result_int());
     resp_params += "\nBody: " + res.body(); 
-    logger.log("Response params:" + resp_params);
+    //logger.log("Response params:" + resp_params);
     return res;
 }
 

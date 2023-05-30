@@ -30,7 +30,7 @@ class IPredictController {
  public:
   virtual Json::Value makePredict(const Json::Value& request) = 0;
  protected:
-  virtual TimeSeriesPredicts makeTimeSeries(const std::vector<double>& samples_data, size_t lenpredict) = 0;
+  virtual TimeSeriesPredicts makeTimeSeries(const std::vector<double>& samples_data, size_t lenpredict, const std::string& name_stock) = 0;
   virtual Json::Value makeDBProtocol(const Json::Value& request) = 0;
   virtual std::vector<double> parseDBProtocol(const Json::Value& response) = 0;
 };

@@ -56,22 +56,28 @@ class Model:
     def simple_predict(self, X):
         return self.model.predict(X)
 
+
+    def refit(self, X_train, y_train, X_val, y_val, name_stock):
+        self.download_model(name_stock)
+        cp = ModelCheckpoint('model/model_' + name_stock + '/', save_best_only=True)
+        self.model.fit(X_train, y_train, validation_data=(X_val, y_val), epochs = 5, callbacks=[cp])
+
     def fit(self, X_train, y_train, X_val, y_val, name_stock):
         model = Sequential()
         model.add(InputLayer((WINDOW_SIZE, 1)))
-        model.add(LSTM(1200))
+        model.add(LSTM(512))
         model.add(Dense(100, 'relu'))
         model.add(Dense(1, 'linear'))
 
         model.summary()
 
-        cp = ModelCheckpoint('model_' + name_stock + '/', save_best_only=True)
+        cp = ModelCheckpoint('model/model_' + name_stock + '/', save_best_only=True)
         model.compile(loss=MeanSquaredError(), optimizer=Adam(learning_rate = 0.0001), metrics=[RootMeanSquaredError()])
 
-        model.fit(X_train, y_train, validation_data=(X_val, y_val), epochs = 10, callbacks=[cp])
+        model.fit(X_train, y_train, validation_data=(X_val, y_val), epochs = 15, callbacks=[cp])
 
     def download_model(self, name_stock):
-        self.model = load_model('model_' + name_stock + '/')
+        self.model = load_model('model/model_' + name_stock + '/')
 
 
 

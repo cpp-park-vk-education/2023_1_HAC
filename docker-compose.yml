@@ -16,13 +16,17 @@ services:
     
 
   model:
+    depends_on:
+      - db
     build: ./model/
     ports:
       - 9950:9950
+    volumes:
+      - ./model/model/:/home/server/model
 
   redis:
     depends_on:
-      - db 
+      - model 
     image: 'bitnami/redis:latest'
     environment:
       - ALLOW_EMPTY_PASSWORD=yes

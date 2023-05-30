@@ -56,7 +56,7 @@ Json::Value api::APIModelRequest::getData(const controllers::TimeSeriesPredicts 
 
         std::vector<double> parsed_data;
         std::string now_value;
-        for (size_t i = 1; i < data_string.length()-1; ++i){
+        for (size_t i = 1; i < data_string.length(); ++i){
         
             if (data_string[i] == ' ' && now_value.length()) {
                // std::cerr << now_value << std::endl;
@@ -67,13 +67,13 @@ Json::Value api::APIModelRequest::getData(const controllers::TimeSeriesPredicts 
             }
             
         }
-        //parsed_data.push_back(std::stod(now_value));
+      // parsed_data.push_back(std::stod(now_value));
 
         json_resp["status"] = true;
         Json::Value json_param;
         std::string number;
         for (int i = 0; i < parsed_data.size(); i++) {  
-        json_param[i] = parsed_data[i];
+            json_param[i] = parsed_data[i];
         };
         json_resp["param"] = json_param;
        // std::cerr << json_resp.toStyledString() << std::endl;

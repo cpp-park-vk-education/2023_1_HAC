@@ -4,4 +4,5 @@
 .env
 /db
 .docker-compose.yml.swo
+.api_model.cpp.swp
 

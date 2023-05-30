@@ -32,7 +32,7 @@ class PredictController : public IPredictController {
     TimeSeriesPredicts makeTimeSeries(const std::vector<double>& samples_data, size_t lenpredict, const std::string& name_stock) override;
     Json::Value makeDBProtocol(const Json::Value& request) override;
     std::vector<double> parseDBProtocol(const Json::Value& response) override;
-
+    std::vector<std::string> makeDateSequence(const std::string& start_time, size_t cnt_hours) override;
     ptrToDBController db_controller_;
     ptrToModelController model_controller_;
 };

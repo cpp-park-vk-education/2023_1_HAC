@@ -42,7 +42,7 @@
     </font>
    </property>
    <property name="text">
-    <string>Loading...</string>
+    <string>Загрузка...</string>
    </property>
   </widget>
   <widget class="QProgressBar" name="progressBar">

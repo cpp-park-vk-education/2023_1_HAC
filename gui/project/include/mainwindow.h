@@ -48,6 +48,11 @@ public slots:
     //void start_apple_plot();
     void start_predict();
     void open_user_set();
+
+private slots:
+    void slotMousePress(QMouseEvent * event);
+    void slotMouseMove(QMouseEvent * event);
+
 private:
     Ui::MainWindow *ui;
     ptr_to_main_handler main_handler_ptr;
@@ -71,8 +76,11 @@ private:
 
     QCustomPlot *customPlot;    // Объявляем графическое полотно
     QCPGraph *graphic;          // Объявляем график
+    QCPCurve *verticalLine;     // Объявляем объект для вертикальной линии
+    QCPItemTracer *tracer;      // Трасировщик по точкам графика
 
     std::string stock_name;
+    double mi, ma, curenti;
 };
 
 #endif // MAINWINDOW_H

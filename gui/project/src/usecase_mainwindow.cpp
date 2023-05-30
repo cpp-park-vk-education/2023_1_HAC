@@ -78,7 +78,7 @@ void UseCaseMainWindow::stockSelectHandler(const std::string& stock_name) {
     stock_data.operation_title = "plot";
     stock_data.stock_name = stock_name;
     //stock_data.lag = 7 * 24;
-    stock_data.lag = 80;
+    stock_data.lag = 1000;
     stock_data.window_size = 8;
     main_network_ptr->getPlotData(stock_data);
 }

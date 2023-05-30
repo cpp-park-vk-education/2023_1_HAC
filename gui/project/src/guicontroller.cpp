@@ -31,6 +31,17 @@ GUIController::GUIController(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::GUIController)
 {
+
+
+    /*QDesktopWidget desktop;
+    QRect rect = desktop.availableGeometry(this);
+    QPoint center = rect.center();
+    int x = center.x() - (width()/2);
+    int y = center.y() - (height()/2);
+    center.setX(x);
+    center.setY(y);
+    move(center);*/
+
     //url_ = "http://25.21.238.202:9988/";
     url_ = "http://62.84.127.93:9988/";
 

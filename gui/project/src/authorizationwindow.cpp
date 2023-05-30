@@ -9,11 +9,20 @@ AuthorizationWindow::AuthorizationWindow(QWidget *parent) :
     ui(new Ui::AuthorizationWindow)
 {
     ui->setupUi(this);
+
+    //background color
+    QPalette pal = QPalette();
+    pal.setColor(QPalette::Window, QColor(254,161,56));
+    this->setAutoFillBackground(true);
+    this->setPalette(pal);
+
     ui->lePassword->setEchoMode(QLineEdit::Password);
     btn_enter = ui->btnEnter;
     btn_reg = ui->btnReg;
 
+    ui->lePassword->setStyleSheet("background-color:rgba(235, 175, 129, 1)");
     ui->lePassword->setText("");
+    ui->leLogin->setStyleSheet("background-color:rgba(235, 175, 129, 1)");
     ui->leLogin->setText("");
 
     connect(this->get_enter_btn(),SIGNAL(clicked(bool)),this, SLOT(start_auth()));

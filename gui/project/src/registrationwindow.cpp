@@ -10,6 +10,13 @@ RegistrationWindow::RegistrationWindow(QWidget *parent) :
     ui(new Ui::RegistrationWindow)
 {
     ui->setupUi(this);
+
+    //background color
+    QPalette pal = QPalette();
+    pal.setColor(QPalette::Window, QColor(242, 125, 15));
+    this->setAutoFillBackground(true);
+    this->setPalette(pal);
+
     ui->lePassword->setEchoMode(QLineEdit::Password);
     ui->lePassConfirm->setEchoMode(QLineEdit::Password);
     btn_enter = ui->btnEnter;

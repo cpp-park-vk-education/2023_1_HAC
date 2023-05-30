@@ -13,6 +13,9 @@
   <property name="windowTitle">
    <string>Form</string>
   </property>
+  <property name="styleSheet">
+   <string notr="true"/>
+  </property>
   <widget class="QWidget" name="layoutWidget">
    <property name="geometry">
     <rect>
@@ -52,6 +55,22 @@
     </item>
     <item row="4" column="0">
      <widget class="QPushButton" name="btnEnter">
+      <property name="font">
+       <font>
+        <weight>75</weight>
+        <bold>true</bold>
+       </font>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">QPushButton {
+    background-color:  rgb(44, 120, 14);
+	color: rgb(255, 255, 255);
+}
+
+QPushButton:pressed {
+    background-color:  rgb(32, 87, 10);
+}</string>
+      </property>
       <property name="text">
        <string>Войти</string>
       </property>

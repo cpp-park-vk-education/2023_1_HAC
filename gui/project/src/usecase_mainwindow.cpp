@@ -74,14 +74,14 @@ void UseCaseMainWindow::drawPlotHandler(std::istream& network_output) {
 void UseCaseMainWindow::stockSelectHandler(const std::string& stock_name) {
     std::cout << "In stock selected: " <<stock_name<< std::endl;
     //stock_name_ = stock_name;
-    if (stock_name.empty()) {
+    /*if (stock_name.empty()) {
         Error error;
         error.type = "NoStock!";
         error.message = "No stock was selected! Select stock and then click predict!";
         main_window_ptr->createErrorMessage(error);
         main_window_ptr->showErrorMessage();
         return;
-    }
+    }*/
     MainData stock_data;
     stock_data.operation_title = "plot";
     stock_data.stock_name = stock_name;
@@ -92,6 +92,14 @@ void UseCaseMainWindow::stockSelectHandler(const std::string& stock_name) {
 }
 void UseCaseMainWindow::predictHandler(const std::string& stock_name, int wind_size) {
     std::cout << "In predict Handler: " <<stock_name<< std::endl;
+    if (stock_name.empty()) {
+        Error error;
+        error.type = "NoStock!";
+        error.message = "No stock was selected! Select stock and then click predict!";
+        main_window_ptr->createErrorMessage(error);
+        main_window_ptr->showErrorMessage();
+        return;
+    }
     stockSelectHandler(stock_name);
     MainData stock_data;
     stock_data.operation_title = "predict";

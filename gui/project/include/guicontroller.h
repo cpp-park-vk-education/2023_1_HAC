@@ -74,16 +74,9 @@ public:
     };
     void openAuthorizationWindow() override;
     void openRegistrationWindow() override;
-    void openUserSettingsWindow() override {
-        pages->setCurrentIndex(2);
-    };
-
-    void openPasswordSettingsWindow() override {
-        pages->setCurrentIndex(3);
-    }
-    void openEmailSettingsWindow() override {
-        pages->setCurrentIndex(4);
-    }
+    void openUserSettingsWindow() override;
+    void openPasswordSettingsWindow() override;
+    void openEmailSettingsWindow() override;
 
 
     std::string getUser() override {

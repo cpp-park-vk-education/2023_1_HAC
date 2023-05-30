@@ -16,6 +16,12 @@ LoadingWindow::LoadingWindow(QWidget *parent) :
     ui(new Ui::LoadingWindow)
 {
     ui->setupUi(this);
+
+    QPalette pal = QPalette();
+    pal.setColor(QPalette::Window, QColor(29,30,51));
+    this->setAutoFillBackground(true);
+    this->setPalette(pal);
+
     image_label = ui->label;
     progress = ui->progressBar;
 
@@ -25,8 +31,9 @@ LoadingWindow::LoadingWindow(QWidget *parent) :
 
     //progress->setCo
     //QPixmap image("/home/sofi_flin/Desktop/DB/MMM/gui/project/load.png");
-    QPixmap image("../../project/load.png");
-    QPixmap pixmapScaled = image.scaled(QSize(800,600),Qt::IgnoreAspectRatio,Qt::SmoothTransformation);
+    //QPixmap image("../../project/load.png");
+    QPixmap image("../../project/loading.png");
+    QPixmap pixmapScaled = image.scaled(QSize(300,500),Qt::IgnoreAspectRatio,Qt::SmoothTransformation);
     image_label->setPixmap(pixmapScaled);
     percent = 1;
 }

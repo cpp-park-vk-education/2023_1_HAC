@@ -52,6 +52,7 @@ void RegistrationWindow::setRegistrationWindowHandler(
 
 void RegistrationWindow::showErrorMessage() {
     errorMes = new QErrorMessage(this);
+    errorMes->setWindowTitle("Error!");
     errorMes->showMessage(*error_type_ + "! " + *error_message_);
     qDebug() << *error_type_ << ' ' << *error_message_;
     std::cout << "error shown"<<std::endl;

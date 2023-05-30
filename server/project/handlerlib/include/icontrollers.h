@@ -33,6 +33,7 @@ class IPredictController {
   virtual TimeSeriesPredicts makeTimeSeries(const std::vector<double>& samples_data, size_t lenpredict, const std::string& name_stock) = 0;
   virtual Json::Value makeDBProtocol(const Json::Value& request) = 0;
   virtual std::vector<double> parseDBProtocol(const Json::Value& response) = 0;
+  virtual std::vector<std::string> makeDateSequence(const std::string& start_time, size_t cnt_hours) = 0;
 };
 
 class IModelController {

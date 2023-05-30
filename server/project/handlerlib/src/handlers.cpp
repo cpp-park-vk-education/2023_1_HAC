@@ -170,10 +170,14 @@ void PredictHandler::makeResponse(IHTTPResponse_ response, const Json::Value& re
         response->setBody(response_json[HEADER_JSON_ERROR].asString());
         return;
     }
-    std::string plot_data = response_json[HEADER_JSON_DATA].toStyledString();
+
+    std::string plot_data_ = response_json[HEADER_JSON_DATA].toStyledString();
+
+    std::string date_ = response_json[HEADER_JSON_DATE].toStyledString();
+    std::string result = plot_data_ + "\n" + date_;
     response->setStatus(OK);
     response->setHeader(PREDICT_DATA, PREDICT_DATA);
-    response->setBody(plot_data);
+    response->setBody(result);
 
 }
 

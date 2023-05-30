@@ -6,6 +6,8 @@
 #include <openssl/sha.h>
 #include <openssl/rand.h>
 
+#include <sstream>
+#include <ctime>
 #include <iomanip>
 #include <sstream>
 #include <iostream>
@@ -44,6 +46,16 @@ const std::string HEADER_JSON_DATE = "date";
 namespace controllers {
 
 FileLogger& logger = FileLogger::getInstance();
+
+
+bool isNighttime(int hour) {
+    return hour >= 3 && hour <= 10;
+}
+
+bool isWeekend(int dayOfWeek) {
+    return dayOfWeek == 0 || dayOfWeek == 6;
+}
+
 
 Json::Value makeJsonError(const std::string& error_mes, bool server_error) {
   Json::Value response;
@@ -111,7 +123,18 @@ Json::Value PredictController::makePredict(const Json::Value& request) {
         std::vector<double> timeseries_vector = parseDBProtocol(response_db);        
         auto time_series = makeTimeSeries(timeseries_vector, std::stoi(request[HEADER_JSON_LENPREDICT].asString()), request[HEADER_JSON_NAME_STOCK].asString());
         logger.log("Request to Model... : predict controller");
-        return model_controller_->callModelApi(time_series);
+         
+        Json::Value result_predict = model_controller_->callModelApi(time_series);
+        std::vector<std::string> date_sequence = makeDateSequence(response_db[HEADER_JSON_DATE][0].asString(), std::stoi(request[HEADER_JSON_LENPREDICT].asString()));
+        
+        Json::Value json_date;
+    
+        for (int i = 0; i < date_sequence.size(); i++) {  
+            json_date[i] = date_sequence[i];
+        };
+        result_predict[HEADER_JSON_DATE] = json_date;
+        
+        return result_predict;
     } catch (market_mentor::ErrorInGetDataFromDBInternal &e) {
         logger.log("Catched ErrorInGetDataFromDBInternal : predict controller");
         return makeJsonError(e.what(), SERVER_ERROR);
@@ -148,6 +171,41 @@ std::vector<double> PredictController::parseDBProtocol(const Json::Value& respon
     }
     logger.log("Parse DB protocol completed successfully: predict controller");
     return timeseries_vector;
+}
+
+std::vector<std::string> PredictController::makeDateSequence(const std::string& start_time, size_t cnt_hours) {
+    std::vector<std::string> result;
+    std::cout << start_time << std::endl;
+    std::tm startDateTime = {};
+    startDateTime.tm_year = std::stoi(start_time.substr(0, 4)) - 1900;
+    startDateTime.tm_mon = std::stoi(start_time.substr(5, 2)) - 1;              // Месяц (январь = 0)
+    startDateTime.tm_mday = std::stoi(start_time.substr(8, 2));           // День
+    startDateTime.tm_hour = std::stoi(start_time.substr(11, 2));             // Час
+    startDateTime.tm_min = std::stoi(start_time.substr(14, 2));          // Минуты
+    startDateTime.tm_sec = std::stoi(start_time.substr(17, 2));              // Секунды
+
+    std::time_t startTime = std::mktime(&startDateTime);
+    
+    std::cout << std::put_time(&startDateTime, "%Y-%m-%d %H-%M-%S") << std::endl;
+    // Количество часов, которые нужно сгенерировать
+    // size_t cnt_hours = hours;
+    size_t it = 0;
+    size_t i_simple = 1;
+    while (it < cnt_hours) {
+        std::time_t currentTime = startTime + i_simple * 3600;  // Добавляем i часов к начальному времени
+        std::tm* currentDateTime = std::localtime(&currentTime);
+
+        // Проверяем, является ли текущий день ночью или выходным
+        if (!isNighttime(currentDateTime->tm_hour) && !isWeekend(currentDateTime->tm_wday)) {
+            std::ostringstream ss;
+
+            ss << std::put_time(currentDateTime, "%Y-%m-%d %H-%M-%S");
+            result.push_back(ss.str());
+            ++it;
+        }
+        ++i_simple;
+    }
+    return result;
 }
 
 TimeSeriesPredicts PredictController::makeTimeSeries(const std::vector<double>& samples_data, size_t lenpredict, const std::string& name_stock) {

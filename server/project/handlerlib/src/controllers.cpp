@@ -109,7 +109,7 @@ Json::Value PredictController::makePredict(const Json::Value& request) {
     Json::Value response_db = db_controller_->DataRequest(request_to_db);
     try {
         std::vector<double> timeseries_vector = parseDBProtocol(response_db);        
-        auto time_series = makeTimeSeries(timeseries_vector, std::stoi(request[HEADER_JSON_LENPREDICT].asString()));
+        auto time_series = makeTimeSeries(timeseries_vector, std::stoi(request[HEADER_JSON_LENPREDICT].asString()), request[HEADER_JSON_NAME_STOCK].asString());
         logger.log("Request to Model... : predict controller");
         return model_controller_->callModelApi(time_series);
     } catch (market_mentor::ErrorInGetDataFromDBInternal &e) {
@@ -150,9 +150,10 @@ std::vector<double> PredictController::parseDBProtocol(const Json::Value& respon
     return timeseries_vector;
 }
 
-TimeSeriesPredicts PredictController::makeTimeSeries(const std::vector<double>& samples_data, size_t lenpredict) {
+TimeSeriesPredicts PredictController::makeTimeSeries(const std::vector<double>& samples_data, size_t lenpredict, const std::string& name_stock) {
     TimeSeriesPredicts ts;
     ts.action = "predict";
+    ts.stock_name = name_stock;
     ts.lenpredict = lenpredict;
     ts.matrix_samples = samples_data;
     logger.log("Timeseries completed successfully: predict controller");

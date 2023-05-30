@@ -5,6 +5,7 @@ import sys
 from model import Model
 from model import parse_http_data_to_seq
 from model import stock_to_X_y
+from datetime import datetime
 
 import logging
 
@@ -58,21 +59,40 @@ def take_predict(json): # time solution
     model.download_model(json["stock_name"])
 
     return model.predict(X, lenpredict)
-    
+
+def log(message):
+    with open('model/output.txt', 'a') as file:
+            current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            file.write(f"{current_time}: {message}\n")
+
     
 
 class NeuralHTTP(BaseHTTPRequestHandler):
     def do_GET(self):
+        log("handle!")
         for header in self.headers:
             handles[header] = self.headers[header]
-            print(f"{header}: {self.headers[header]}")
-        logging.info("123")
-        self.protocol_version = "HTTP/1.1" 
+            log(f"{header}: {self.headers[header]}")
+        
+        self.protocol_version = "HTTP/1.1"
+
         self.send_response(200)
         self.send_header("Content-type", "text/html")
         self.send_header("Connection", "close") # добавить заголовок Connection
         result = str(router(handles))
-        self.send_header("Content-Length", str(1))
+        
+        log("resp:")
+        log("Response 200")
+        log(f"Content-type: text/html")
+        log(f"Connection: close")
+        log(f"Content-Length: {str(len(result))}")
+        log(f"data: {result}")
+        
+        
+        # Записываем информацию об успешной отправке ответа
+        log(f"{current_time}: Response sent: OK\n")
+
+        self.send_header("Content-Length", str(len(result)))
         self.send_header("data", result.replace("\n", ""))
 
         self.end_headers()

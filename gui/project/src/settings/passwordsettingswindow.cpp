@@ -45,6 +45,7 @@ void PasswordSettingsWindow::setPasswordSettingsWindowHandler(ptr_to_passwordset
 
 void PasswordSettingsWindow::showErrorMessage() {
     errorMes = new QErrorMessage(this);
+    errorMes->setWindowTitle("Error!");
     errorMes->showMessage(*error_type_ + "! " + *error_message_);
     qDebug() << *error_type_ << ' ' << *error_message_;
     std::cout << "error shown"<<std::endl;
@@ -82,4 +83,10 @@ std::string PasswordSettingsWindow::getNewPassword() {
 std::string PasswordSettingsWindow::getRepeatPassword() {
     std::string repeat_password = ui->leRepeatPassword_2->text().toStdString();
     return repeat_password;
+}
+
+void PasswordSettingsWindow::clean_input_lines() {
+    ui->leOldPassword_2->setText("");
+    ui->leNewPassword_2->setText("");
+    ui->leRepeatPassword_2->setText("");
 }

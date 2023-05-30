@@ -35,7 +35,7 @@
    <property name="geometry">
     <rect>
      <x>270</x>
-     <y>10</y>
+     <y>0</y>
      <width>221</width>
      <height>81</height>
     </rect>
@@ -91,7 +91,7 @@ QPushButton:pressed {
     <item>
      <widget class="QGroupBox" name="groupBox">
       <property name="sizePolicy">
-       <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
+       <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
         <horstretch>0</horstretch>
         <verstretch>0</verstretch>
        </sizepolicy>
@@ -112,7 +112,7 @@ QPushButton:pressed {
       <widget class="QRadioButton" name="btnRad1">
        <property name="geometry">
         <rect>
-         <x>0</x>
+         <x>10</x>
          <y>30</y>
          <width>112</width>
          <height>20</height>
@@ -128,7 +128,7 @@ QPushButton:pressed {
       <widget class="QRadioButton" name="btnRad2">
        <property name="geometry">
         <rect>
-         <x>130</x>
+         <x>140</x>
          <y>30</y>
          <width>112</width>
          <height>20</height>
@@ -141,7 +141,7 @@ QPushButton:pressed {
       <widget class="QRadioButton" name="btnRad3">
        <property name="geometry">
         <rect>
-         <x>250</x>
+         <x>270</x>
          <y>30</y>
          <width>112</width>
          <height>20</height>
@@ -154,7 +154,7 @@ QPushButton:pressed {
       <widget class="QRadioButton" name="btnRad4">
        <property name="geometry">
         <rect>
-         <x>380</x>
+         <x>390</x>
          <y>30</y>
          <width>112</width>
          <height>20</height>
@@ -165,6 +165,22 @@ QPushButton:pressed {
        </property>
       </widget>
      </widget>
+    </item>
+    <item>
+     <spacer name="verticalSpacer">
+      <property name="orientation">
+       <enum>Qt::Vertical</enum>
+      </property>
+      <property name="sizeType">
+       <enum>QSizePolicy::Fixed</enum>
+      </property>
+      <property name="sizeHint" stdset="0">
+       <size>
+        <width>5</width>
+        <height>2</height>
+       </size>
+      </property>
+     </spacer>
     </item>
     <item>
      <widget class="QCustomPlot" name="widget" native="true">
@@ -187,7 +203,7 @@ QPushButton:pressed {
      <x>640</x>
      <y>10</y>
      <width>121</width>
-     <height>51</height>
+     <height>41</height>
     </rect>
    </property>
    <property name="font">
@@ -208,8 +224,7 @@ QPushButton:pressed {
 }</string>
    </property>
    <property name="text">
-    <string>Настройки
-пользователя </string>
+    <string>Настройки </string>
    </property>
   </widget>
   <widget class="QLabel" name="label_2">
@@ -236,15 +251,47 @@ QPushButton:pressed {
     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:16pt; color: #A674FD&quot;&gt;Список акций&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
    </property>
   </widget>
-  <widget class="QLineEdit" name="lineEdit">
+  <widget class="QWidget" name="horizontalLayoutWidget">
    <property name="geometry">
     <rect>
-     <x>510</x>
+     <x>300</x>
      <y>60</y>
-     <width>113</width>
-     <height>25</height>
+     <width>409</width>
+     <height>41</height>
     </rect>
    </property>
+   <layout class="QHBoxLayout" name="horizontalLayout">
+    <item>
+     <widget class="QLineEdit" name="lineEdit_2">
+      <property name="whatsThis">
+       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <spacer name="horizontalSpacer">
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+      <property name="sizeType">
+       <enum>QSizePolicy::Fixed</enum>
+      </property>
+      <property name="sizeHint" stdset="0">
+       <size>
+        <width>60</width>
+        <height>20</height>
+       </size>
+      </property>
+     </spacer>
+    </item>
+    <item>
+     <widget class="QLineEdit" name="lineEdit">
+      <property name="whatsThis">
+       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      </property>
+     </widget>
+    </item>
+   </layout>
   </widget>
  </widget>
  <customwidgets>

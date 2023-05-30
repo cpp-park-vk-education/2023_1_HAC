@@ -47,6 +47,7 @@ GUIController::GUIController(QWidget *parent)
 
     ui->setupUi(this);
     pages = new QStackedWidget(this);
+    //ui->gridLayout->addWidget(pages);
 
     auth_window = new AuthorizationWindow(this);
     pages->addWidget(auth_window);
@@ -171,6 +172,19 @@ void GUIController::openRegistrationWindow() {
     reg_window->clean_input_lines();
     pages->setCurrentIndex(5);
 };
+
+void GUIController::openUserSettingsWindow() {
+    pages->setCurrentIndex(2);
+};
+
+void GUIController::openPasswordSettingsWindow() {
+    password_settings_window->clean_input_lines();
+    pages->setCurrentIndex(3);
+}
+void GUIController::openEmailSettingsWindow() {
+    email_settings_window->clean_input_lines();
+    pages->setCurrentIndex(4);
+}
 
 void GUIController::stop_timer() {
     timer->stop();

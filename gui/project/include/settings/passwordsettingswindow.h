@@ -25,6 +25,8 @@ public:
     std::string getNewPassword() override;
     std::string getRepeatPassword() override;
 
+    void clean_input_lines();
+
 public slots:
     void sendSetting();
     void returnToMain();

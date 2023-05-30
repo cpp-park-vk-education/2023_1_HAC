@@ -25,6 +25,8 @@ public:
     std::string getNewEmail() override;
     std::string getPassword() override;
 
+    void clean_input_lines();
+
 public slots:
     void sendSetting();
     void returnToMain();

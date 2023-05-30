@@ -14,13 +14,13 @@ EmailSettingsWindow::EmailSettingsWindow(QWidget *parent) :
 
     //background color
     QPalette pal = QPalette();
-    pal.setColor(QPalette::Window, QColor(242, 125, 15));
+    pal.setColor(QPalette::Window, QColor(29,30,51));
     this->setAutoFillBackground(true);
     this->setPalette(pal);
 
     ui->lePassword->setEchoMode(QLineEdit::Password);
-    ui->lePassword->setStyleSheet("background-color:rgba(235, 175, 129, 1)");
-    ui->leNewEmail->setStyleSheet("background-color:rgba(235, 175, 129, 1)");
+    ui->lePassword->setStyleSheet("background-color:rgb(200,201,182);");
+    ui->leNewEmail->setStyleSheet("background-color:rgb(200,201,182);");
 
     btn_enter = ui->btnEnter;
     btn_return = ui->btnReturn;

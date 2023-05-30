@@ -29,13 +29,13 @@
     </font>
    </property>
    <property name="styleSheet">
-    <string notr="true">QPushButton {
-    background-color:  rgb(44, 120, 14);
+    <string notr="true">QPushButton {	
+    background-color:  rgb(104,97,112);
 	color: rgb(255, 255, 255);
 }
 
 QPushButton:pressed {
-    background-color:  rgb(32, 87, 10);
+    background-color:  rgb(70, 68, 81);
 }</string>
    </property>
    <property name="text">
@@ -45,9 +45,9 @@ QPushButton:pressed {
   <widget class="QWidget" name="layoutWidget">
    <property name="geometry">
     <rect>
-     <x>290</x>
-     <y>170</y>
-     <width>251</width>
+     <x>240</x>
+     <y>160</y>
+     <width>385</width>
      <height>181</height>
     </rect>
    </property>
@@ -61,13 +61,13 @@ QPushButton:pressed {
        </font>
       </property>
       <property name="styleSheet">
-       <string notr="true">QPushButton {
-    background-color:  rgb(44, 120, 14);
+       <string notr="true">QPushButton {	
+    background-color:  rgb(104,97,112);
 	color: rgb(255, 255, 255);
 }
 
 QPushButton:pressed {
-    background-color:  rgb(32, 87, 10);
+    background-color:  rgb(70, 68, 81);
 }</string>
       </property>
       <property name="text">
@@ -80,15 +80,29 @@ QPushButton:pressed {
     </item>
     <item row="1" column="0">
      <widget class="QLabel" name="Email">
+      <property name="font">
+       <font>
+        <family>URW Bookman</family>
+        <weight>75</weight>
+        <bold>true</bold>
+       </font>
+      </property>
       <property name="text">
-       <string>Новый адрес электронной почты</string>
+       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:16pt; color: #A674FD&quot;&gt;Новый адрес электронной почты&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
       </property>
      </widget>
     </item>
     <item row="4" column="0">
      <widget class="QLabel" name="Password">
+      <property name="font">
+       <font>
+        <family>URW Bookman</family>
+        <weight>75</weight>
+        <bold>true</bold>
+       </font>
+      </property>
       <property name="text">
-       <string>Подтвердите пароль</string>
+       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:16pt; color: #A674FD&quot;&gt;Подтвердите пароль&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
       </property>
      </widget>
     </item>
@@ -100,19 +114,22 @@ QPushButton:pressed {
   <widget class="QLabel" name="Settings">
    <property name="geometry">
     <rect>
-     <x>300</x>
-     <y>110</y>
-     <width>241</width>
-     <height>21</height>
+     <x>260</x>
+     <y>90</y>
+     <width>341</width>
+     <height>51</height>
     </rect>
    </property>
    <property name="font">
     <font>
+     <family>URW Bookman [urw]</family>
      <pointsize>14</pointsize>
+     <weight>75</weight>
+     <bold>true</bold>
     </font>
    </property>
    <property name="text">
-    <string>Настройки пользователя</string>
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:18pt; color: #e7e6ea&quot;&gt;Настройка пользователя&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
    </property>
   </widget>
  </widget>

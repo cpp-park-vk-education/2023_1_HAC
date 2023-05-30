@@ -11,7 +11,7 @@ UserSettingsWindow::UserSettingsWindow(QWidget *parent) :
 {
     ui->setupUi(this);
     QPalette pal = QPalette();
-    pal.setColor(QPalette::Window, QColor(242, 125, 15));
+    pal.setColor(QPalette::Window, QColor(29,30,51));
     this->setAutoFillBackground(true);
     this->setPalette(pal);
     

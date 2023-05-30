@@ -14,13 +14,15 @@ MainWindow::MainWindow(QWidget *parent) :
 
     //background color
     QPalette pal = QPalette();
-    pal.setColor(QPalette::Window, QColor(242, 125, 15));
+    pal.setColor(QPalette::Window, QColor(29,30,51));
     this->setAutoFillBackground(true);
     this->setPalette(pal);
 
     btn_predict = ui->btnPredict;
     btn_user_set = ui->btnUserSet;
     //widget_graph = ui->widgetGraph;
+
+
     customPlot = ui->widget;
     ui->widget->xAxis->setRange(0,10);
     ui->widget->yAxis->setRange(0, 10);
@@ -42,6 +44,9 @@ MainWindow::MainWindow(QWidget *parent) :
     customPlot->setInteraction(QCP::iRangeDrag, true);  // Включаем взаимодействие перетаскивания графика
     customPlot->axisRect()->setRangeDrag(Qt::Horizontal);   // Включаем перетаскивание только по горизонтальной оси
     customPlot->axisRect()->setRangeZoom(Qt::Horizontal);   // Включаем удаление/приближение только по горизонтальной оси
+
+    //customPlot->setStyleSheet("color:rgba(235, 175, 129, 1)");
+
     //customPlot->xAxis->setTickLabelType(QCPAxis::ltDateTime);   // Подпись координат по Оси X в качестве Даты и Времени
     //customPlot->xAxis->setDateTimeFormat("hh:mm");  // Устанавливаем формат даты и времени
 
@@ -66,14 +71,24 @@ MainWindow::MainWindow(QWidget *parent) :
 
     // Автоматическое масштабирование тиков по Оси X
     //customPlot->xAxis->setAutoTickStep(true); //problem !!!!!!!!!!
+    QColor axis_color(146,131,155);
+    customPlot->setBackground(QColor(38,35,50));
+    customPlot->yAxis->setLabelColor(axis_color);
+    customPlot->xAxis->setTickLabelColor(axis_color);
+    customPlot->xAxis->setBasePen(QPen(axis_color));
+    customPlot->xAxis->setLabelColor(axis_color);
+    customPlot->xAxis->setTickPen(QPen(axis_color));
+    customPlot->xAxis->setSubTickPen(QPen(axis_color));
 
 
-    customPlot->xAxis2->setVisible(true);
-    customPlot->yAxis2->setVisible(true);
-    customPlot->xAxis2->setTicks(false);
-    customPlot->yAxis2->setTicks(false);
-    customPlot->xAxis2->setTickLabels(false);
-    customPlot->yAxis2->setTickLabels(false);
+    customPlot->yAxis->setLabelColor(axis_color);
+    customPlot->yAxis->setTickLabelColor(axis_color);
+    customPlot->yAxis->setBasePen(QPen(axis_color));
+    customPlot->yAxis->setLabelColor(axis_color);
+    customPlot->yAxis->setTickPen(QPen(axis_color));
+    customPlot->yAxis->setSubTickPen(QPen(axis_color));
+
+    ui->lineEdit->setStyleSheet("background-color:rgb(200,201,182)");
 
     //customPlot->yAxis->setTickLabelColor(QColor(Qt::red)); // Красный цвет подписей тиков по Оси Y
 
@@ -338,9 +353,9 @@ void MainWindow::drawPlot() {
         ui->widget->yAxis->setUpperEnding(QCPLineEnding::esSpikeArrow);
 
         ui->widget->addGraph();
-        ui->widget->graph(0)->setPen(QPen(Qt::red));
+        ui->widget->graph(0)->setPen(QColor(179,68,108, 255));
         ui->widget->graph(0)->addData(xx, y);
-        ui->widget->graph(0)->setBrush(QBrush(QColor(235, 19, 19, 70)));
+        ui->widget->graph(0)->setBrush(QBrush(QColor(179,68,108, 128)));
 
         //tracer = new QCPItemTracer(customPlot);
         tracer->setGraph(customPlot->graph(0));   // Трассировщик будет работать с графиком
@@ -418,10 +433,14 @@ void MainWindow::drawPlot() {
 
             //ui->widget->update();
             ui->widget->addGraph();
-            ui->widget->graph(1)->setPen(QPen(Qt::green));
+          //  ui->widget->graph(1)->setPen(QPen(Qt::green));
+            ui->widget->graph(1)->setPen(QPen(QColor(34, 139, 34, 255)));
+
             ui->widget->graph(1)->addData(x_new, y_new);
             //ui->widget->graph(1)->addData(xx_new, y_new);
-            ui->widget->graph(1)->setBrush(QBrush(QColor(162, 242, 136, 70)));
+           // ui->widget->graph(1)->setBrush(QBrush(QColor(162, 242, 136, 70)));
+                ui->widget->graph(1)->setBrush(QColor(34, 139, 34, 70));
+
             ui->widget->replot();
 
         //graphic->setData(time, income); // Устанавливаем данные
@@ -538,7 +557,7 @@ void MainWindow::start_actions(const std::vector<std::string>& action_strs) {
         //counter++;                                              // Инкрементируем счётчик
 
         std::cout <<"(" <<i<<")"<<std::endl;
-
+        button->setStyleSheet("QPushButton { background-color:  rgb(104,97,112); color: rgb(255, 255, 255); } QPushButton:pressed { background-color:  rgb(70, 68, 81);}");
         actions.push_back(button);
         ui->verticalLayout->addWidget(actions[i]);
         //ui->verticalLayout->addWidget(button);                  // Помещаем кнопку в vertical layout

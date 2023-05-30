@@ -10,7 +10,11 @@ UserSettingsWindow::UserSettingsWindow(QWidget *parent) :
     ui(new Ui::UserSettingsWindow)
 {
     ui->setupUi(this);
-    //btn_enter = ui->btnEnter;
+    QPalette pal = QPalette();
+    pal.setColor(QPalette::Window, QColor(29,30,51));
+    this->setAutoFillBackground(true);
+    this->setPalette(pal);
+    
     btn_password = ui->btnPassword;
     btn_email = ui->btnEmail;
     btn_return = ui->btnReturn;

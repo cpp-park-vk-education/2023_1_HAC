@@ -8,9 +8,19 @@
 PasswordSettingsWindow::PasswordSettingsWindow(QWidget *parent) : QWidget(parent), ui(new Ui::PasswordSettingsWindow)
 {
     ui->setupUi(this);
+    QPalette pal = QPalette();
+    pal.setColor(QPalette::Window, QColor(29,30,51));
+    this->setAutoFillBackground(true);
+    this->setPalette(pal);
+
     ui->leOldPassword_2->setEchoMode(QLineEdit::Password);
     ui->leNewPassword_2->setEchoMode(QLineEdit::Password);
     ui->leRepeatPassword_2->setEchoMode(QLineEdit::Password);
+
+    ui->leOldPassword_2->setStyleSheet("background-color:rgb(200,201,182);");
+    ui->leNewPassword_2->setStyleSheet("background-color:rgb(200,201,182);");
+    ui->leRepeatPassword_2->setStyleSheet("background-color:rgb(200,201,182);");
+
     btn_enter = ui->btnEnter;
     btn_return = ui->btnReturn;
     connect(btn_enter,SIGNAL(clicked(bool)),this, SLOT(sendSetting()));

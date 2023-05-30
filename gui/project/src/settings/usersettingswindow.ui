@@ -16,11 +16,27 @@
   <widget class="QPushButton" name="btnReturn">
    <property name="geometry">
     <rect>
-     <x>10</x>
-     <y>10</y>
-     <width>151</width>
-     <height>71</height>
+     <x>20</x>
+     <y>480</y>
+     <width>201</width>
+     <height>31</height>
     </rect>
+   </property>
+   <property name="font">
+    <font>
+     <weight>75</weight>
+     <bold>true</bold>
+    </font>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">QPushButton {	
+    background-color:  rgb(104,97,112);
+	color: rgb(255, 255, 255);
+}
+
+QPushButton:pressed {
+    background-color:  rgb(70, 68, 81);
+}</string>
    </property>
    <property name="text">
     <string>Вернуться назад</string>
@@ -29,15 +45,31 @@
   <widget class="QWidget" name="layoutWidget">
    <property name="geometry">
     <rect>
-     <x>310</x>
-     <y>180</y>
-     <width>211</width>
+     <x>260</x>
+     <y>160</y>
+     <width>321</width>
      <height>212</height>
     </rect>
    </property>
    <layout class="QGridLayout" name="gridLayout_2">
     <item row="0" column="0">
      <widget class="QPushButton" name="btnEmail">
+      <property name="font">
+       <font>
+        <weight>75</weight>
+        <bold>true</bold>
+       </font>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">QPushButton {	
+    background-color:  rgb(104,97,112);
+	color: rgb(255, 255, 255);
+}
+
+QPushButton:pressed {
+    background-color:  rgb(70, 68, 81);
+}</string>
+      </property>
       <property name="text">
        <string>Сменить email</string>
       </property>
@@ -45,6 +77,22 @@
     </item>
     <item row="1" column="0">
      <widget class="QPushButton" name="btnPassword">
+      <property name="font">
+       <font>
+        <weight>75</weight>
+        <bold>true</bold>
+       </font>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">QPushButton {	
+    background-color:  rgb(104,97,112);
+	color: rgb(255, 255, 255);
+}
+
+QPushButton:pressed {
+    background-color:  rgb(70, 68, 81);
+}</string>
+      </property>
       <property name="text">
        <string>Сменить пароль</string>
       </property>
@@ -55,29 +103,48 @@
   <widget class="QLabel" name="Settings">
    <property name="geometry">
     <rect>
-     <x>300</x>
-     <y>110</y>
-     <width>241</width>
-     <height>21</height>
+     <x>240</x>
+     <y>100</y>
+     <width>371</width>
+     <height>51</height>
     </rect>
    </property>
    <property name="font">
     <font>
+     <family>URW Bookman</family>
      <pointsize>14</pointsize>
+     <weight>75</weight>
+     <bold>true</bold>
     </font>
    </property>
    <property name="text">
-    <string>Настройки пользователя</string>
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:18pt; color: #e7e6ea&quot;&gt;Настройка пользователя&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
    </property>
   </widget>
   <widget class="QPushButton" name="btnExit">
    <property name="geometry">
     <rect>
-     <x>600</x>
-     <y>10</y>
-     <width>191</width>
-     <height>71</height>
+     <x>590</x>
+     <y>480</y>
+     <width>201</width>
+     <height>31</height>
     </rect>
+   </property>
+   <property name="font">
+    <font>
+     <weight>75</weight>
+     <bold>true</bold>
+    </font>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">QPushButton {	
+    background-color:  rgb(104,97,112);
+	color: rgb(255, 255, 255);
+}
+
+QPushButton:pressed {
+    background-color:  rgb(70, 68, 81);
+}</string>
    </property>
    <property name="text">
     <string>Выйти из учётной записи</string>

@@ -1,1 +1,4 @@
+MSFT
 AAPL
+NFLX
+NVDA

@@ -85,7 +85,7 @@ class Model:
             log(f"BEFOR COMPILE")
             model = Sequential()
             model.add(InputLayer((WINDOW_SIZE, 1)))
-            model.add(LSTM(512))
+            model.add(LSTM(124))
             model.add(Dense(100, 'relu'))
             model.add(Dense(1, 'linear'))
 
@@ -94,7 +94,7 @@ class Model:
             cp = ModelCheckpoint('model/model_' + name_stock + '/', save_best_only=True)
             model.compile(loss=MeanSquaredError(), optimizer=Adam(learning_rate = 0.0001), metrics=[RootMeanSquaredError()])
 
-            model.fit(X_train, y_train, validation_data=(X_val, y_val), epochs = 15, callbacks=[cp])
+            model.fit(X_train, y_train, validation_data=(X_val, y_val), epochs = 120, callbacks=[cp])
         except:
             log(f"ERROR IN fit")
 

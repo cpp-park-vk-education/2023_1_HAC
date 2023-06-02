@@ -1,3 +1,4 @@
+#include <iostream>
 #include "postgresserver.hpp"
 
 using namespace database;

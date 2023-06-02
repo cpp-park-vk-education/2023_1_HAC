@@ -1,3 +1,4 @@
+#include <iostream>
 #include "redisserver.hpp"
 
 using namespace database;

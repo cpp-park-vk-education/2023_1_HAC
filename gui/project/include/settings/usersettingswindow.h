@@ -5,7 +5,6 @@
 #include <QErrorMessage>
 #include <QDebug>
 
-
 #include "usersettingswindow_interface.h"
 
 namespace Ui {
@@ -18,11 +17,12 @@ class UserSettingsWindow : public QWidget, public IUserSettingsWindow {
 public:
     explicit UserSettingsWindow(QWidget *parent = nullptr);
     ~UserSettingsWindow();
+    
     void setUserSettingsWindowHandler(ptr_to_settings_handler set_handler_ptr) override;
 
 public slots:
-    void PasswordChange();
-    void EmailChange();
+    void passwordChange();
+    void emailChange();
     void returnToMain();
     void startExiting();
 

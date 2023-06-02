@@ -29,7 +29,7 @@ public:
 
     virtual void sendError(const Error& error_message) = 0;
     virtual void passToMain() = 0;
-    virtual void ConfirmHandler(const std::string& new_email, const std::string& password) = 0;
+    virtual void confirmHandler(const std::string& new_email, const std::string& password) = 0;
     virtual std::string getUser() = 0;
     virtual void setUser(const std::string& user) = 0;
 };

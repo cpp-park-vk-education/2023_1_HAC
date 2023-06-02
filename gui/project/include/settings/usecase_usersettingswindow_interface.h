@@ -6,9 +6,6 @@
 #include "usersettingswindow_interface.h"
 #include "usersettingswindow_network_interface.h"
 #include "../../include/guicontroller_interface.h"
-
-
-
 #include "../../include/ionetwork_interface.h"
 
 class IWindowManager;
@@ -33,17 +30,12 @@ public:
     virtual void setWindowManager(ptr_to_iwindow_manager wind_manager_ptr) = 0;
     virtual void setUserSettingsWindow(
             ptr_to_isettings_window settings_wind_ptr) = 0; 
-   // virtual ptr_to_isettings_window getUserSettingsWindow() = 0;
 
     virtual void passToMain() = 0;
-    virtual void OpenPasswordWindow() = 0;
-    virtual void OpenEmailWindow() = 0;
-
+    virtual void openPasswordWindow() = 0;
+    virtual void openEmailWindow() = 0;
     virtual void setUserSettingsNetwork(ptr_to_isettings_network settings_net_ptr) = 0;
-//    virtual void sendError(const Error& error_message) = 0;
-
-//     virtual void ConfirmHandler(const std::string& old_password,const std::string& new_password, const std::string& repeat_password) = 0;
-    virtual void UserExitHandler() = 0;
+    virtual void userExitHandler() = 0;
     virtual std::string getUser() = 0;
     virtual void setUser(const std::string& user) = 0;
 };

@@ -1,14 +1,9 @@
-#include <memory>
-#include <iostream>
-
 #include "../../include/settings/emailsettingswindow.h"
 #include "ui_emailsettingswindow.h"
 #include "../../include/guicontroller.h"
 
 
-EmailSettingsWindow::EmailSettingsWindow(QWidget *parent) :
-    QWidget(parent),
-    ui(new Ui::EmailSettingsWindow)
+EmailSettingsWindow::EmailSettingsWindow(QWidget *parent) : QWidget(parent), ui(new Ui::EmailSettingsWindow)
 {
     ui->setupUi(this);
 
@@ -36,7 +31,7 @@ EmailSettingsWindow::~EmailSettingsWindow()
     delete error_type_;
     delete btn_enter;
     delete btn_return;
-    delete errorMes;
+    delete error_mes_;
 }
 
 
@@ -46,12 +41,10 @@ void EmailSettingsWindow::setEmailSettingsWindowHandler(ptr_to_emailsettings_han
 
 
 void EmailSettingsWindow::showErrorMessage() {
-    errorMes = new QErrorMessage(this);
-    errorMes->setWindowTitle("Error!");
-    errorMes->showMessage(*error_type_ + "! " + *error_message_);
+    error_mes_ = new QErrorMessage(this);
+    error_mes_->setWindowTitle("Error!");
+    error_mes_->showMessage(*error_type_ + "! " + *error_message_);
     qDebug() << *error_type_ << ' ' << *error_message_;
-    std::cout << "error shown"<<std::endl;
-    std::cout << "created error message"<<std::endl;
 }
 
 
@@ -63,12 +56,11 @@ void EmailSettingsWindow::createErrorMessage(const Error& error_message) {
         error_type_ = new QString(error_message.type.c_str());
         error_message_ = new QString(error_message.message.c_str());
     }
-    std::cout << "created error message"<<std::endl;
 }
 
 
 void EmailSettingsWindow::sendSetting() {
-    settings_handler_ptr->ConfirmHandler(getNewEmail(), getPassword());
+    settings_handler_ptr->confirmHandler(getNewEmail(), getPassword());
 }
 
 
@@ -87,7 +79,7 @@ std::string EmailSettingsWindow::getPassword() {
     return password;
 }
 
-void EmailSettingsWindow::clean_input_lines() {
+void EmailSettingsWindow::cleanInputLines() {
     ui->lePassword->setText("");
     ui->leNewEmail->setText("");
 }

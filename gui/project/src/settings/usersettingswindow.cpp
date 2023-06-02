@@ -1,9 +1,6 @@
 #include "../../include/settings/usersettingswindow.h"
 #include "ui_usersettingswindow.h"
-
 #include "../../include/guicontroller.h"
-#include <memory>
-#include <iostream>
 
 UserSettingsWindow::UserSettingsWindow(QWidget *parent) :
     QWidget(parent),
@@ -19,8 +16,8 @@ UserSettingsWindow::UserSettingsWindow(QWidget *parent) :
     btn_email = ui->btnEmail;
     btn_return = ui->btnReturn;
     btn_exit = ui->btnExit;
-    connect(btn_password,SIGNAL(clicked(bool)),this, SLOT(PasswordChange()));
-    connect(btn_email,SIGNAL(clicked(bool)),this, SLOT(EmailChange()));
+    connect(btn_password,SIGNAL(clicked(bool)),this, SLOT(passwordChange()));
+    connect(btn_email,SIGNAL(clicked(bool)),this, SLOT(emailChange()));
     connect(btn_return,SIGNAL(clicked(bool)),this, SLOT(returnToMain()));
     connect(btn_exit,SIGNAL(clicked(bool)),this, SLOT(startExiting()));
 
@@ -40,16 +37,15 @@ void UserSettingsWindow::returnToMain() {
     settings_handler_ptr->passToMain();
 }
 
-void UserSettingsWindow::PasswordChange() {
-    settings_handler_ptr->OpenPasswordWindow();
+void UserSettingsWindow::passwordChange() {
+    settings_handler_ptr->openPasswordWindow();
 }
 
-void UserSettingsWindow::EmailChange() {
-    settings_handler_ptr->OpenEmailWindow();
+void UserSettingsWindow::emailChange() {
+    settings_handler_ptr->openEmailWindow();
 }
 
 void UserSettingsWindow::startExiting() {
-    std::cout <<"in start exit" <<std::endl;
-    settings_handler_ptr->UserExitHandler();
+    settings_handler_ptr->userExitHandler();
 }
 

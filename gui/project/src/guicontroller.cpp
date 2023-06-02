@@ -178,11 +178,11 @@ void GUIController::openUserSettingsWindow() {
 };
 
 void GUIController::openPasswordSettingsWindow() {
-    password_settings_window->clean_input_lines();
+    password_settings_window->cleanInputLines();
     pages->setCurrentIndex(3);
 }
 void GUIController::openEmailSettingsWindow() {
-    email_settings_window->clean_input_lines();
+    email_settings_window->cleanInputLines();
     pages->setCurrentIndex(4);
 }
 

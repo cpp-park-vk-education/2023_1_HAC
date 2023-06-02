@@ -10,6 +10,9 @@ ADD_EXECUTABLE(
         src/gui_authorization_tests.cpp
         src/gui_registration_tests.cpp
         #src/gui_user_settings_tests.cpp
+        #src/gui_password_settings_tests.cpp
+        #src/gui_email_settings_tests.cpp
+
         src/gui_mainwindow_tests.cpp
 
         ../src/authorizationwindow_network.cpp

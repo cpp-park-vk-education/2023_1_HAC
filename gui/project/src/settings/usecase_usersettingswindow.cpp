@@ -12,23 +12,15 @@ void UseCaseUserSettingsWindow::setUserSettingsWindow(ptr_to_isettings_window us
     settings_window_ptr = user_set_ptr;
 }
 
-// void UseCaseUserSettingsWindow::setUserSettingsNetwork(ptr_to_isettings_network settings_net_ptr) {
-//     settings_network_ptr = settings_net_ptr;
-// }
-
-// ptr_to_isettings_window UseCaseUserSettingsWindow::getUserSettingsWindow() {
-//     return settings_window_ptr;
-// }
-
 void UseCaseUserSettingsWindow::passToMain() {
     window_manager_ptr->openMainWindow();
 }
 
-void UseCaseUserSettingsWindow::OpenEmailWindow() {
+void UseCaseUserSettingsWindow::openEmailWindow() {
     window_manager_ptr->openEmailSettingsWindow();
 }
 
-void UseCaseUserSettingsWindow::OpenPasswordWindow() {
+void UseCaseUserSettingsWindow::openPasswordWindow() {
     window_manager_ptr->openPasswordSettingsWindow();
 }
 
@@ -44,11 +36,10 @@ void  UseCaseUserSettingsWindow::setUserSettingsNetwork(ptr_to_isettings_network
     settings_network_ptr = settings_net_ptr;
 }
 
-void UseCaseUserSettingsWindow::UserExitHandler() {
-    std::cout << "in handler exit" <<std::endl;
+void UseCaseUserSettingsWindow::userExitHandler() {
     if (user_.empty()) {
         setUser(window_manager_ptr->getUser());
     }
-    std::cout << "user = " <<user_ <<std::endl;
+    
     settings_network_ptr->getUserExit(user_);
 }

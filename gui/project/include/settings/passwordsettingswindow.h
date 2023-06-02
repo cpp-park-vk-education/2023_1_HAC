@@ -18,14 +18,14 @@ class PasswordSettingsWindow : public QWidget, public IPasswordSettingsWindow {
 public:
     explicit PasswordSettingsWindow(QWidget *parent = nullptr);
     ~PasswordSettingsWindow();
+
     void setPasswordSettingsWindowHandler(ptr_to_passwordsettings_handler set_handler_ptr) override;
     void showErrorMessage() override;
     void createErrorMessage(const Error& error_message) override;
     std::string getOldPassword() override;
     std::string getNewPassword() override;
     std::string getRepeatPassword() override;
-
-    void clean_input_lines();
+    void cleanInputLines();
 
 public slots:
     void sendSetting();
@@ -42,7 +42,7 @@ private:
     QPushButton* btn_return;
     QString* error_message_;
     QString* error_type_;
-    QErrorMessage* errorMes;
+    QErrorMessage* error_mes_;
 };
 
 #endif // PASSWORDSETTINGSWINDOW_H

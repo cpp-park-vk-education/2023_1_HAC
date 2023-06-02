@@ -1,9 +1,6 @@
 #include "../../include/settings/passwordsettingswindow.h"
 #include "ui_passwordsettingswindow.h"
-
 #include "../../include/guicontroller.h"
-#include <memory>
-#include <iostream>
 
 PasswordSettingsWindow::PasswordSettingsWindow(QWidget *parent) : QWidget(parent), ui(new Ui::PasswordSettingsWindow)
 {
@@ -35,7 +32,7 @@ PasswordSettingsWindow::~PasswordSettingsWindow()
     delete error_type_;
     delete btn_enter;
     delete btn_return;
-    delete errorMes;
+    delete error_mes_;
 }
 
 
@@ -44,11 +41,10 @@ void PasswordSettingsWindow::setPasswordSettingsWindowHandler(ptr_to_passwordset
 }
 
 void PasswordSettingsWindow::showErrorMessage() {
-    errorMes = new QErrorMessage(this);
-    errorMes->setWindowTitle("Error!");
-    errorMes->showMessage(*error_type_ + "! " + *error_message_);
+    error_mes_ = new QErrorMessage(this);
+    error_mes_->setWindowTitle("Error!");
+    error_mes_->showMessage(*error_type_ + "! " + *error_message_);
     qDebug() << *error_type_ << ' ' << *error_message_;
-    std::cout << "error shown"<<std::endl;
 }
 
 void PasswordSettingsWindow::createErrorMessage(const Error& error_message) {
@@ -59,11 +55,10 @@ void PasswordSettingsWindow::createErrorMessage(const Error& error_message) {
         error_type_ = new QString(error_message.type.c_str());
         error_message_ = new QString(error_message.message.c_str());
     }
-    std::cout << "created error message"<<std::endl;
 }
 
 void PasswordSettingsWindow::sendSetting() {
-    settings_handler_ptr->ConfirmHandler(getOldPassword(), getNewPassword(), getRepeatPassword());
+    settings_handler_ptr->confirmHandler(getOldPassword(), getNewPassword(), getRepeatPassword());
 }
 
 void PasswordSettingsWindow::returnToMain() {
@@ -85,7 +80,7 @@ std::string PasswordSettingsWindow::getRepeatPassword() {
     return repeat_password;
 }
 
-void PasswordSettingsWindow::clean_input_lines() {
+void PasswordSettingsWindow::cleanInputLines() {
     ui->leOldPassword_2->setText("");
     ui->leNewPassword_2->setText("");
     ui->leRepeatPassword_2->setText("");

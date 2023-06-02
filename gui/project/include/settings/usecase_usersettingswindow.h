@@ -9,22 +9,16 @@
 class UseCaseUserSettingsWindow : public IHandlerUserSettingsWindow {
 public:
     ~UseCaseUserSettingsWindow();
+    
     void setWindowManager(ptr_to_iwindow_manager wind_manager_ptr) override;
     void setUserSettingsWindow(
             ptr_to_isettings_window user_set_ptr) override;
 
     void setUserSettingsNetwork(ptr_to_isettings_network settings_net_ptr) override;
-    //ptr_to_isettings_window getUserSettingsWindow() override;
-   // void sendError(const Error& error_message) override;
-    // void ConfirmHandler(const std::string& old_password,
-    //                              const std::string& new_password, const std::string& repeat_password) override;
-
-    void UserExitHandler() override;
-
-    void OpenPasswordWindow() override;
-    void OpenEmailWindow() override;
+    void userExitHandler() override;
+    void openPasswordWindow() override;
+    void openEmailWindow() override;
     void passToMain() override;
-
     std::string getUser() override;
     void setUser(const std::string& user) override;
 
@@ -32,8 +26,6 @@ private:
     ptr_to_isettings_window settings_window_ptr;
     ptr_to_isettings_network settings_network_ptr;
     ptr_to_iwindow_manager window_manager_ptr;
-
-    std::string url_;
     std::string user_;
 };
 

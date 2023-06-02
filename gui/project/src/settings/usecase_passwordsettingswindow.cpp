@@ -29,10 +29,9 @@ void UseCasePasswordSettingsWindow::passToMain() {
     window_manager_ptr->openUserSettingsWindow();
 }
 
-void UseCasePasswordSettingsWindow::ConfirmHandler(const std::string& old_password, 
+void UseCasePasswordSettingsWindow::confirmHandler(const std::string& old_password, 
                 const std::string& new_password, const std::string&  repeat_password) {
     if (old_password ==  new_password) {
-        std::cout << "bad" << std::endl;
         Error error_message;
         error_message.type = "BadNewPassword";
         error_message.message = "The old password cannot be the new password!";
@@ -42,7 +41,6 @@ void UseCasePasswordSettingsWindow::ConfirmHandler(const std::string& old_passwo
     }       
 
     if (new_password != repeat_password) {
-        std::cout << "bad" << std::endl;
         Error error_message;
         error_message.type = "BadNewPassword";
         error_message.message = "Passwords don't match!";
@@ -52,7 +50,6 @@ void UseCasePasswordSettingsWindow::ConfirmHandler(const std::string& old_passwo
     }
 
     if (new_password.empty() || old_password.empty()) {
-        std::cout << "bad" << std::endl;
         Error error_message;
         error_message.type = "BadPassword";
         error_message.message = "Password is null!";

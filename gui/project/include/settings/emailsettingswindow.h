@@ -1,8 +1,8 @@
 #ifndef EMAILSETTINGSWINDOW_H
 #define EMAILSETTINGSWINDOW_H
 
-#include <QWidget>
 #include <memory>
+#include <QWidget>
 #include <QErrorMessage>
 #include <QDebug>
 
@@ -18,14 +18,14 @@ class EmailSettingsWindow : public QWidget, public IEmailSettingsWindow {
 public:
     explicit EmailSettingsWindow(QWidget *parent = nullptr);
     ~EmailSettingsWindow();
-    void setEmailSettingsWindowHandler(
-            ptr_to_emailsettings_handler set_handler_ptr) override;
+
+    void setEmailSettingsWindowHandler(ptr_to_emailsettings_handler set_handler_ptr) override;
     void showErrorMessage() override;
     void createErrorMessage(const Error& error_message) override;
     std::string getNewEmail() override;
     std::string getPassword() override;
 
-    void clean_input_lines();
+    void cleanInputLines();
 
 public slots:
     void sendSetting();
@@ -42,7 +42,7 @@ private:
     QPushButton* btn_return;
     QString* error_message_;
     QString* error_type_;
-    QErrorMessage* errorMes;
+    QErrorMessage* error_mes_;
 };
 
 #endif // EMAILSETTINGSWINDOW_H

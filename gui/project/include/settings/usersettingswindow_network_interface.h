@@ -1,8 +1,11 @@
 #ifndef USERSETTINGSWINDOW_NETWORK_INTERFACE_H
 #define USERSETTINGSWINDOW_NETWORK_INTERFACE_H
 
-
 #include <memory>
+
+#include "passwordsettingswindow_interface.h"
+#include "emailsettingswindow_interface.h"
+#include "../ionetwork_interface.h"
 
 struct ConfirmEdit {
     std::string old_password;
@@ -11,9 +14,6 @@ struct ConfirmEdit {
     std::string new_email;
 };
 
-#include "passwordsettingswindow_interface.h"
-#include "emailsettingswindow_interface.h"
-#include "../ionetwork_interface.h"
 
 class IHandlerPasswordSettingsWindow;
 using ptr_to_passwordsettings_handler = std::shared_ptr<IHandlerPasswordSettingsWindow>;
@@ -31,7 +31,6 @@ public:
     virtual void setUserSettingsNetwork(ptr_to_inetwork net_ptr) = 0;
     virtual void getUserPasswordSettings(const ConfirmEdit& confirm_passwords) = 0;
     virtual void getUserEmailSettings(const ConfirmEdit& confirm_email) = 0;
-    //virtual void onGetUserSettingsResponse(const Error& error_state) = 0;
     virtual void onGetUserPasswordSettingsResponse(const Error& error_state) = 0;
     virtual void onGetUserEmailSettingsResponse(const Error& error_state) = 0;
     virtual void getUserExit(const std::string& user) = 0;

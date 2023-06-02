@@ -1,6 +1,8 @@
-#include "dbcontroller.hpp"
-
 #include <iostream>
+#include "dbcontroller.hpp"
+#include "repositories.hpp"
+#include "redisserver.hpp"
+#include "postgresserver.hpp"
 
 using namespace dbcontroller;
 

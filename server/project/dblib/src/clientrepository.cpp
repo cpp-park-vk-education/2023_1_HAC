@@ -1,15 +1,20 @@
+#include <iostream>
 #include "repositories.hpp"
+#include "repositorycache.hpp"
 
 using namespace repository;
 
+const int kClienCacheSize = 20;
+
 // ClientRepository
 
-ClientRepository::ClientRepository(): database_(nullptr), client_cache_(std::make_shared<RepositoryCache<std::string, ClientData>>(20)) {
+ClientRepository::ClientRepository(): database_(nullptr), 
+        client_cache_(std::make_shared<RepositoryCache<std::string, ClientData>>(kClienCacheSize)) {
 }
 
 
 ClientRepository::ClientRepository(const std::shared_ptr<IDataBase>& db): database_(db),
-         client_cache_(std::make_shared<RepositoryCache<std::string, ClientData>>(20)) {
+         client_cache_(std::make_shared<RepositoryCache<std::string, ClientData>>(kClienCacheSize)) {
 }
 
 // Защита от специальных символов в запросе пользователя

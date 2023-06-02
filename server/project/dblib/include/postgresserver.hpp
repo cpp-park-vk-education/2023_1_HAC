@@ -1,22 +1,9 @@
 #pragma once // NO_LINT
-#include <iostream>
 #include <memory>
 #include <pqxx/pqxx>
-#include <jsoncpp/json/json.h>
-#include "dbexception.hpp"
+#include "idatabase.hpp"
 
 namespace database {
-    
-    class IDataBase{
-    public:
-        virtual bool IsOpen() = 0;
-        virtual bool SendQuery(const std::string& query) = 0;
-        virtual bool Connect() = 0;
-
-        virtual Json::Value GetData(const std::string& query) = 0;
-        virtual Json::Value GetRow(const std::string& query) = 0;
-    };
-
 
     class PostgresServer: public IDataBase {
     public:

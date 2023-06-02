@@ -1,15 +1,21 @@
+#include <iostream>
 #include "repositories.hpp"
+#include "repositorycache.hpp"
 
 using namespace repository;
 
+const int kTimeSeriesCacheSize = 5;
+const int kStocksCacheSize = 1;
+
 TimeSeriesRepository::TimeSeriesRepository(): database_(nullptr), 
-        timeseries_cache_(std::make_shared<RepositoryCache<std::string, TimeSeriesData>>(5)) {
+        timeseries_cache_(std::make_shared<RepositoryCache<std::string, TimeSeriesData>>(kTimeSeriesCacheSize)),
+        stocks_cache_(std::make_shared<RepositoryCache<std::string, AllStocks>>(kStocksCacheSize)) {
 }
 
 
 TimeSeriesRepository::TimeSeriesRepository(const std::shared_ptr<IDataBase>& db): database_(db),
-        timeseries_cache_(std::make_shared<RepositoryCache<std::string, TimeSeriesData>>(5)),
-        stocks_cache_(std::make_shared<RepositoryCache<std::string, AllStocks>>(1)) {
+        timeseries_cache_(std::make_shared<RepositoryCache<std::string, TimeSeriesData>>(kTimeSeriesCacheSize)),
+        stocks_cache_(std::make_shared<RepositoryCache<std::string, AllStocks>>(kStocksCacheSize)) {
 }
 
 

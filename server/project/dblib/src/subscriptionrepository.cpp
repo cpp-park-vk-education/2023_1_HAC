@@ -1,16 +1,20 @@
+#include <iostream>
 #include "repositories.hpp"
+#include "repositorycache.hpp"
 
 using namespace repository;
 
-// Subscription. dbcontoroller не вызывает данный репозиторий, так как пока не реализована система подписок
+// Subscription. dbcontoroller не вызывает данный репозиторий, так как пока не была реализована система подписок
+
+const int kSubCacheSize = 5;
 
 SubscriptionRepository::SubscriptionRepository(): database_(nullptr), 
-        subscription_cache_(std::make_shared<RepositoryCache<std::string, SubscriptionData>>(5)) {
+        subscription_cache_(std::make_shared<RepositoryCache<std::string, SubscriptionData>>(kSubCacheSize)) {
 }
 
 
 SubscriptionRepository::SubscriptionRepository(const std::shared_ptr<IDataBase>& db): database_(db), 
-        subscription_cache_(std::make_shared<RepositoryCache<std::string, SubscriptionData>>(5)) {
+        subscription_cache_(std::make_shared<RepositoryCache<std::string, SubscriptionData>>(kSubCacheSize)) {
 }
 
 std::shared_ptr<SubscriptionData> SubscriptionRepository::DatabaseResponseParse(const Json::Value& db_response) {

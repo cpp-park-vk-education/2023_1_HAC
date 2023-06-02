@@ -90,7 +90,7 @@ void ColdStartHelper::updateData(controllers::IGetStocksController* prt_to_getst
         for (int i = 0; i < db_response["param"].size(); ++i) {
             samples_data->matrix_samples.push_back(std::stod(db_response["param"][i].asString()));
         }
-        //ptr_to_api_model_->getData(*samples_data);
+        ptr_to_api_model_->getData(*samples_data);
     }
 };
 

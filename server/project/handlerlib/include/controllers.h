@@ -13,12 +13,18 @@ using namespace api;
 
 using ptrToDBController = dbcontroller::IDataBaseController*;
 using ptrToModelController = controllers::IModelController*;
+using ptrToAPIModel = api::IAPIModelRequest*;
 
-
+// PROTOCOL AND ERROR
 Json::Value makeJsonError(const std::string& error_mes, bool server_error);
+Json::Value makeProtocolSendCookie(const std::string& cookie, const std::string& login);
+Json::Value makeProtocolAuthorization(const Json::Value& request);
 
+// SUPPORT FUNC
 hash_ hashing(const std::string& buffer);
 std::string makeCookie();
+bool isNighttime(int hour);
+bool isWeekend(int day_of_week);
 
 // class PredictController
 class PredictController : public IPredictController {
@@ -29,10 +35,10 @@ class PredictController : public IPredictController {
    
 
  private:
-    TimeSeriesPredicts makeTimeSeries(const std::vector<double>& samples_data, size_t lenpredict, const std::string& name_stock) override;
-    Json::Value makeDBProtocol(const Json::Value& request) override;
-    std::vector<double> parseDBProtocol(const Json::Value& response) override;
-    std::vector<std::string> makeDateSequence(const std::string& start_time, size_t cnt_hours) override;
+    TimeSeriesPredicts makeTimeSeries(const std::vector<double>& samples_data, size_t lenpredict, const std::string& name_stock);
+    Json::Value makeDBProtocol(const Json::Value& request);
+    std::vector<double> parseDBProtocol(const Json::Value& response);
+    std::vector<std::string> makeDateSequence(const std::string& start_time, size_t cnt_hours);
     ptrToDBController db_controller_;
     ptrToModelController model_controller_;
 };
@@ -40,11 +46,11 @@ class PredictController : public IPredictController {
 // class ModelController
 class ModelController : public IModelController {
  public:
-  explicit ModelController(api::IAPIModelRequest* api_model);
+  explicit ModelController(ptrToAPIModel api_model);
   Json::Value callModelApi(const TimeSeriesPredicts& samples_data) override;
 
  private:
-  api::IAPIModelRequest* api_model_;
+  ptrToAPIModel api_model_;
 };
 
 // class ShowPlotController 
@@ -55,7 +61,7 @@ class ShowPlotController : public IShowPlotController {
   Json::Value createPlotData(const Json::Value& request) override;
 
  private:
-  Json::Value makeDBProtocol(const Json::Value& request) override;
+  Json::Value makeDBProtocol(const Json::Value& request);
 
   ptrToDBController db_controller_;
 };
@@ -67,7 +73,7 @@ class RegisterController : public IRegisterController {
 
   Json::Value registration(Json::Value& request) override; 
  private:
-  Json::Value makeDBProtocol(const Json::Value& request) override;
+  Json::Value makeDBProtocol(const Json::Value& request);
 
   ptrToDBController db_controller_;
 };
@@ -79,8 +85,8 @@ class AuthorizeController : public IAuthorizeController {
 
   Json::Value authorization(Json::Value& request) override;
  private:
-  Json::Value checkPassword(const Json::Value& db_response, const Json::Value& request) override;
-  Json::Value makeDBProtocol(const Json::Value& request) override;
+  Json::Value checkPassword(const Json::Value& db_response, const Json::Value& request);
+
 
   ptrToDBController db_controller_;
 };
@@ -93,8 +99,7 @@ class UpdateDataController : public IUpdateDataController {
   bool updateData(const handlers::ProtocolAPI& protocol) override;
 
  private:
-  // Json::Value parseHTTPToJson(IHTTPResponse_ response) override;
-  Json::Value makeDBProtocol(const Json::Value& request) override;
+  Json::Value makeDBProtocol(const Json::Value& request);
 
   ptrToDBController db_controller_;
   ptrToAPIStock api_stock_;
@@ -106,7 +111,7 @@ class ExitController : public IExitController {
   explicit ExitController(const ptrToDBController db_controller);
   Json::Value deleteCookie(const Json::Value& request) override;
  private:
-  Json::Value makeDBProtocol(const Json::Value& request) override;
+  Json::Value makeDBProtocol(const Json::Value& request);
 
   ptrToDBController db_controller_;
 };
@@ -119,8 +124,7 @@ class ChangeEmailController : public IChangeEmailController {
   explicit ChangeEmailController(const ptrToDBController db_controller);
   Json::Value changeEmail(const Json::Value& request) override;
  private:
-  Json::Value makeProtocolAuthor(const Json::Value& request) override;
-  Json::Value makeDBProtocol(const Json::Value& request) override;
+  Json::Value makeDBProtocol(const Json::Value& request);
 
   ptrToDBController db_controller_;
 };
@@ -133,8 +137,7 @@ class ChangePasswordController : public IChangePasswordController {
   explicit ChangePasswordController(const ptrToDBController db_controller);
   Json::Value changePassword(const Json::Value& request) override;
  private:
-  Json::Value makeProtocolAuthor(const Json::Value& request) override;
-  Json::Value makeDBProtocol(const Json::Value& request) override;
+  Json::Value makeDBProtocol(const Json::Value& request);
 
   ptrToDBController db_controller_;
 };
@@ -146,7 +149,7 @@ class GetStocksController : public IGetStocksController {
   explicit GetStocksController(const ptrToDBController db_controller);
   Json::Value getNameStocks() override;
  private:
-  Json::Value makeDBProtocol() override;
+  Json::Value makeDBProtocol();
 
   ptrToDBController db_controller_;
 };
@@ -159,8 +162,8 @@ class MiddleWare : public IMiddleWare {
   
   cookie_map checkCookieFile(const std::string& cookie) override;
  private:
-  Json::Value makeDBProtocol(const std::string& cookie) override;
-  cookie_map paseDBResponse(const Json::Value& response, const std::string& cookie) override;
+  Json::Value makeDBProtocol(const std::string& cookie);
+  cookie_map paseDBResponse(const Json::Value& response, const std::string& cookie);
 
   ptrToDBController db_controller_;
 };

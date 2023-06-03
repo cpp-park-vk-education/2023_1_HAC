@@ -120,7 +120,7 @@ PredictHandler::PredictHandler(ptrToPredictController controller)
     : controller_(controller) {};
 
 void PredictHandler::handle(IHTTPRequest_ request, IHTTPResponse_ response) {   
-    // url / getUrl
+    // url
     try {
         Json::Value request_json = parseInputHttpRequest(request->getURL());
         Json::Value response_json = controller_->makePredict(request_json);
@@ -561,7 +561,6 @@ void GetStocksHandler::handle(IHTTPRequest_ request, IHTTPResponse_ response) {
     }
 }
 
-Json::Value GetStocksHandler::parseInputHttpRequest(const std::string& message) {}
 
 void GetStocksHandler::makeResponse(IHTTPResponse_ response, const Json::Value& response_json) {
     if (!response_json[HEADER_JSON_STATUS].asBool()) {

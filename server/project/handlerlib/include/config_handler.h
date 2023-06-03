@@ -13,6 +13,4 @@ struct ProtocolAPI {
     std::string token;
 };
 
-
-
 } // namespace handlers 

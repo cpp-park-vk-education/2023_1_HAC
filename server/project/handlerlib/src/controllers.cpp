@@ -2,7 +2,6 @@
 #include "handler_exception.h"
 #include "logger.h"
 
-
 #include <openssl/sha.h>
 #include <openssl/rand.h>
 
@@ -20,6 +19,8 @@ const bool SERVER_ERROR = true;
 const bool NOT_SERVER_ERROR = false;
 
 const std::string TIME_SERIES = "timeseries";
+const std::string ACTION_PREDICT = "predict";
+
 
 const std::string HEADER_JSON_DB_STATUS_OPEN = "DatabaseIsOpen";
 const std::string HEADER_JSON_ERROR = "error";
@@ -52,8 +53,8 @@ bool isNighttime(int hour) {
     return hour >= 3 && hour <= 10;
 }
 
-bool isWeekend(int dayOfWeek) {
-    return dayOfWeek == 0 || dayOfWeek == 6;
+bool isWeekend(int day_of_week) {
+    return day_of_week == 0 || day_of_week == 6;
 }
 
 
@@ -95,6 +96,17 @@ Json::Value makeProtocolSendCookie(const std::string& cookie, const std::string&
     return db_protocol;
 }
 
+
+Json::Value makeProtocolAuthorization(const Json::Value& request) {
+    Json::Value db_protocol;
+    db_protocol[HEADER_JSON_TYPE] = TypeRequest::POST_REQUEST;
+    db_protocol[HEADER_JSON_TYPEDATA] = TypeData::AUTHORIZATION;
+    db_protocol[HEADER_JSON_LOGIN] = request[HEADER_JSON_LOGIN].asString();
+    logger.log("Json DP prtocol authorization completed successfully");
+    return db_protocol;
+}
+
+
 hash_ hashing(const std::string& buffer) {
     unsigned char hash[SHA256_DIGEST_LENGTH];
     SHA256_CTX sha256;
@@ -116,7 +128,6 @@ PredictController::PredictController(const ptrToDBController db_controller, cons
 
 Json::Value PredictController::makePredict(const Json::Value& request) {
     Json::Value request_to_db = makeDBProtocol(request);
-    // отправляет название ДБ контроллеру
     logger.log("Request to DB... : predict controller");
     Json::Value response_db = db_controller_->DataRequest(request_to_db);
     try {
@@ -178,24 +189,22 @@ std::vector<std::string> PredictController::makeDateSequence(const std::string& 
     std::cout << start_time << std::endl;
     std::tm startDateTime = {};
     startDateTime.tm_year = std::stoi(start_time.substr(0, 4)) - 1900;
-    startDateTime.tm_mon = std::stoi(start_time.substr(5, 2)) - 1;              // Месяц (январь = 0)
-    startDateTime.tm_mday = std::stoi(start_time.substr(8, 2));           // День
-    startDateTime.tm_hour = std::stoi(start_time.substr(11, 2));             // Час
-    startDateTime.tm_min = std::stoi(start_time.substr(14, 2));          // Минуты
-    startDateTime.tm_sec = std::stoi(start_time.substr(17, 2));              // Секунды
+    startDateTime.tm_mon = std::stoi(start_time.substr(5, 2)) - 1;
+    startDateTime.tm_mday = std::stoi(start_time.substr(8, 2));
+    startDateTime.tm_hour = std::stoi(start_time.substr(11, 2));
+    startDateTime.tm_min = std::stoi(start_time.substr(14, 2));
+    startDateTime.tm_sec = std::stoi(start_time.substr(17, 2));
 
     std::time_t startTime = std::mktime(&startDateTime);
     
     std::cout << std::put_time(&startDateTime, "%Y-%m-%d %H-%M-%S") << std::endl;
-    // Количество часов, которые нужно сгенерировать
-    // size_t cnt_hours = hours;
+
     size_t it = 0;
     size_t i_simple = 1;
     while (it < cnt_hours) {
-        std::time_t currentTime = startTime + i_simple * 3600;  // Добавляем i часов к начальному времени
+        std::time_t currentTime = startTime + i_simple * 3600;
         std::tm* currentDateTime = std::localtime(&currentTime);
 
-        // Проверяем, является ли текущий день ночью или выходным
         if (!isNighttime(currentDateTime->tm_hour) && !isWeekend(currentDateTime->tm_wday)) {
             std::ostringstream ss;
 
@@ -210,7 +219,7 @@ std::vector<std::string> PredictController::makeDateSequence(const std::string& 
 
 TimeSeriesPredicts PredictController::makeTimeSeries(const std::vector<double>& samples_data, size_t lenpredict, const std::string& name_stock) {
     TimeSeriesPredicts ts;
-    ts.action = "predict";
+    ts.action = ACTION_PREDICT;
     ts.stock_name = name_stock;
     ts.lenpredict = lenpredict;
     ts.matrix_samples = samples_data;
@@ -243,7 +252,6 @@ ShowPlotController::ShowPlotController(const ptrToDBController db_controller)
     : db_controller_(db_controller) {}
 
 Json::Value ShowPlotController::createPlotData(const Json::Value& request) {
-    // получает из джейсона название акции
     Json::Value request_to_db = makeDBProtocol(request);
     logger.log("Request to DB... : showplot controller");
     return db_controller_->DataRequest(request_to_db);
@@ -272,10 +280,12 @@ Json::Value RegisterController::registration(Json::Value& request) {
 
     if (response_db[HEADER_JSON_STATUS].asBool()) {
         std::string cookie = makeCookie();
-        logger.log("Make protocol for cookie... : registration controller");
+        logger.log("Make protocol for send cookie... : registration controller");
         Json::Value coockei_to_db = makeProtocolSendCookie(cookie, request[HEADER_JSON_LOGIN].asString());
+        
         logger.log("DB request for cookie... : registration controller");
         Json::Value result_send_coockie = db_controller_->DataRequest(coockei_to_db);
+
         if (!result_send_coockie[HEADER_JSON_STATUS].asBool()) {
             logger.log("Bad response from DB request for cookie... : registration controller");
             throw market_mentor::CreateCookieError();
@@ -307,44 +317,42 @@ AuthorizeController::AuthorizeController(const ptrToDBController db_controller)
 
 Json::Value AuthorizeController::authorization(Json::Value& request) {
 
-    Json::Value request_to_db = makeDBProtocol(request);
+    Json::Value request_to_db = makeProtocolAuthorization(request);
     logger.log("Request to DB for auth data... : authorization controller");
     Json::Value response_db = db_controller_->DataRequest(request_to_db);
     if (!response_db[HEADER_JSON_STATUS].asBool()) {
         return response_db;
     }
+
     logger.log("Hashing... : authorization controller");
     request[HEADER_JSON_PASSWORD] = hashing(request[HEADER_JSON_PASSWORD].asString());
     
     Json::Value result_password_check = checkPassword(response_db, request);
     if (result_password_check[HEADER_JSON_STATUS].asBool()) {
+
         logger.log("Make cookie... : authorization controller");
         std::string cookie = makeCookie();
-        logger.log("Make protocol for cookie... : authorization controller");
+
+        logger.log("Make protocol for send cookie... : authorization controller");
         Json::Value coockei_to_db = makeProtocolSendCookie(cookie, request[HEADER_JSON_LOGIN].asString());
+
         logger.log("DB request for cookie... : authorization controller");
         Json::Value result_send_coockie = db_controller_->DataRequest(coockei_to_db);
+
         if (!result_send_coockie[HEADER_JSON_STATUS].asBool()) {
             logger.log("Bad response from DB request for cookie... : authorization controller");
             throw market_mentor::CreateCookieError();
         }
+
         logger.log("Add cookie to response... : authorization controller");
         result_send_coockie[HEADER_JSON_TOKEN] = cookie;
         return result_send_coockie;
     }
+
     logger.log("Bad password or login : authorization controller");
     return result_password_check;
 }
 
-
-Json::Value AuthorizeController::makeDBProtocol(const Json::Value& request) {
-    Json::Value db_protocol;
-    db_protocol[HEADER_JSON_TYPE] = TypeRequest::POST_REQUEST;
-    db_protocol[HEADER_JSON_TYPEDATA] = TypeData::AUTHORIZATION;
-    db_protocol[HEADER_JSON_LOGIN] = request[HEADER_JSON_LOGIN].asString();
-    logger.log("Json DP prtocol auth completed successfully: authorization controller");
-    return db_protocol;
-}
 
 Json::Value AuthorizeController::checkPassword(const Json::Value& db_response, const Json::Value& request) {
     Json::Value result_response;
@@ -429,7 +437,7 @@ ChangeEmailController::ChangeEmailController(const ptrToDBController db_controll
     : db_controller_(db_controller) {}
 
 Json::Value ChangeEmailController::changeEmail(const Json::Value& request) {
-    Json::Value request_to_db_author = makeProtocolAuthor(request);
+    Json::Value request_to_db_author = makeProtocolAuthorization(request);
     logger.log("Request to DB auth. : change email controller");
     
     Json::Value response_db_auth = db_controller_->DataRequest(request_to_db_author);
@@ -455,21 +463,13 @@ Json::Value ChangeEmailController::makeDBProtocol(const Json::Value& request) {
     return db_protocol;
 }
 
-Json::Value ChangeEmailController::makeProtocolAuthor(const Json::Value& request) {
-    Json::Value db_protocol;
-    db_protocol[HEADER_JSON_TYPE] = TypeRequest::POST_REQUEST;
-    db_protocol[HEADER_JSON_TYPEDATA] = TypeData::AUTHORIZATION;
-    db_protocol[HEADER_JSON_LOGIN] = request[HEADER_JSON_LOGIN].asString();
-    logger.log("Json DP prtocol auth completed successfully: change email controller");
-    return db_protocol;
-}
 
 // class ChangePasswordController
 ChangePasswordController::ChangePasswordController(const ptrToDBController db_controller)
     : db_controller_(db_controller) {}
 
 Json::Value ChangePasswordController::changePassword(const Json::Value& request) {
-    Json::Value request_to_db_author = makeProtocolAuthor(request);
+    Json::Value request_to_db_author = makeProtocolAuthorization(request);
     logger.log("Request to DB auth. : change email controller");
     
     Json::Value response_db_auth = db_controller_->DataRequest(request_to_db_author);
@@ -496,15 +496,6 @@ Json::Value ChangePasswordController::makeDBProtocol(const Json::Value& request)
     return db_protocol;
 }
 
-Json::Value ChangePasswordController::makeProtocolAuthor(const Json::Value& request) {
-    Json::Value db_protocol;
-    db_protocol[HEADER_JSON_TYPE] = TypeRequest::POST_REQUEST;
-    db_protocol[HEADER_JSON_TYPEDATA] = TypeData::AUTHORIZATION;
-    db_protocol[HEADER_JSON_LOGIN] = request[HEADER_JSON_LOGIN].asString();
-    logger.log("Json DP prtocol auth completed successfully: change passowrd controller");
-    return db_protocol;
-}
-
 
 // class GetStocksController
 GetStocksController::GetStocksController(const ptrToDBController db_controller)
@@ -523,6 +514,5 @@ Json::Value GetStocksController::makeDBProtocol() {
     logger.log("Json DP prtocol completed successfully: getStocks controller");
     return db_protocol;
 }
-
 
 } // namespace controllers 

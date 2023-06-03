@@ -73,7 +73,7 @@ void ColdStartHelper::updateData(controllers::IGetStocksController* prt_to_getst
             start_update_time += 60 * 60 * 24 * 29;
         }
         // У одного токена максимум 10 запросов в секунду
-        std::this_thread::sleep_for(std::chrono::seconds(1));
+        std::this_thread::sleep_for(std::chrono::seconds(3));
     }
 
     for (auto stock_name : stock_names) {

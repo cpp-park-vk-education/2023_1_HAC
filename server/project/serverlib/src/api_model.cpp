@@ -62,10 +62,13 @@ Json::Value api::APIModelRequest::getData(const controllers::TimeSeriesPredicts 
                // std::cerr << now_value << std::endl;
                 parsed_data.push_back(std::stod(now_value));
                 now_value = "";
-            } else if (data_string[i] != ' ' ) {
+            } else if (data_string[i] != ' ') {
                 now_value += data_string[i]; 
             }
             
+        }
+        if (now_value.length()){
+            parsed_data.push_back(std::stod(now_value));
         }
       // parsed_data.push_back(std::stod(now_value));
 

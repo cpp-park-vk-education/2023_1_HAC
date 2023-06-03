@@ -38,7 +38,7 @@ def router(json):
 def make_fit(json):
     log(f"BEFOR PARSE")
     X = parse_http_data_to_seq(json)
-    X_ , y_ = stock_to_X_y(X, WINDOW_SIZE)
+    X_ , y_ = stock_to_X_y(X[::-1], WINDOW_SIZE)
     X_train, y_train = X_[:3000], y_[:3000]
     X_val, y_val = X_[3000:], y_[3000:]
     log(f"BEFOR MODEL")
@@ -53,9 +53,9 @@ def make_fit(json):
 
 def make_refit(json):
     X = parse_http_data_to_seq(json)
-    X_ , y_ = stock_to_X_y(X, WINDOW_SIZE)
-    X_train, y_train = X_[:500], y_[:500]
-    X_val, y_val = X_[:500:], y_[500:]
+    X_ , y_ = stock_to_X_y(X[::-1], WINDOW_SIZE)
+    X_train, y_train = X_[:2500], y_[:2500]
+    X_val, y_val = X_[2500:], y_[2500:]
     model = Model()
     try:
         model.refit(X_train, y_train, X_val, y_val, json["stock_name"])
@@ -71,7 +71,7 @@ def take_predict(json): # time solution
     model = Model()
     model.download_model(json["stock_name"])
 
-    return model.predict(X, lenpredict)
+    return model.predict(X[::-1], lenpredict)
 
 def log(message):
     with open('model/output.txt', 'a') as file:

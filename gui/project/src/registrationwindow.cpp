@@ -15,7 +15,7 @@ RegistrationWindow::RegistrationWindow(QWidget *parent) :
     this->setAutoFillBackground(true);
     this->setPalette(pal);
 
-    //background color
+    //цвет фона
     ui->lePassword->setStyleSheet("background-color:rgb(200,201,182);");
     ui->lePassConfirm->setStyleSheet("background-color:rgb(200,201,182);");
     ui->leLogin->setStyleSheet("background-color:rgb(200,201,182);");
@@ -31,8 +31,9 @@ RegistrationWindow::RegistrationWindow(QWidget *parent) :
     ui->lePassConfirm->setText("");
     ui->leEmail->setText("");
 
-    connect(this->get_enter_btn(),SIGNAL(clicked(bool)),this, SLOT(start_reg()));
-    connect(this->get_back_btn(),SIGNAL(clicked(bool)),this, SLOT(open_auth_window()));
+    connect(this->getEnterBtn(),SIGNAL(clicked(bool)),this, SLOT(startReg()));
+    connect(this->getBackBtn(),SIGNAL(clicked(bool)),this, SLOT
+    (openAuthWindow()));
 }
 
 RegistrationWindow::~RegistrationWindow()
@@ -40,7 +41,7 @@ RegistrationWindow::~RegistrationWindow()
     delete ui;
     delete error_message_;
     delete error_type_;
-    delete errorMes;
+    delete error_mes_;
     delete btn_enter;
     delete btn_back;
 }
@@ -51,17 +52,14 @@ void RegistrationWindow::setRegistrationWindowHandler(
 }
 
 void RegistrationWindow::showErrorMessage() {
-    errorMes = new QErrorMessage(this);
-    errorMes->setWindowTitle("Error!");
-    errorMes->showMessage(*error_type_ + "! " + *error_message_);
-    qDebug() << *error_type_ << ' ' << *error_message_;
-    std::cout << "error shown"<<std::endl;
+    error_mes_ = new QErrorMessage(this);
+    error_mes_->setWindowTitle("Error!");
+    error_mes_->showMessage(*error_type_ + "! " + *error_message_);
 }
 
 void RegistrationWindow::createErrorMessage(const Error& error_message) {
     error_type_ = new QString(error_message.type.c_str());
     error_message_ = new QString(error_message.message.c_str());
-    std::cout << "created error message"<<std::endl;
 }
 
 std::string RegistrationWindow::getLogin() {
@@ -84,28 +82,22 @@ std::string RegistrationWindow::getEmail() {
     return email;
 }
 
-QPushButton* RegistrationWindow::get_enter_btn() {
+QPushButton* RegistrationWindow::getEnterBtn() {
     return btn_enter;
 }
 
-QPushButton* RegistrationWindow::get_back_btn() {
+QPushButton* RegistrationWindow::getBackBtn() {
     return btn_back;
 }
 
-void RegistrationWindow::start_reg() {
-    std::cout << "In start reg" <<std::endl;
+void RegistrationWindow::startReg() {
     registration_handler_ptr->regHandler(getEmail(), getLogin(), getPassword(), getPasswordConfirm());
 }
 
-void RegistrationWindow::open_auth_window() {
-    std::cout << "In start reg" <<std::endl;
+void RegistrationWindow::openAuthWindow() {
     registration_handler_ptr->openAuthorizationWindow();
-    /*ui->lePassword->setText("");
-    ui->leLogin->setText("");
-    ui->lePassConfirm->setText("");
-    ui->leEmail->setText("");*/
 }
-void RegistrationWindow::clean_input_lines() {
+void RegistrationWindow::cleanInputLines() {
     ui->lePassword->setText("");
     ui->leLogin->setText("");
     ui->lePassConfirm->setText("");

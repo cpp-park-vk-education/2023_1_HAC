@@ -13,14 +13,9 @@ void NetworkRegistrationWindow::setRegistrationNetwork(
 }
 
 void NetworkRegistrationWindow::getRegistration(const RegInput& reg_params) {
-    std::cout << "in get reg" <<std::endl;
     reg_params_ = reg_params;
-    //std::string auth_line = "login\t" + auth_params.login + "\t" + "password\t" + auth_params.password;
-    //network_ptr->PostRequest(url_, );
     std::string auth_line = reg_params.login + "\t" + reg_params.password
                             + "\t" + reg_params.email;
-    std::cout<<"*" <<auth_line <<"*"<<std::endl;
-
     network_ptr->setConfig("REGISTRATION");
 
     network_ptr->PostRequest(url_, auth_line,
@@ -30,8 +25,6 @@ void NetworkRegistrationWindow::getRegistration(const RegInput& reg_params) {
 
 void NetworkRegistrationWindow::onGetRegistrationResponse(
         const Error& error_state) {
-    std::cout << "In response" <<std::endl;
-    std::cout << error_state.type << ' ' <<error_state.message << std::endl;
     if (error_state.type == "0") {
     registration_handler_ptr->passToMain(error_state.message);
     } else {
@@ -40,5 +33,5 @@ void NetworkRegistrationWindow::onGetRegistrationResponse(
 }
 
 void NetworkRegistrationWindow::setUrl(const std::string url) {
-url_ = url;
+    url_ = url;
 }

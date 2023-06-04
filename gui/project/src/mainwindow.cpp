@@ -1,10 +1,10 @@
 #include "../include/mainwindow.h"
 #include "ui_mainwindow.h"
 
-#include "../include/guicontroller.h"
 #include <memory>
-#include <iostream>
 #include <string>
+
+#include "../include/guicontroller.h"
 
 MainWindow::MainWindow(QWidget *parent) :
     QWidget(parent),
@@ -12,7 +12,7 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    //background color
+    //цвет фона
     QPalette pal = QPalette();
     pal.setColor(QPalette::Window, QColor(29,30,51));
     this->setAutoFillBackground(true);
@@ -23,10 +23,7 @@ MainWindow::MainWindow(QWidget *parent) :
     btn_predict = ui->btnPredict;
     btn_user_set = ui->btnUserSet;
 
-    //widget_graph = ui->widgetGraph;
-
-
-    customPlot = ui->widget;
+    custom_plot = ui->widget;
     ui->widget->xAxis->setRange(0,10);
     ui->widget->yAxis->setRange(0, 10);
 
@@ -34,105 +31,81 @@ MainWindow::MainWindow(QWidget *parent) :
     if (ui->btnRad1->isChecked()) {
         predict_parm = 8;
     }
-
     // Инициализируем вертикальную линию
-    verticalLine = new QCPCurve(customPlot->xAxis, customPlot->yAxis);
+    verticalLine = new QCPCurve(custom_plot->xAxis, custom_plot->yAxis);
 
     // Подключаем сигналы событий мыши от полотна графика к слотам для их обработки
-    connect(customPlot, &QCustomPlot::mousePress, this, &MainWindow::slotMousePress);
-    connect(customPlot, &QCustomPlot::mouseMove, this, &MainWindow::slotMouseMove);
+    connect(custom_plot, &QCustomPlot::mousePress, this, &MainWindow::slotMousePress);
+    connect(custom_plot, &QCustomPlot::mouseMove, this, &MainWindow::slotMouseMove);
 
-
-    customPlot->setInteraction(QCP::iRangeZoom,true);   // Включаем взаимодействие удаления/приближения
-    customPlot->setInteraction(QCP::iRangeDrag, true);  // Включаем взаимодействие перетаскивания графика
-    customPlot->axisRect()->setRangeDrag(Qt::Horizontal);   // Включаем перетаскивание только по горизонтальной оси
-    customPlot->axisRect()->setRangeZoom(Qt::Horizontal);   // Включаем удаление/приближение только по горизонтальной оси
-
-    //customPlot->setStyleSheet("color:rgba(235, 175, 129, 1)");
-
-    //customPlot->xAxis->setTickLabelType(QCPAxis::ltDateTime);   // Подпись координат по Оси X в качестве Даты и Времени
-    //customPlot->xAxis->setDateTimeFormat("hh:mm");  // Устанавливаем формат даты и времени
-
-    //QSharedPointer<QCPAxisTickerFixed> fixedTicker(new QCPAxisTickerFixed);
-    //customPlot->xAxis->setTicker(fixedTicker);
-
-    //fixedTicker->setTickStep(QCPAxisTickerFixed::ltDateTime); // tick step shall be 1.0
-
-    //fixedTicker->setScaleStrategy(QCPAxisTickerFixed::ssNone);
+    custom_plot->setInteraction(QCP::iRangeZoom,true);   // Включаем взаимодействие удаления/приближения
+    custom_plot->setInteraction(QCP::iRangeDrag, true);  // Включаем взаимодействие перетаскивания графика
+    custom_plot->axisRect()->setRangeDrag(Qt::Horizontal);   // Включаем перетаскивание только по горизонтальной оси
+    custom_plot->axisRect()->setRangeZoom(Qt::Horizontal);   // Включаем
+    // удаление/приближение только по горизонтальной оси
 
     QSharedPointer<QCPAxisTickerDateTime> dateTimeTicker(new QCPAxisTickerDateTime);
-    customPlot->xAxis->setTicker(dateTimeTicker);
-
-    //customPlot->xAxis->setRange(QCPAxisTickerDateTime::dateTimeToKey(QDate(2013, 11, 16)), QCPAxisTickerDateTime::dateTimeToKey(QDate(2015, 5, 2)));
+    custom_plot->xAxis->setTicker(dateTimeTicker);
     dateTimeTicker->setDateTimeFormat("hh dd. MMM\nyyyy");
-
     // Настраиваем шрифт по осям координат
-    customPlot->xAxis->setTickLabelFont(QFont(QFont().family(), 8));
-    customPlot->yAxis->setTickLabelFont(QFont(QFont().family(), 8));
+    custom_plot->xAxis->setTickLabelFont(QFont(QFont().family(), 8));
+    custom_plot->yAxis->setTickLabelFont(QFont(QFont().family(), 8));
 
-    tracer = new QCPItemTracer(customPlot);
+    tracer = new QCPItemTracer(custom_plot);
     tracer->setPen(QPen(Qt::white));
 
-    // Автоматическое масштабирование тиков по Оси X
-    //customPlot->xAxis->setAutoTickStep(true); //problem !!!!!!!!!!
     QColor axis_color(146,131,155);
-    customPlot->setBackground(QColor(38,35,50));
-    customPlot->yAxis->setLabelColor(axis_color);
-    customPlot->xAxis->setTickLabelColor(axis_color);
-    customPlot->xAxis->setBasePen(QPen(axis_color));
-    customPlot->xAxis->setLabelColor(axis_color);
-    customPlot->xAxis->setTickPen(QPen(axis_color));
-    customPlot->xAxis->setSubTickPen(QPen(axis_color));
+    custom_plot->setBackground(QColor(38,35,50));
+    custom_plot->yAxis->setLabelColor(axis_color);
+    custom_plot->xAxis->setTickLabelColor(axis_color);
+    custom_plot->xAxis->setBasePen(QPen(axis_color));
+    custom_plot->xAxis->setLabelColor(axis_color);
+    custom_plot->xAxis->setTickPen(QPen(axis_color));
+    custom_plot->xAxis->setSubTickPen(QPen(axis_color));
 
 
-    customPlot->yAxis->setLabelColor(axis_color);
-    customPlot->yAxis->setTickLabelColor(axis_color);
-    customPlot->yAxis->setBasePen(QPen(axis_color));
-    customPlot->yAxis->setLabelColor(axis_color);
-    customPlot->yAxis->setTickPen(QPen(axis_color));
-    customPlot->yAxis->setSubTickPen(QPen(axis_color));
+    custom_plot->yAxis->setLabelColor(axis_color);
+    custom_plot->yAxis->setTickLabelColor(axis_color);
+    custom_plot->yAxis->setBasePen(QPen(axis_color));
+    custom_plot->yAxis->setLabelColor(axis_color);
+    custom_plot->yAxis->setTickPen(QPen(axis_color));
+    custom_plot->yAxis->setSubTickPen(QPen(axis_color));
 
     ui->lineEdit->setStyleSheet("background-color:rgb(200,201,182)");
     ui->lineEdit_2->setStyleSheet("background-color:rgb(200,201,182)");
     ui->lineEdit->setAlignment(Qt::AlignCenter);
     ui->lineEdit_2->setAlignment(Qt::AlignCenter);
 
-    //customPlot->yAxis->setTickLabelColor(QColor(Qt::red)); // Красный цвет подписей тиков по Оси Y
+    connect(this->getPredictBtn(),SIGNAL(clicked(bool)),this, SLOT
+    (startPredict()));
+    connect(this->getUserSetBtn(),SIGNAL(clicked(bool)),this, SLOT
+    (openUserSet()));
 
-
-
-
-     //mapper = new QSignalMapper(this);
-
-    //connect(this->get_apple_btn(),SIGNAL(clicked(bool)),this, SLOT(start_apple_plot()));
-    connect(this->get_predict_btn(),SIGNAL(clicked(bool)),this, SLOT(start_predict()));
-    connect(this->get_user_set_btn(),SIGNAL(clicked(bool)),this, SLOT(open_user_set()));
+    min_el = 0, max_el = 0, current_x = 0;
 }
 
 MainWindow::~MainWindow()
 {
     delete ui;
-    //delete btn_apple;
     delete btn_predict;
     delete btn_user_set;
-    delete errorMes;
+    delete error_mes_;
     delete error_message_;
     delete error_type_;
+    for (int i = 0; i < actions.size(); ++i) {
+        delete actions[i];
+    }
+    delete custom_plot;
+    delete verticalLine;
+    delete tracer;
 }
 
-/*void MainWindow::start_apple_plot() {
-    stock_name = "apple";
-    std::cout <<"stock_name" <<std::endl;
-    main_handler_ptr->stockSelectHandler("apple");
-}*/
-
-void MainWindow::start_plot(const std::string& stock) {
-    std::cout << stock <<std::endl;
+void MainWindow::startPlot(const std::string& stock) {
     stock_name = stock;
     main_handler_ptr->stockSelectHandler(stock);
 }
 
-void MainWindow::start_predict() {
+void MainWindow::startPredict() {
     if (ui->btnRad1->isChecked()) {
         predict_parm = 8;
     } else if (ui->btnRad2->isChecked()) {
@@ -142,405 +115,165 @@ void MainWindow::start_predict() {
     } else if (ui->btnRad4->isChecked()) {
         predict_parm = 60;
     }
-    std::cout <<"stock = " << stock_name <<std::endl;
     main_handler_ptr->predictHandler(stock_name, predict_parm);
 }
 
-void MainWindow::open_user_set() {
-    std::cout <<"openning"<<std::endl;
+void MainWindow::openUserSet() {
     main_handler_ptr->openUserSettings();
 }
 
-/*QPushButton* MainWindow::get_apple_btn() {
-    return btn_apple;
-}*/
-
-QPushButton* MainWindow::get_predict_btn() {
+QPushButton* MainWindow::getPredictBtn() {
     return btn_predict;
 }
 
-QPushButton* MainWindow::get_user_set_btn() {
+QPushButton* MainWindow::getUserSetBtn() {
     return btn_user_set;
 }
 
 void MainWindow::drawPlot() {
     ui->widget->clearGraphs();
     ui->lineEdit_2->setText(stock_name.c_str());
-    //customPlot->legend->setVisible(true);
-    //customPlot->legend->setLayer(stock_name.c_str());
-    /*QVector<double> x, x_new;
+    double now = QDateTime::currentDateTime().toTime_t();
+    double cur = 0;
+    QVector<double> x, x_new;
+
+    int predict_x_start = x_dates.size() * 0.99;
     double max_element =*std::max_element(y.begin(), y.end());
     double max_element_new =*std::max_element(y_new.begin(), y_new.end());
     double min_element = *std::min_element(y.begin(), y.end());
     double min_element_new =*std::min_element(y_new.begin(), y_new.end());
     max_element_new = std::max(max_element, max_element_new);
+    std::reverse(y.begin(), y.end());
     min_element_new = std::min(min_element, min_element_new);
-    ui->widget->xAxis->setRange(0, y.size()+2);
-    ui->widget->yAxis->setRange(min_element - 3, max_element+2);
-    for (size_t i = 0; i < y.size(); ++i) {
-        x.push_back(i);
-    }
+    std::string str = x_dates[x_dates.size() - 1].substr(11, 2) +" " +
+            x_dates[x_dates.size() - 1].substr(8, 2)
+            + "-" + x_dates[x_dates.size() - 1].substr(5, 2) + "-" +
+            x_dates[x_dates.size() - 1].substr(0, 4);
+    QDateTime date = QDateTime::fromString(str.c_str(),"hh dd-MM-yyyy");
+    now = date.toTime_t();
+    str = x_dates[0].substr(11, 2) +" " + x_dates[0].substr(8, 2)
+            + "-" + x_dates[0].substr(5, 2) + "-" +
+            x_dates[0].substr(0, 4);
+    date = QDateTime::fromString(str.c_str(),"hh dd-MM-yyyy");
 
-    ui->widget->xAxis->setLabel("lag");
-    ui->widget->yAxis->setLabel("price, $");
+    cur = date.toTime_t();
+    current_x = cur;
+
+    QVector<double> x_line(2) , y_line(2);
+    x_line[0] = now;
+    y_line[0] = min_element;
+    y_line[1] = max_element;
+    x_line[1] = now;
+
+    min_el = min_element;
+    max_el = max_element;
+    verticalLine->setData(x_line, y_line); // Устанавливаем координаты
+    verticalLine->setVisible(false);
+    ui->widget->xAxis->setRange(now, cur + 4 * 3600);
+    ui->widget->yAxis->setRange(min_element - 3, max_element + 2);
+
+    for (int i = x_dates.size() - 1; i >= 0 ; i--) {
+
+        std::string str = x_dates[i].substr(11, 2) +" " + x_dates[i].substr(8, 2) + "-"
+                    + x_dates[i].substr(5, 2) + "-" + x_dates[i].substr(0, 4);
+        QDateTime b = QDateTime::fromString(str.c_str(),"hh dd-MM-yyyy");
+        double curent = b.toTime_t();
+        x.push_back(curent);
+    }
+    ui->widget->xAxis->setLabel("Дата и время");
+    ui->widget->yAxis->setLabel("Цена, $");
 
     ui->widget->xAxis->setUpperEnding(QCPLineEnding::esSpikeArrow);
     ui->widget->yAxis->setUpperEnding(QCPLineEnding::esSpikeArrow);
 
     ui->widget->addGraph();
-    ui->widget->graph(0)->setPen(QPen(Qt::red));
+    ui->widget->graph(0)->setPen(QColor(179,68,108, 255));
     ui->widget->graph(0)->addData(x, y);
-    ui->widget->graph(0)->setBrush(QBrush(QColor(235, 19, 19, 70)));
-    ui->widget->replot();
+    ui->widget->graph(0)->setBrush(QBrush(QColor(179,68,108, 128)));
 
+
+    tracer->setGraph(custom_plot->graph(0));   // Трассировщик будет работать с графиком
+    ui->widget->replot();
 
     if (y_new.size() != 0) {
-        ui->widget->xAxis->setRange(0, y.size() +y_new.size()+2);
-        ui->widget->yAxis->setRange(min_element_new - 3, max_element_new+2);
-        //ui->widget->graph(0)->setPen(QPen(Qt::green));
-        //ui->widget->graph(0)->setBrush(QBrush(QColor(qrand() % 256, qrand() % 256, qrand() % 256, 70)));
-        x_new.push_back(y.size()-1);
-        y_new.push_front(y[y.size()-1]);
-        std::cout <<"**"<< y_new.size() <<"**"<< std::endl;
-        for (size_t i = 1; i < y_new.size(); ++i) {
-            //std::cout <<
-            x_new.push_back(y.size() + i);
-            std::cout << x_new[i] << ' ';
-        }
 
-        for (size_t i = 0; i < y_new.size(); ++i) {
-            //std::cout <<
-            std::cout << y_new[i] << ' ';
-        }
+        str = x_dates[x_dates.size() - 1 - predict_x_start].substr(11, 2) +" "
+                + x_dates[x_dates.size() - 1 - predict_x_start].substr(8, 2)
+                + "-" + x_dates[x_dates.size() - 1 - predict_x_start].substr(5, 2)
+                + "-" + x_dates[x_dates.size() - 1 - predict_x_start].substr(0, 4);
+        date = QDateTime::fromString(str.c_str(),"hh dd-MM-yyyy");
 
-        //ui->widget->graph(0)->setPen(QPen(Qt::green));
-
-        //ui->widget->addGraph(); // red line
-        //ui->widget->graph(1)->setPen(QPen((Qt::green)));
-
-        //ui->widget->update();
-        ui->widget->addGraph();
-        ui->widget->graph(1)->setPen(QPen(Qt::green));
-        ui->widget->graph(1)->addData(x_new, y_new);
-        ui->widget->graph(1)->setBrush(QBrush(QColor(162, 242, 136, 70)));
-        ui->widget->replot();
-
-
-
-        */
-        // Инициализируем график и привязываем его к Осям
-        //graphic = new QCPGraph(customPlot->xAxis, customPlot->yAxis);
-        //customPlot->addPlottable(graphic);  // Устанавливаем график на полотно
-        //graphic->setName("Доход, Р");       // Устанавливаем
-        //graphic->setPen(QPen(QColor(Qt::red))); // Устанавливаем цвет графика
-        //graphic->setAntialiased(false);         // Отключаем сглаживание, по умолчанию включено
-        //graphic->setLineStyle(QCPGraph::lsImpulse); // График в виде импульсных тиков
-
-
-        /*if (tracer) {
-            tracer = nullptr;
-        }*/
-
-
-        /*y_new.push_back(180);
-        y_new.push_back(170);
-        y_new.push_back(175);
-        y_new.push_back(177);
-        y_new.push_back(179);*/
-
-        double now = QDateTime::currentDateTime().toTime_t();
-        double cur = 0;
-        QVector<double> x, x_new;
-        QVector<double> xx, xx_new;
-
-        int predict_x_start = x_dates.size() * 0.99;
-        std::cout <<predict_x_start <<std::endl;
-
-        double max_element =*std::max_element(y.begin(), y.end());
-        double max_element_new =*std::max_element(y_new.begin(), y_new.end());
-        double min_element = *std::min_element(y.begin(), y.end());
-        double min_element_new =*std::min_element(y_new.begin(), y_new.end());
-        max_element_new = std::max(max_element, max_element_new);
-
-
-
-        std::reverse(y.begin(), y.end());
-        /*if (y_new.size() != 0) {
-            min_element = std::min(min_element, min_element_new);
-        }*/
-        min_element_new = std::min(min_element, min_element_new);
-        std::cout <<"min element"  << min_element_new <<std::endl;
-
-
-        std::string strin = x_dates[x_dates.size() - 1].substr(11, 2) +" " + x_dates[x_dates.size() - 1].substr(8, 2)
-                + "-" + x_dates[x_dates.size() - 1].substr(5, 2) + "-" + x_dates[x_dates.size() - 1].substr(0, 4);
-        QDateTime b = QDateTime::fromString(strin.c_str(),"hh dd-MM-yyyy");
-
-        //std::cout<<"!" << b.toString("hh dd. MMM\nyyyy").toStdString() <<"!" <<std::endl;
-        now = b.toTime_t();
-
-        strin = x_dates[0].substr(11, 2) +" " + x_dates[0].substr(8, 2)
+        double now_new = date.toTime_t();
+        str = x_dates[0].substr(11, 2) +" " + x_dates[0].substr(8, 2)
                 + "-" + x_dates[0].substr(5, 2) + "-" + x_dates[0].substr(0, 4);
-        b = QDateTime::fromString(strin.c_str(),"hh dd-MM-yyyy");
+        date = QDateTime::fromString(str.c_str(),"hh dd-MM-yyyy");
 
-        //std::cout<<"!" << b.toString("hh dd. MMM\nyyyy").toStdString() <<"!" <<std::endl;
-        cur = b.toTime_t();
-        curenti = cur;
+        double start = date.toTime_t();
 
-        QVector<double> x_line(2) , y_line(2);
-        x_line[0] = now;
-        y_line[0] = min_element;
-        y_line[1] = max_element;
-        x_line[1] = now;
+        str = x_new_dates[x_new_dates.size() - 1].substr(11, 2) +" " + x_new_dates[x_new_dates.size() - 1].substr(8, 2)
+                + "-" + x_new_dates[x_new_dates.size() - 1].substr(5, 2) + "-" + x_new_dates[x_new_dates.size() - 1].substr(0, 4);
+        date = QDateTime::fromString(str.c_str(),"hh dd-MM-yyyy");
+        double cur_new = date.toTime_t();
 
-        mi = min_element;
-        ma = max_element;
+        ui->widget->xAxis->setRange(now_new, cur_new + 3600 * 2);
+        ui->widget->yAxis->setRange(min_element_new - 3, max_element_new + 2);
+        x_new.insert(x_new.begin(), start);
+        y_new.insert(y_new.begin(), y[y.size()-1]);
+        for (size_t i = 0; i < x_new_dates.size(); ++i) {
+            std::string str = x_new_dates[i].substr(11, 2) +" " + x_new_dates[i].substr(8, 2) + "-"
+                        + x_new_dates[i].substr(5, 2) + "-" + x_new_dates[i].substr(0, 4);
 
-    //customPlot->addPlottable(verticalLine);   // Добавляем линию на полотно
-    verticalLine->setName("Vertical");      // Устанавливаем ей наименование
-    verticalLine->setData(x_line, y_line);            // И устанавливаем координаты
-    verticalLine->setVisible(false);
-    //verticalLine->setColor
-
-        ui->widget->xAxis->setRange(now, cur + 4 * 3600);
-
-        int mini = min_element - 3;
-        ui->widget->yAxis->setRange(mini, max_element+2);
-        //ui->widget->yAxis->setRange(min_element - 3, max_element+2);
-        for (size_t i = 0; i < y.size(); ++i) {
-            x.push_back(i);
-            //xx.push_back(now + 3600 * i);
-            //QDateTime b = QDateTime::fromString(x_dates[i].c_str(),"hh dd. MMM\nyyyy");
-            //std::cout<<"!" << b.toString("hh dd. MMM\nyyyy").toStdString() <<"!" <<std::endl;
-            //double curent = b.toTime_t();
-            //xx.push_back(curent);
-
-           // xx.push_back()
+            QDateTime b = QDateTime::fromString(str.c_str(),"hh dd-MM-yyyy");
+            double curent = b.toTime_t();
+            x_new.push_back(curent);
         }
 
-        /*for (size_t i = 0; i < x_dates.size(); ++i) {
-            //x.push_back(i);
-            //xx.push_back(now + 3600 * i);
-            //std::string str = x_dates[i].substr(0, 13);
-            std::string str = x_dates[i].substr(11, 2) +" " + x_dates[i].substr(8, 2) + "-"
-                    + x_dates[i].substr(5, 2) + "-" + x_dates[i].substr(0, 4);
-            //std::cout <<x_dates[i]<<std::endl;
-            //std::cout <<test<<std::endl;
-            //std::string stri = "09 25-05-2023";
-            QDateTime b = QDateTime::fromString(str.c_str(),"hh dd-MM-yyyy");
-
-            std::cout<<"!" << b.toString("hh dd. MMM\nyyyy").toStdString() <<"!" <<std::endl;
-            double curent = b.toTime_t();
-            cur = curent;
-            xx.push_back(curent);
-
-           // xx.push_back()
-        }*/
-
-        for (int i = x_dates.size() - 1; i >= 0 ; i--) {
-            //x.push_back(i);
-            //xx.push_back(now + 3600 * i);
-            //std::string str = x_dates[i].substr(0, 13);
-            std::string str = x_dates[i].substr(11, 2) +" " + x_dates[i].substr(8, 2) + "-"
-                    + x_dates[i].substr(5, 2) + "-" + x_dates[i].substr(0, 4);
-            //std::cout <<x_dates[i]<<std::endl;
-            //std::cout <<test<<std::endl;
-            //std::string stri = "09 25-05-2023";
-            QDateTime b = QDateTime::fromString(str.c_str(),"hh dd-MM-yyyy");
-
-            std::cout<<"!" << b.toString("hh dd. MMM\nyyyy").toStdString() <<"!" <<std::endl;
-            double curent = b.toTime_t();
-            cur = curent;
-            xx.push_back(curent);
-
-           // xx.push_back()
-        }
-
-
-        ui->widget->xAxis->setLabel("Дата и время");
-        //ui->widget->yAxis->setLabel("price, $");
-        ui->widget->yAxis->setLabel("Цена, $");
-
-        ui->widget->xAxis->setUpperEnding(QCPLineEnding::esSpikeArrow);
-        ui->widget->yAxis->setUpperEnding(QCPLineEnding::esSpikeArrow);
+        min_el = min_element_new;
+        max_el = max_element_new;
 
         ui->widget->addGraph();
-        ui->widget->graph(0)->setPen(QColor(179,68,108, 255));
-        ui->widget->graph(0)->addData(xx, y);
-        ui->widget->graph(0)->setBrush(QBrush(QColor(179,68,108, 128)));
-
-        //tracer = new QCPItemTracer(customPlot);
-        tracer->setGraph(customPlot->graph(0));   // Трассировщик будет работать с графиком
-
-
+        ui->widget->graph(1)->setPen(QPen(QColor(34, 139, 34, 255)));
+        ui->widget->graph(1)->addData(x_new, y_new);
+        ui->widget->graph(1)->setBrush(QColor(34, 139, 34, 70));
         ui->widget->replot();
 
-
-
-        if (y_new.size() != 0) {
-            std::cout << x_dates[x_dates.size() - 1-700] <<std::endl;
-            strin = x_dates[x_dates.size() - 1 - predict_x_start].substr(11, 2) +" "
-                    + x_dates[x_dates.size() - 1 - predict_x_start].substr(8, 2)
-                    + "-" + x_dates[x_dates.size() - 1 - predict_x_start].substr(5, 2)
-                    + "-" + x_dates[x_dates.size() - 1 - predict_x_start].substr(0, 4);
-            QDateTime b = QDateTime::fromString(strin.c_str(),"hh dd-MM-yyyy");
-
-                    //std::cout<<"!" << b.toString("hh dd. MMM\nyyyy").toStdString() <<"!" <<std::endl;
-            double now_new = b.toTime_t();
-
-            strin = x_dates[0].substr(11, 2) +" " + x_dates[0].substr(8, 2)
-                            + "-" + x_dates[0].substr(5, 2) + "-" + x_dates[0].substr(0, 4);
-            b = QDateTime::fromString(strin.c_str(),"hh dd-MM-yyyy");
-
-            //std::cout<<"!" << b.toString("hh dd. MMM\nyyyy").toStdString() <<"!" <<std::endl;
-            double start = b.toTime_t();
-
-            strin = x_new_dates[0].substr(11, 2) +" " + x_new_dates[0].substr(8, 2)
-                            + "-" + x_new_dates[0].substr(5, 2) + "-" + x_new_dates[0].substr(0, 4);
-            b = QDateTime::fromString(strin.c_str(),"hh dd-MM-yyyy");
-
-            //std::cout<<"!" << b.toString("hh dd. MMM\nyyyy").toStdString() <<"!" <<std::endl;
-            cur = b.toTime_t();
-
-            strin = x_new_dates[x_new_dates.size() - 1].substr(11, 2) +" " + x_new_dates[x_new_dates.size() - 1].substr(8, 2)
-                            + "-" + x_new_dates[x_new_dates.size() - 1].substr(5, 2) + "-" + x_new_dates[x_new_dates.size() - 1].substr(0, 4);
-            b = QDateTime::fromString(strin.c_str(),"hh dd-MM-yyyy");
-
-            //std::cout<<"!" << b.toString("hh dd. MMM\nyyyy").toStdString() <<"!" <<std::endl;
-            double cur_new = b.toTime_t();
-
-            //ui->widget->xAxis->setRange(now, now + 3600 *(cur + y_new.size() + 2));
-            ui->widget->xAxis->setRange(now_new, cur_new + 3600 * 2);
-            //ui->widget->xAxis->setRange(now_new, cur + 3600 * 2);
-            mini = min_element_new - 3;
-            std::cout<<"##" <<mini<<"##"<<std::endl;
-
-            ui->widget->yAxis->setRange(mini, max_element_new+2);
-
-            //ui->widget->yAxis->setRange(min_element_new - 3, max_element_new+2);
-            //ui->widget->graph(0)->setPen(QPen(Qt::green));
-            //ui->widget->graph(0)->setBrush(QBrush(QColor(qrand() % 256, qrand() % 256, qrand() % 256, 70)));
-            //x_new.push_front(cur);
-            xx_new.insert(xx_new.begin(), start);
-            //xx_new.push_front(start);
-            //y_new.push_front(y[y.size()-1]);
-            y_new.insert(y_new.begin(), y[y.size()-1]);
-            std::cout <<"**"<< y_new.size() <<"**"<< std::endl;
-            std::cout <<"**"<< x_new_dates.size() <<"**"<< std::endl;
-            for (size_t i = 0; i < x_new_dates.size(); ++i) {
-                //std::cout <<
-                //x_new.push_back(cur + (i) * 3600);
-                //std::cout << x_new[i] << ' ';
-                std::cout <<"%%%"<<x_new_dates[i]<<"%%%"<<std::endl;
-                std::string str = x_new_dates[i].substr(11, 2) +" " + x_new_dates[i].substr(8, 2) + "-"
-                        + x_new_dates[i].substr(5, 2) + "-" + x_new_dates[i].substr(0, 4);
-                //std::cout <<x_dates[i]<<std::endl;
-                //std::cout <<test<<std::endl;
-                //std::string stri = "09 25-05-2023";
-                QDateTime b = QDateTime::fromString(str.c_str(),"hh dd-MM-yyyy");
-
-                std::cout<<"!" << b.toString("hh dd. MMM\nyyyy").toStdString() <<"!" <<std::endl;
-                double curent = b.toTime_t();
-                //cur = curent;
-                xx_new.push_back(curent);
-                std::cout <<"%%%"<<"in"<<"%%%"<<std::endl;
-            }
-            std::cout <<"%%%"<<"out"<<"%%%"<<std::endl;
-            for (size_t i = 0; i < y_new.size(); ++i) {
-                //std::cout <<
-                std::cout << y_new[i] << ' ';
-            }
-
-            //ui->widget->graph(0)->setPen(QPen(Qt::green));
-
-            //ui->widget->addGraph(); // red line
-            //ui->widget->graph(1)->setPen(QPen((Qt::green)));
-
-            //ui->widget->update();
-            ui->widget->addGraph();
-          //  ui->widget->graph(1)->setPen(QPen(Qt::green));
-            ui->widget->graph(1)->setPen(QPen(QColor(34, 139, 34, 255)));
-
-            ui->widget->graph(1)->addData(xx_new, y_new);
-            //ui->widget->graph(1)->addData(xx_new, y_new);
-           // ui->widget->graph(1)->setBrush(QBrush(QColor(162, 242, 136, 70)));
-                ui->widget->graph(1)->setBrush(QColor(34, 139, 34, 70));
-
-            ui->widget->replot();
-
-        //graphic->setData(time, income); // Устанавливаем данные
-        customPlot->rescaleAxes();      // Масштабируем график по данным
-        ui->widget->yAxis->setRange(mini, max_element_new+2);
+        custom_plot->rescaleAxes();
+        ui->widget->yAxis->setRange(min_element_new - 3, max_element_new+2);
         ui->widget->xAxis->setRange(now_new, cur_new + 3600 * 2);
-        customPlot->replot();           // Отрисовываем график
-
-
-
-
-
-
+        custom_plot->replot();
     }
-
-    /*ui->widget->graph(0)->addData(x, y);
-    ui->widget->replot();
-    ui->widget->graph(0)->setPen(QPen(Qt::red));*/
-
-    /*QLinearGradient lGrad(QPointF(0,0), QPointF(x_new[0],y_new[0]));
-    lGrad.setColorAt(0, QColor(Qt::red));
-    lGrad.setColorAt(1, QColor(Qt::green));
-    QBrush lBrush(lGrad);
-    QPen myPen;
-    myPen.setBrush(lBrush);
-
-    ui->widget->graph(0)->setPen(myPen);*/
-    //ui->widget->graph(0)->setPen(QPen(Qt::red));
-
-
-    //ui->widget->graph(0)->setPen(QPen(Qt::green));
-
     y_new.clear();
     y_new.squeeze();
     y.clear();
     y.squeeze();
-    std::cout << "Graphic is drawn" << std::endl;
-    /*if (tracer) {
-        delete tracer;
-    }*/
 }
 
 void MainWindow::slotMousePress(QMouseEvent *event)
 {
-    // Определяем координату X на графике, где был произведён клик мышью
-    double coordX = customPlot->xAxis->pixelToCoord(event->pos().x());
-    if (coordX > curenti) {
-        tracer->setGraph(customPlot->graph(1));
+    // Определяем координату x на графике, где был произведён клик мышью
+    double coord_x = custom_plot->xAxis->pixelToCoord(event->pos().x());
+    if (coord_x > current_x) {
+        tracer->setGraph(custom_plot->graph(1));
     } else {
-        tracer->setGraph(customPlot->graph(0));
+        tracer->setGraph(custom_plot->graph(0));
     }
 
     // Подготавливаем координаты по оси X для переноса вертикальной линии
     QVector<double> x_line(2), y_line(2);
-    x_line[0] = coordX;
-    //y[0] = -50;
-    x_line[1] = coordX;
-    //y[1] = 50;
-    y_line[0] = mi;
-    //x_line[1] = max_element;
-    y_line[1] = ma;
-
-    //ui->lineEdit->setEnabled(true);
-
+    x_line[0] = coord_x;
+    x_line[1] = coord_x;
+    y_line[0] = min_el;
+    y_line[1] = max_el;
 
     // Устанавливаем новые координаты
     verticalLine->setData(x_line, y_line);
 
     // По координате X клика мыши определим ближайшие координаты для трассировщика
-    tracer->setGraphKey(coordX);
+    tracer->setGraphKey(coord_x);
 
     // Выводим координаты точки графика, где установился трассировщик, в lineEdit
     ui->lineEdit->setText("Цена: " + QString::number(tracer->position->value()) + " $");
-    customPlot->replot(); // Перерисовываем содержимое полотна графика
-    //ui->lineEdit->setEnabled(false);
+    custom_plot->replot(); // Перерисовываем содержимое полотна графика
 }
 
 void MainWindow::slotMouseMove(QMouseEvent *event)
@@ -567,52 +300,35 @@ void MainWindow::createPlot(const std::vector<double>& y_plot_data,
 }
 
 void MainWindow::showErrorMessage() {
-    errorMes = new QErrorMessage(this);
-    errorMes->setWindowTitle("Error!");
-    errorMes->showMessage(*error_type_ + "! " + *error_message_);
-    qDebug() << *error_type_ << ' ' << *error_message_;
-    std::cout << "error shown"<<std::endl;
+    error_mes_ = new QErrorMessage(this);
+    error_mes_->setWindowTitle("Error!");
+    error_mes_->showMessage(*error_type_ + "! " + *error_message_);
 }
 
 void MainWindow::createErrorMessage(const Error& error_message) {
     error_type_ = new QString(error_message.type.c_str());
     error_message_ = new QString(error_message.message.c_str());
-    std::cout << "created error message"<<std::endl;
 }
 
-void MainWindow::start_actions(const std::vector<std::string>& action_strs) {
+void MainWindow::startActions(const std::vector<std::string>& action_strs) {
     for (size_t i = 0; i < action_strs.size(); ++i) {
-        QPushButton *button = new QPushButton(this);            // Создаём кнопку
-        button->setText(action_strs[i].c_str());  // Устанавливаем в неё текст
-        //counter++;                                              // Инкрементируем счётчик
+        QPushButton *button = new QPushButton(this); // Создаём кнопку
+        button->setText(action_strs[i].c_str()); // Устанавливаем в неё текст
 
-        std::cout <<"(" <<i<<")"<<std::endl;
-        button->setStyleSheet("QPushButton { background-color:  rgb(104,97,112); color: rgb(255, 255, 255); } QPushButton:pressed { background-color:  rgb(70, 68, 81);}");
+        button->setStyleSheet("QPushButton { background-color:  rgb(104,97,112);"
+                              " color: rgb(255, 255, 255); } "
+                              "QPushButton:pressed { background-color:  "
+                              "rgb(70, 68, 81);}");
         actions.push_back(button);
         ui->verticalLayout->addWidget(actions[i]);
-        //ui->verticalLayout->addWidget(button);                  // Помещаем кнопку в vertical layout
-
-        // подключаем сигнал клика кнопки к мапперу
-
-
 
         connect(button, &QPushButton::clicked, [this, button](){
-            //ui->label->setText(button->text());
-            std::cout <<"@" << button->text().toStdString() <<std::endl;
-            start_plot(button->text().toStdString());
+            startPlot(button->text().toStdString());
         });
-
-        //mapper->removeMappings(actions[i]);
     }
-    //start_apple_plot();
-    /*Error error;
-    error.message = "09";
-    error.type = "aaa";
-    createErrorMessage(error);
-    showErrorMessage();*/
 }
 
-void MainWindow::get_actions_data() {
+void MainWindow::getActionsData() {
     main_handler_ptr->getActionsDataHandler();
 }
 

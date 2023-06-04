@@ -29,14 +29,14 @@ class MIONetworkInterface: public IONetworkInterface {
 public:
     void PostRequest(const std::string& url, const std::string& body,
                              std::function<void(
-                                     const Error& error_state)> callback) {
+                                     const Error& error_state)> callback) override {
         url_ = url;
     }
     void GetRequest(const std::string& url, std::istream&  body,
                             std::function<void(
                                     std::istream& network_output,
-                                    const Error& error_state)> callback) {}
-    virtual void setConfig(const std::string& host) {}
+                                    const Error& error_state)> callback) override {}
+    void setConfig(const std::string& host) override {}
     void setCookie(const std::string& cookie_data) override {}
     void setWindowManager(ptr_to_iwindow_manager wind_manager_ptr) override {}
     std::string url_;
@@ -69,7 +69,7 @@ public:
             ptr_to_iauthorization_window auth_window_ptr) override {}
     void setAuthorizationNetwork(
             ptr_to_iauthorization_network auth_network_ptr) override {}
-    ptr_to_iauthorization_window getAuthorizationWindow() override {}
+    ptr_to_iauthorization_window getAuthorizationWindow() override {return nullptr;}
     void authHandler(const std::string &login, const std::string &password)
     override {}
     void passToMain(const std::string& user) override {
@@ -81,11 +81,10 @@ public:
     void setUser(const std::string& user) override {
         user_ = user;
     }
-    std::string getUser() override { return user_; }
     void openRegistrationWindow() override {}
 
-    void check_cookie() override {}
-    void checked_cookie(const std::string& user, const std::string& status) override {}
+    void checkCookie() override {}
+    void checkedCookie(const std::string& user, const std::string& status) override {}
     std::string error_type;
     std::string user_;
 };

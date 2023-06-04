@@ -2,21 +2,18 @@ FIND_PACKAGE(GTest REQUIRED)
 FIND_PACKAGE(Threads REQUIRED)
 
 INCLUDE_DIRECTORIES(include ../include ${GTEST_INCLUDE_DIRS})
-#FILE(GLOB GUI_LIB ../../project/src/*)
 
 ADD_EXECUTABLE(
         tests
         src/main.cpp
         src/gui_authorization_tests.cpp
         src/gui_registration_tests.cpp
-        #src/gui_user_settings_tests.cpp
-        #src/gui_password_settings_tests.cpp
-        #src/gui_email_settings_tests.cpp
-
+        src/gui_email_settings_tests.cpp
+        src/gui_password_settings_tests.cpp
         src/gui_mainwindow_tests.cpp
 
         ../src/authorizationwindow_network.cpp
-        ../src/usecase_authorization_window.cpp
+        ../src/usecase_authorizationwindow.cpp
 
         ../src/registrationwindow_network.cpp
         ../src/usecase_registrationwindow.cpp
@@ -24,15 +21,9 @@ ADD_EXECUTABLE(
         ../src/mainwindow_network.cpp
         ../src/usecase_mainwindow.cpp
 
-        #../src/usersettingswindow_network.cpp
-        #../src/usecase_usersettingswindow.cpp
-
-#        ../src/settings/usersettingswindow_network.cpp
-#        ../src/settings/usecase_usersettingswindow.cpp
-#        ../src/settings/passwordsettingswindow_network.cpp
-#        ../src/settings/usecase_passwordsettingswindow.cpp
-#        ../src/settings/emailsettingswindow_network.cpp
-#        ../src/settings/usecase_emailsettingswindow.cpp
+        ../src/settings/usersettingswindow_network.cpp
+       ../src/settings/usecase_passwordsettingswindow.cpp
+        ../src/settings/usecase_emailsettingswindow.cpp
 )
 TARGET_LINK_LIBRARIES(tests ${GTEST_BOTH_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT}  -lstdc++fs)
 

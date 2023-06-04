@@ -1,9 +1,7 @@
 #ifndef USECASE_REGISTRATIONWINDOW_H
 #define USECASE_REGISTRATIONWINDOW_H
 
-//#include "../include/registrationwindow_interface.h"
 #include "../include/usecase_registrationwindow_interface.h"
-//#include "../include/registrationwindow_network_interface.h"
 
 #include <string>
 
@@ -22,11 +20,7 @@ public:
                     const std::string& pass_confirm) override;
     void passToMain(const std::string& user) override;
     void sendError(const Error& error_message) override;
-
     void setUser(const std::string& user) override {}
-    std::string getUrl() override {}
-    void setUrl(const std::string& url) override {}
-
     void openAuthorizationWindow() override;
 
 private:

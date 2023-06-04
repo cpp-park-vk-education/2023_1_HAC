@@ -16,7 +16,9 @@ AuthorizationWindow::AuthorizationWindow(QWidget *parent) :
     this->setAutoFillBackground(true);
     this->setPalette(pal);
 
+    //Hide password with special dots
     ui->lePassword->setEchoMode(QLineEdit::Password);
+
     btn_enter = ui->btnEnter;
     btn_reg = ui->btnReg;
 
@@ -25,9 +27,8 @@ AuthorizationWindow::AuthorizationWindow(QWidget *parent) :
     ui->leLogin->setStyleSheet("background-color:rgb(200,201,182);");
     ui->leLogin->setText("");
 
-    connect(this->get_enter_btn(),SIGNAL(clicked(bool)),this, SLOT(start_auth()));
-    connect(this->get_reg_btn(),SIGNAL(clicked(bool)),this, SLOT(open_reg_window()));
-
+    connect(this->getEnterBtn(),SIGNAL(clicked(bool)),this, SLOT(startAuth()));
+    connect(this->getRegBtn(),SIGNAL(clicked(bool)),this, SLOT(openRegWindow()));
 }
 
 AuthorizationWindow::~AuthorizationWindow()
@@ -35,7 +36,7 @@ AuthorizationWindow::~AuthorizationWindow()
     delete ui;
     delete error_message_;
     delete error_type_;
-    delete errorMes;
+    delete error_mes_;
     delete btn_enter;
     delete btn_reg;
 }
@@ -54,32 +55,26 @@ std::string AuthorizationWindow::getPassword() {
     return password;
 }
 
-
-QPushButton* AuthorizationWindow::get_enter_btn() {
+QPushButton* AuthorizationWindow::getEnterBtn() {
     return btn_enter;
 }
 
-QPushButton* AuthorizationWindow::get_reg_btn() {
+QPushButton* AuthorizationWindow::getRegBtn() {
     return btn_reg;
 }
 
-
-void AuthorizationWindow::start_auth() {
+void AuthorizationWindow::startAuth() {
     authorization_handler_ptr->authHandler(getLogin(), getPassword());
 }
 
-void AuthorizationWindow::open_reg_window() {
+void AuthorizationWindow::openRegWindow() {
     authorization_handler_ptr->openRegistrationWindow();
-    //ui->lePassword->setText("");
-    //ui->leLogin->setText("");
 }
 
 void AuthorizationWindow::showErrorMessage() {
-    errorMes = new QErrorMessage(this);
-    errorMes->setWindowTitle("Error!");
-    errorMes->showMessage(*error_type_ + "! " + *error_message_);
-    qDebug() << *error_type_ << ' ' << *error_message_;
-    std::cout << "error shown"<<std::endl;
+    error_mes_ = new QErrorMessage(this);
+    error_mes_->setWindowTitle("Error!");
+    error_mes_->showMessage(*error_type_ + "! " + *error_message_);
 }
 
 void AuthorizationWindow::createErrorMessage(const Error& error_message) {
@@ -90,10 +85,9 @@ void AuthorizationWindow::createErrorMessage(const Error& error_message) {
         error_type_ = new QString(error_message.type.c_str());
         error_message_ = new QString(error_message.message.c_str());
     }
-    std::cout << "created error message"<<std::endl;
 }
 
-void AuthorizationWindow::clean_input_lines() {
+void AuthorizationWindow::cleanInputLines() {
     ui->lePassword->setText("");
     ui->leLogin->setText("");
 }

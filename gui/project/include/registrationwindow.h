@@ -31,14 +31,14 @@ public:
     std::string getPasswordConfirm() override;
     std::string getEmail() override;
 
-    QPushButton* get_enter_btn();
-    QPushButton* get_back_btn();
+    QPushButton* getEnterBtn();
+    QPushButton* getBackBtn();
 
-    void clean_input_lines();
+    void cleanInputLines();
 
 public slots:
-    void start_reg();
-    void open_auth_window();
+    void startReg();
+    void openAuthWindow();
 private:
     Ui::RegistrationWindow *ui;
     ptr_to_registration_handler registration_handler_ptr;
@@ -50,7 +50,7 @@ private:
 
     QString* error_message_;
     QString* error_type_;
-    QErrorMessage* errorMes;
+    QErrorMessage* error_mes_;
 
     QPushButton* btn_enter;
     QPushButton* btn_back;

@@ -1,13 +1,13 @@
 #ifndef TEST_VK_PROJECT_IONETWORK_H
 #define TEST_VK_PROJECT_IONETWORK_H
 
-#include <QtNetwork/QNetworkAccessManager>
-#include <QUrlQuery>
-
 #include <string>
 #include <iostream>
 #include <sstream>
 #include <algorithm>
+
+#include <QtNetwork/QNetworkAccessManager>
+#include <QUrlQuery>
 #include <QNetworkReply>
 #include <QUrlQuery>
 
@@ -20,8 +20,8 @@ public:
                                      callback) override;
 
     void onFirstFinishedPost(QNetworkReply* reply, std::string user,
-                             std::function<void(const Error& error_state)> callback);
-
+                             std::function<void(
+                                     const Error& error_state)> callback);
     void onFinishedPost(QNetworkReply* reply, std::string user,
                      std::function<void(const Error& error_state)> callback);
     void onFinishedPostExit(QNetworkReply* reply, std::string user,
@@ -31,7 +31,6 @@ public:
                             std::function<void(std::istream& network_output,
                                     const Error& error_state)> callback)
                                     override;
-
     void onFinishedGet(QNetworkReply* reply,
                        std::function<void(std::istream& network_output,
                                const Error& error_state)> callback);

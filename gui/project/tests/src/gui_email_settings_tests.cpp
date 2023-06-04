@@ -1,14 +1,16 @@
 #include "utils.h"
 
 #include "ionetwork_interface.h"
-#include "usecase_emailsettingswindow.h"
-#include "emailsettingswindow_interface.h"
-#include "usersettingswindow_network.h"
+#include "settings/usecase_emailsettingswindow.h"
+#include "settings/emailsettingswindow_interface.h"
+#include "settings/usersettingswindow_network.h"
 
 class MNetworkUserSettingsWindow : public INetworkUserSettingsWindow {
 public:
-    void setUserPasswordSettingsHandler(ptr_to_passwordsettings_handler set_passwordhandler_ptr) override;
-    void setUserEmailSettingsHandler(ptr_to_emailsettings_handler set_emailhandler_ptr) override;
+    void setUserPasswordSettingsHandler(ptr_to_passwordsettings_handler
+    set_passwordhandler_ptr) override {}
+    void setUserEmailSettingsHandler(ptr_to_emailsettings_handler
+    set_emailhandler_ptr) override {}
     void setUserSettingsNetwork(ptr_to_inetwork net_ptr) override {}
     void getUserPasswordSettings(const ConfirmEdit& confirm_passwords) override {
         confirm_params = confirm_passwords;
@@ -26,16 +28,16 @@ public:
 
 class MIONetworkInterface: public IONetworkInterface {
 public:
-    void PostRequest(const std::string& url, const std::string& body, std::function<void(const Error& error_state)> callback) {
+    void PostRequest(const std::string& url, const std::string& body, std::function<void(const Error& error_state)> callback) override {
         url_ = url;
     }
 
         void GetRequest(const std::string& url, std::istream& body, std::function<void(std::istream& network_output,
                                     const Error& error_state)> callback) override {}
 
-    virtual void setConfig(const std::string& host) { }
-    void setCookie(const std::string& cookie_data) override;
-    void setWindowManager(ptr_to_iwindow_manager wind_manager_ptr) override;
+    void setConfig(const std::string& host) override {}
+    void setCookie(const std::string& cookie_data) override {}
+    void setWindowManager(ptr_to_iwindow_manager wind_manager_ptr) override {}
 
     std::string url_;
 };
@@ -50,8 +52,8 @@ public:
         error_message_ = error_message;
     }
 
-    std::string getNewEmail() override;
-    std::string getPassword() override;
+    std::string getNewEmail() override {return{};}
+    std::string getPassword() override {return{};}
 
     Error error_message_;
 };
@@ -90,14 +92,14 @@ public:
     void setWindowManager(ptr_to_iwindow_manager wind_manager_ptr) override {}
     void setEmailSettingsWindow(ptr_to_iemailsettings_window settings_wind_ptr) override {}
     void setUserSettingsNetwork(ptr_to_isettings_network settings_net_ptr) override {}
-    ptr_to_iemailsettings_window getEmailSettingsWindow() override {}
+    ptr_to_iemailsettings_window getEmailSettingsWindow() override {return nullptr;}
     void sendError(const Error &error_message) override {
         error_type = error_message.type;
     }
 
     void passToMain() override {}
     void confirmHandler(const std::string& new_email, const std::string& password) override {}
-    std::string getUser() override {}
+    std::string getUser() override {return nullptr;}
     void setUser(const std::string &user) override {}
     std::string error_type;
 };

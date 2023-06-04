@@ -31,23 +31,10 @@ GUIController::GUIController(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::GUIController)
 {
-
-
-    /*QDesktopWidget desktop;
-    QRect rect = desktop.availableGeometry(this);
-    QPoint center = rect.center();
-    int x = center.x() - (width()/2);
-    int y = center.y() - (height()/2);
-    center.setX(x);
-    center.setY(y);
-    move(center);*/
-
-    //url_ = "http://25.21.238.202:9988/";
     url_ = "http://62.84.127.93:9988/";
 
     ui->setupUi(this);
     pages = new QStackedWidget(this);
-    //ui->gridLayout->addWidget(pages);
 
     auth_window = new AuthorizationWindow(this);
     pages->addWidget(auth_window);
@@ -77,26 +64,12 @@ GUIController::GUIController(QWidget *parent)
     main_network_ptr->setMainHandler(main_handler_ptr);
     main_network_ptr->setMainNetwork(network_ptr);
 
-    // user_settings_window = new UserSettingsWindow(this);
-    // pages->addWidget(user_settings_window);
-    // user_settings_handler_ptr = std::make_shared<UseCaseUserSettingsWindow>();
-    // user_settings_window->setUserSettingsWindowHandler(user_settings_handler_ptr);
-    // user_settings_handler_ptr->setUserSettingsWindow(std::shared_ptr<UserSettingsWindow>(user_settings_window));
-    // user_settings_handler_ptr->setWindowManager(window_manager_ptr);
-    // user_settings_network_ptr = std::make_shared<NetworkUserSettingsWindow>();
-    // user_settings_handler_ptr->setUserSettingsNetwork(user_settings_network_ptr);
-    // user_settings_network_ptr->setUrl(url_);
-    // user_settings_network_ptr->setUserSettingsHandler(user_settings_handler_ptr);
-    // user_settings_network_ptr->setUserSettingsNetwork(network_ptr);
-
-
     user_settings_window = new UserSettingsWindow(this);
     pages->addWidget(user_settings_window); 
     user_settings_handler_ptr = std::make_shared<UseCaseUserSettingsWindow>();
     user_settings_window->setUserSettingsWindowHandler(user_settings_handler_ptr);
     user_settings_handler_ptr->setUserSettingsWindow(std::shared_ptr<UserSettingsWindow>(user_settings_window));
     user_settings_handler_ptr->setWindowManager(window_manager_ptr);
-    // user_settings_handler_ptr->setUserSettingsNetwork(user_settings_network_ptr);
     
     user_settings_network_ptr = std::make_shared<NetworkUserSettingsWindow>();
     user_settings_handler_ptr->setUserSettingsNetwork(user_settings_network_ptr);
@@ -118,7 +91,6 @@ GUIController::GUIController(QWidget *parent)
     email_settings_handler_ptr->setUserSettingsNetwork(user_settings_network_ptr);
 
     user_settings_network_ptr->setUrl(url_);
-    //user_settings_network_ptr->setUserSettingsHandler(user_settings_handler_ptr);
     user_settings_network_ptr->setUserSettingsNetwork(network_ptr);
     user_settings_network_ptr->setUserPasswordSettingsHandler(password_settings_handler_ptr);
     user_settings_network_ptr->setUserEmailSettingsHandler(email_settings_handler_ptr);
@@ -141,16 +113,9 @@ GUIController::GUIController(QWidget *parent)
 
     first_time_in_main = true;
 
-    //check needed
-    //getting stocks from db
-    //main_window->get_actions_data();
-
     setCentralWidget(pages);
-    //pages->setCurrentIndex(0);
     pages->setCurrentIndex(6);
-    //authorization_handler_ptr->check_cookie();
     openLoadWindow();
-    //pages->setCurrentIndex(1);
 }
 
 GUIController::~GUIController()
@@ -161,16 +126,28 @@ GUIController::~GUIController()
     delete main_window;
     delete reg_window;
     delete user_settings_window;
+    delete timer;
+    delete password_settings_window;
+    delete email_settings_window;
+    delete load_window;
 }
 
 void GUIController::openAuthorizationWindow() {
-    auth_window->clean_input_lines();
+    auth_window->cleanInputLines();
     pages->setCurrentIndex(0);
 };
 
 void GUIController::openRegistrationWindow() {
-    reg_window->clean_input_lines();
+    reg_window->cleanInputLines();
     pages->setCurrentIndex(5);
+};
+
+void GUIController::openMainWindow() {
+    if (first_time_in_main) {
+    main_window->getActionsData();
+    first_time_in_main = false;
+    }
+    pages->setCurrentIndex(1);
 };
 
 void GUIController::openUserSettingsWindow() {
@@ -193,36 +170,28 @@ void GUIController::stop_timer() {
 void GUIController::openLoadWindow() {
     pages->setCurrentIndex(6);
     timer = new QTimer(this);
-    //load_window->perform_progress();
-    connect(timer,SIGNAL(timeout()), load_window, SLOT(perform_progress()));
+    connect(timer,SIGNAL(timeout()), load_window,
+            SLOT(perform_progress()));
     timer->start(10);
-    authorization_handler_ptr->check_cookie();
-    //load_window->perform_progress();
-
-    //check needed
-    //getting stocks from db
-    //main_window->get_actions_data();
+    authorization_handler_ptr->checkCookie();
 
     QTimer::singleShot(2000, this, SLOT(change_windows()));
-    //authorization_handler_ptr->check_cookie();
 }
 
 void GUIController::change_windows() {
     if (start_status == "good") {
         start_status = "";
-        //check needed
-        //getting stocks from db
-        //main_window->get_actions_data();
         openMainWindow();
     } else {
-        std::vector<std::string> vec_tmp;
-        vec_tmp.push_back("sum");
-        vec_tmp.push_back("here");
-        //main_window->get_actions_data();
         openAuthorizationWindow();
-        //openMainWindow();//temprorary
-        //main_window->start_actions(vec_tmp);//temprorary
         start_status = "";
     }
 }
 
+void GUIController::setUser(const std::string& user) {
+    user_ = user;
+};
+
+std::string GUIController::getUser() {
+return user_;
+};

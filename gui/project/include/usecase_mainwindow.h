@@ -4,6 +4,7 @@
 #include <string>
 #include <vector>
 #include <iostream>
+
 #include "../include/usecase_mainwindow_interface.h"
 
 class UseCaseMainWindow : public IHandlerMainWindow {
@@ -16,14 +17,13 @@ public:
     void stockSelectHandler(const std::string& stock_name) override;
     void predictHandler(const std::string& stock_name, int wind_size) override;
     void sendError(const Error& error_message) override;
-    std::string getUrl() override {}
-    void setUrl(const std::string& url) override {}
     void openUserSettings() override;
 
     void getActionsDataHandler() override;
     void setActionsDataHandler(std::istream& network_output) override;
 
-    bool replace(std::string& str, const std::string& from, const std::string& to);
+    bool replaceSubstr(std::string& str, const std::string& from, const
+    std::string& to);
 
 private:
     ptr_to_imain_window main_window_ptr;
@@ -31,8 +31,6 @@ private:
     ptr_to_imain_network main_network_ptr;
     std::vector<double> y;
     std::vector<std::string> dates;
-
-    //std::string stock_name_;
 };
 
 #endif // USECASE_MAINWINDOW_H

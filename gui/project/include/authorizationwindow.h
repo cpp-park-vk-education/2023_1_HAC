@@ -2,14 +2,15 @@
 #define AUTHORIZATIONWINDOW_H
 
 #include <iostream>
-
 #include <string>
 #include <memory>
-#include "../include/authorizationwindow_interface.h"
+
 #include <QWidget>
 #include <QPushButton>
 #include <QDebug>
 #include <QErrorMessage>
+
+#include "../include/authorizationwindow_interface.h"
 
 namespace Ui {
 class AuthorizationWindow;
@@ -28,14 +29,14 @@ public:
     std::string getLogin() override;
     std::string getPassword() override;
 
-    QPushButton* get_enter_btn();
-    QPushButton* get_reg_btn();
+    QPushButton* getEnterBtn();
+    QPushButton* getRegBtn();
 
-    void clean_input_lines();
+    void cleanInputLines();
 
 public slots:
-    void start_auth();
-    void open_reg_window();
+    void startAuth();
+    void openRegWindow();
 
 private:
     Ui::AuthorizationWindow *ui;
@@ -45,10 +46,9 @@ private:
     QPushButton* btn_enter;
     QPushButton* btn_reg;
 
-
     QString* error_message_;
     QString* error_type_;
-    QErrorMessage* errorMes;
+    QErrorMessage* error_mes_;
 };
 
 #endif // AUTHORIZATIONWINDOW_H

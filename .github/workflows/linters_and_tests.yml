@@ -3,29 +3,27 @@ name: linters_and_tests
 on: push
 
 jobs:
+
+  push:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Login to DockerHub Registry
+        run: echo ${{ secrets.DOCKERHUB_PASSWORD }} | docker login -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
+      - name: Build Docker image
+        run: TAG=${{ env.tag }} ./ci/scripts/build_server.sh
+      - name: Push the image
+        run: TAG=${{ env.tag }} ./ci/scripts/build_server.sh
+
   build:
     runs-on: ubuntu-latest
-    container: rbeketov/ubuntu_cpp_fix
     steps:
     - uses: actions/checkout@v2 
-    - run: make build
+    - run: make build_server
 
   test:
     runs-on: ubuntu-latest
-    container: rbeketov/ubuntu_cpp_fix
     needs: [build]
     steps:
       - uses: actions/checkout@v2
-      - run: make test
-
-  memtest:
-    runs-on: ubuntu-latest
-    container: rbeketov/ubuntu_cpp_fix
-    needs: [test]
-    steps:
-      - uses: actions/checkout@v2
-      - run: make memtest
-      - name: Upload artifacts
-        uses: actions/upload-artifact@v2
-        with:
-          path: ./server/build/report
+      - run: make test_server

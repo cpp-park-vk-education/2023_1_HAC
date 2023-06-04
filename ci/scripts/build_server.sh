@@ -6,4 +6,4 @@ if [[ ! $TAG ]]; then
     TAG=latest
 fi
 
-docker build -t mm_server:$TAG -f ./ci/dockers/Dockerfile.server . 
+docker build -t mm_server -f ./ci/dockers/Dockerfile.server .

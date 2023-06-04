@@ -4,25 +4,16 @@ on: push
 
 jobs:
 
-  push:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - name: Login to DockerHub Registry
-        run: echo ${{ secrets.DOCKERHUB_PASSWORD }} | docker login -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
-      - name: Build Docker image
-        run: TAG=${{ env.tag }} ./ci/scripts/build_server.sh
-      - name: Push the image
-        run: TAG=${{ env.tag }} ./ci/scripts/build_server.sh
-
   build:
     runs-on: ubuntu-latest
+    container: rbeketov/mm_server
     steps:
     - uses: actions/checkout@v2 
     - run: make build_server
 
   test:
     runs-on: ubuntu-latest
+    container: rbeketov/mm_server
     needs: [build]
     steps:
       - uses: actions/checkout@v2

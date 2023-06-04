@@ -6,4 +6,4 @@ if [[ ! $TAG ]]; then
     TAG=latest
 fi
 
-docker push rbeketov/mm_server:$TAG
+docker push rbeketov/mm_server

@@ -7,10 +7,7 @@
 using ::testing::Return;
 using ::testing::_;
 
-using namespace dbcontroller;
-using namespace repository;
-
-class DatabaseMock: public IDataBase {
+class DatabaseMock: public database::IDataBase {
 public:
     ~DatabaseMock() = default;
     MOCK_METHOD(bool, IsOpen, (),(override));
@@ -20,7 +17,7 @@ public:
     MOCK_METHOD(bool, Connect,(), (override));
 };
 
-class MemoryDatabaseMock: public IMemoryDataBase {
+class MemoryDatabaseMock: public database::IMemoryDataBase {
 public:
     ~MemoryDatabaseMock() = default;
     MOCK_METHOD(bool, IsOpen, (),(override));
@@ -33,7 +30,7 @@ public:
 
 };
 
-class ClientRepositoryMock: public IClientRepository {
+class ClientRepositoryMock: public repository::IClientRepository {
 public:
     ~ClientRepositoryMock() override = default;
     MOCK_METHOD(bool, Insert, (const std::shared_ptr<ClientData>& data),(override));
@@ -44,7 +41,7 @@ public:
 };
 
 
-class TimeSeriesRepositoryMock: public ITimeSeriesRepository {
+class TimeSeriesRepositoryMock: public repository::ITimeSeriesRepository {
 public:
     ~TimeSeriesRepositoryMock() override = default;
     MOCK_METHOD(bool, Insert, (const std::shared_ptr<TimeSeriesData>& data),(override));
@@ -56,14 +53,14 @@ public:
 };
 
 
-class SubscriptionRepositoryMock: public ISubscriptionRepository {
+class SubscriptionRepositoryMock: public repository::ISubscriptionRepository {
 public:
     ~SubscriptionRepositoryMock() override = default;     
     MOCK_METHOD(std::shared_ptr<SubscriptionData>, GetByKey, (const std::string& key),(override));   
     MOCK_METHOD(std::shared_ptr<AllSubscription>, GetAll, (),(override));         
 };
 
-class TokenRepositoryMock: public ITokenRepository {
+class TokenRepositoryMock: public repository::ITokenRepository {
 public:
     ~TokenRepositoryMock() = default;     
     MOCK_METHOD(bool, Insert, (const TokenData& data),(override));   
@@ -75,9 +72,13 @@ public:
 
 class DBControllerTest: public ::testing::Test {
 public:
-    DBControllerTest(): test_client_rep(new ClientRepositoryMock), test_timeseries_rep(new TimeSeriesRepositoryMock), 
-    test_sub_rep(new SubscriptionRepositoryMock), db(new DatabaseMock), redis(new MemoryDatabaseMock), test_token_rep(new TokenRepositoryMock), 
-            db_controller(new DataBaseController(db, redis,  test_client_rep, test_timeseries_rep, test_sub_rep, test_token_rep)) {
+    DBControllerTest(): test_client_rep(new ClientRepositoryMock), 
+                test_timeseries_rep(new TimeSeriesRepositoryMock), 
+                test_sub_rep(new SubscriptionRepositoryMock), 
+                db(new DatabaseMock), redis(new MemoryDatabaseMock), 
+                test_token_rep(new TokenRepositoryMock), 
+                db_controller(new dbcontroller::DataBaseController(db, redis,  test_client_rep, 
+                    test_timeseries_rep, test_sub_rep, test_token_rep)) {
     }
 
 protected:
@@ -87,7 +88,7 @@ protected:
     std::shared_ptr<TokenRepositoryMock> test_token_rep;  
     std::shared_ptr<DatabaseMock> db;
     std::shared_ptr<MemoryDatabaseMock> redis;
-    std::shared_ptr<IDataBaseController> db_controller;
+    std::shared_ptr<dbcontroller::IDataBaseController> db_controller;
 
 };
 

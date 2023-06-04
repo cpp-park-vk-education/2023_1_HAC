@@ -2,23 +2,22 @@
 #include "repositories.hpp"
 #include "repositorycache.hpp"
 
-using namespace repository;
-
 const int kClienCacheSize = 20;
 
 // ClientRepository
 
-ClientRepository::ClientRepository(): database_(nullptr), 
-        client_cache_(std::make_shared<RepositoryCache<std::string, ClientData>>(kClienCacheSize)) {
+repository::ClientRepository::ClientRepository(): database_(nullptr), 
+        client_cache_(std::make_shared<cache::RepositoryCache<std::string, ClientData>>(kClienCacheSize)) {
 }
 
 
-ClientRepository::ClientRepository(const std::shared_ptr<IDataBase>& db): database_(db),
-         client_cache_(std::make_shared<RepositoryCache<std::string, ClientData>>(kClienCacheSize)) {
+repository::ClientRepository::ClientRepository(const std::shared_ptr<database::IDataBase>& db): database_(db),
+         client_cache_(std::make_shared<cache::RepositoryCache<std::string, ClientData>>(kClienCacheSize)) {
 }
+
 
 // Защита от специальных символов в запросе пользователя
-bool ClientRepository::SpecialCharacterCheck(const std::string& word) {
+bool repository::ClientRepository::SpecialCharacterCheck(const std::string& word) {
     // Если символ найден, то возвращаем true
     if (word.find('\'') != std::string::npos) {
         return true;
@@ -27,7 +26,8 @@ bool ClientRepository::SpecialCharacterCheck(const std::string& word) {
     return false;
 }
 
-bool ClientRepository::Insert(const std::shared_ptr<ClientData>& data) {
+
+bool repository::ClientRepository::Insert(const std::shared_ptr<ClientData>& data) {
     if (client_cache_->Has(data->login)) {
         return false;
     }
@@ -52,7 +52,7 @@ bool ClientRepository::Insert(const std::shared_ptr<ClientData>& data) {
 
 }
 
-std::shared_ptr<ClientData> ClientRepository::DatabaseResponseParse(const Json::Value& db_response) {
+std::shared_ptr<ClientData> repository::ClientRepository::DatabaseResponseParse(const Json::Value& db_response) {
     const int kUserId = 0;
     const int kLoginId = 1;
     const int kEmailId = 2;
@@ -66,7 +66,8 @@ std::shared_ptr<ClientData> ClientRepository::DatabaseResponseParse(const Json::
     return result;
 }
 
-std::shared_ptr<ClientData> ClientRepository::GetByKey(const ClientGetType& type, const std::string& key){
+std::shared_ptr<ClientData> repository::ClientRepository::GetByKey(const ClientGetType& type, const std::string& key){
+    
     if (client_cache_->Has(key)) {
         std::shared_ptr<ClientData> result = std::make_shared<ClientData>(client_cache_->Get(key));
         return result;
@@ -111,7 +112,7 @@ std::shared_ptr<ClientData> ClientRepository::GetByKey(const ClientGetType& type
 }
 
 
-bool ClientRepository::Delete(const std::string& key) {
+bool repository::ClientRepository::Delete(const std::string& key) {
     if (!database_->IsOpen()) {
         return false;
     }
@@ -128,7 +129,9 @@ bool ClientRepository::Delete(const std::string& key) {
 }
 
 
-bool ClientRepository::Update(const ClientUpdateType& type, const std::string& key, const std::shared_ptr<ClientData>& data) {
+bool repository::ClientRepository::Update(const ClientUpdateType& type, const std::string& key, 
+            const std::shared_ptr<ClientData>& data) {
+                                            
     if (!database_->IsOpen()) {
         return false;
     }    
@@ -169,7 +172,8 @@ bool ClientRepository::Update(const ClientUpdateType& type, const std::string& k
     return result;
 }
 
-void ClientRepository::CacheUpdate(const ClientUpdateType& type, const std::string& key, const std::shared_ptr<ClientData>& data) {
+void repository::ClientRepository::CacheUpdate(const ClientUpdateType& type,
+                 const std::string& key, const std::shared_ptr<ClientData>& data) {
     std::shared_ptr<ClientData> cache_data;
     cache_data = std::make_shared<ClientData>(client_cache_->Get(key));  
 

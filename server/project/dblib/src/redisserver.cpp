@@ -1,16 +1,15 @@
 #include <iostream>
 #include "redisserver.hpp"
 
-using namespace database;
 
-RedisServer::RedisServer(): host_("62.84.127.93"), port_(6369), password_("marketmentor_password") {
+database::RedisServer::RedisServer(): host_("62.84.127.93"), port_(6369), password_("marketmentor_password") {
 }
 
-RedisServer::RedisServer(const std::string& host, int port, const std::string& password): 
+database::RedisServer::RedisServer(const std::string& host, int port, const std::string& password): 
         host_(host), port_(port), password_(password) {
 }
 
-bool RedisServer::IsOpen() {
+bool database::RedisServer::IsOpen() {
     try {
         redis_->ping();    
     }
@@ -22,7 +21,7 @@ bool RedisServer::IsOpen() {
     return true;
 }
 
-bool RedisServer::Connect() {
+bool database::RedisServer::Connect() {
     sw::redis::ConnectionOptions connection_options;
     connection_options.host = host_; 
     connection_options.port = port_;
@@ -31,7 +30,7 @@ bool RedisServer::Connect() {
     return IsOpen();
 }
 
-bool RedisServer::Insert(const std::string& key, const std::string& value, const size_t& ttl) {
+bool database::RedisServer::Insert(const std::string& key, const std::string& value, const size_t& ttl) {
     if (Has(key)) {
         return false;
     }
@@ -49,7 +48,7 @@ bool RedisServer::Insert(const std::string& key, const std::string& value, const
 }
 
 
-bool RedisServer::Delete(const std::string& key) {
+bool database::RedisServer::Delete(const std::string& key) {
     if (!Has(key)) {
         return false;
     }
@@ -67,7 +66,7 @@ bool RedisServer::Delete(const std::string& key) {
 
 
 
-bool RedisServer::Update(const std::string& key, const std::string& value, const size_t& ttl){
+bool database::RedisServer::Update(const std::string& key, const std::string& value, const size_t& ttl){
     if (!Has(key)) {
         return false;
     }
@@ -85,7 +84,7 @@ bool RedisServer::Update(const std::string& key, const std::string& value, const
     return true;
 }
 
-bool RedisServer::Has(const std::string& key) { 
+bool database::RedisServer::Has(const std::string& key) { 
     if (!IsOpen()) {
         return false;
     }
@@ -106,7 +105,7 @@ bool RedisServer::Has(const std::string& key) {
     return true;
 }
 
-std::string RedisServer::Get(const std::string& key) {
+std::string database::RedisServer::Get(const std::string& key) {
     if (!IsOpen()) {
         return "NULL";
     }

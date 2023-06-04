@@ -2,18 +2,15 @@
 #include "repositories.hpp"
 #include "repositorycache.hpp"
 
-using namespace repository;
-using namespace database;
-
-TokenRepository::TokenRepository(): database_(nullptr) {
+repository::TokenRepository::TokenRepository(): database_(nullptr) {
 } 
 
 
-TokenRepository::TokenRepository (const std::shared_ptr<IMemoryDataBase>& db): database_(db) {
+repository::TokenRepository::TokenRepository (const std::shared_ptr<database::IMemoryDataBase>& db): database_(db) {
 }
 
 
-bool TokenRepository::Insert(const TokenData& data) {
+bool repository::TokenRepository::Insert(const TokenData& data) {
     if (!database_->IsOpen()) {
         return false;
     }
@@ -26,7 +23,7 @@ bool TokenRepository::Insert(const TokenData& data) {
 }
 
 
-bool TokenRepository::Delete(const std::string& key) {
+bool repository::TokenRepository::Delete(const std::string& key) {
     if (!database_->IsOpen()) {
         return false;
     }
@@ -35,7 +32,7 @@ bool TokenRepository::Delete(const std::string& key) {
 }
 
 
-std::shared_ptr<TokenData> TokenRepository::Get(const std::string& key) {
+std::shared_ptr<TokenData> repository::TokenRepository::Get(const std::string& key) {
     if (!database_->IsOpen()) {
         return nullptr;
     }

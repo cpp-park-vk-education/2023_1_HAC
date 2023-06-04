@@ -1,17 +1,15 @@
 #include <gtest/gtest.h>
 #include "repositorycache.hpp"
 
-using namespace cache;
-
 struct TestStruct {
     std::string name;
 };
 class RepositoryCacheTest: public ::testing::Test {
 public:
-    RepositoryCacheTest(): cache_(new RepositoryCache<std::string, TestStruct>){}
+    RepositoryCacheTest(): cache_(new cache::RepositoryCache<std::string, TestStruct>){}
 
 protected:
-    std::unique_ptr<IRepositoryCache<std::string, TestStruct>> cache_;
+    std::unique_ptr<cache::IRepositoryCache<std::string, TestStruct>> cache_;
 };
 
 TEST_F(RepositoryCacheTest, InsertCase) {

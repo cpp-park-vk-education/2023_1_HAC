@@ -2,22 +2,20 @@
 #include "repositories.hpp"
 #include "repositorycache.hpp"
 
-using namespace repository;
-
 // Subscription. dbcontoroller не вызывает данный репозиторий, так как пока не была реализована система подписок
 
 const int kSubCacheSize = 5;
 
-SubscriptionRepository::SubscriptionRepository(): database_(nullptr), 
-        subscription_cache_(std::make_shared<RepositoryCache<std::string, SubscriptionData>>(kSubCacheSize)) {
+repository::SubscriptionRepository::SubscriptionRepository(): database_(nullptr), 
+        subscription_cache_(std::make_shared<cache::RepositoryCache<std::string, SubscriptionData>>(kSubCacheSize)) {
 }
 
 
-SubscriptionRepository::SubscriptionRepository(const std::shared_ptr<IDataBase>& db): database_(db), 
-        subscription_cache_(std::make_shared<RepositoryCache<std::string, SubscriptionData>>(kSubCacheSize)) {
+repository::SubscriptionRepository::SubscriptionRepository(const std::shared_ptr<database::IDataBase>& db): database_(db), 
+        subscription_cache_(std::make_shared<cache::RepositoryCache<std::string, SubscriptionData>>(kSubCacheSize)) {
 }
 
-std::shared_ptr<SubscriptionData> SubscriptionRepository::DatabaseResponseParse(const Json::Value& db_response) {
+std::shared_ptr<SubscriptionData> repository::SubscriptionRepository::DatabaseResponseParse(const Json::Value& db_response) {
     const int kSubId = 0;
     const int kNameId = 1;
     const int kCountId = 2;
@@ -37,7 +35,7 @@ std::shared_ptr<SubscriptionData> SubscriptionRepository::DatabaseResponseParse(
     return row;
 }
 
-std::shared_ptr<SubscriptionData> SubscriptionRepository::GetByKey(const std::string& key) {
+std::shared_ptr<SubscriptionData> repository::SubscriptionRepository::GetByKey(const std::string& key) {
     if (subscription_cache_->Has(key)) {
         std::shared_ptr<SubscriptionData> result = std::make_shared<SubscriptionData>(subscription_cache_->Get(key));
         return result;
@@ -68,7 +66,7 @@ std::shared_ptr<SubscriptionData> SubscriptionRepository::GetByKey(const std::st
 }
 
 
-std::shared_ptr<AllSubscription> SubscriptionRepository::GetAll() {
+std::shared_ptr<AllSubscription> repository::SubscriptionRepository::GetAll() {
 
     if (!database_->IsOpen()) {
         return nullptr;

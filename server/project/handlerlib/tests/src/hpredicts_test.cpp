@@ -5,9 +5,9 @@
 class MockPredictController : public controllers::IPredictController {
 public:
    MOCK_METHOD(Json::Value, makePredict, (const Json::Value& request), (override));
-   MOCK_METHOD(controllers::TimeSeriesPredicts, makeTimeSeries, (const std::vector<double>& samples_data, size_t lenpredict), (override));
-   MOCK_METHOD(Json::Value, makeDBProtocol, (const Json::Value& request), (override));
-   MOCK_METHOD(std::vector<double>, parseDBProtocol, (const Json::Value& response), (override));
+   // MOCK_METHOD(controllers::TimeSeriesPredicts, makeTimeSeries, (const std::vector<double>& samples_data, size_t lenpredict), (override));
+   // MOCK_METHOD(Json::Value, makeDBProtocol, (const Json::Value& request), (override));
+   // MOCK_METHOD(std::vector<double>, parseDBProtocol, (const Json::Value& response), (override));
 };
 
 
@@ -67,25 +67,33 @@ TEST_F(PredictHandlerTest, CheckCorrectNegativeResponseIncorrectNameTokens) {
 TEST_F(PredictHandlerTest, CheckCorrectPositiveResponseAndJSONPass) {
     handlers::PredictHandler predict_handler(ptr_predict_controller);
 
-    EXPECT_CALL(*http_request, getURL()).WillOnce(Return("/?name=test&lenpredict=8"));
+    EXPECT_CALL(*http_request, getURL()).WillOnce(Return("/?name=test&lenpredict=4"));
 
     Json::Value data;
-    data["0"] = 1;
-    data["1"] = 2;
-    data["2"] = 3;
-    data["3"] = 4;
+    data[1] = 1;
+    data[2] = 2;
+    data[3] = 3;
+    data[4] = 4;
+
+    Json::Value date;
+    date[1] = 1;
+    date[2] = 2;
+    date[3] = 3;
+    date[4] = 4;
+
     Json::Value expect_return;
     expect_return[HEADER_JSON_STATUS] = true;
     expect_return[HEADER_JSON_DATA] = data;
+    expect_return[HEADER_JSON_DATE] = date;
 
     Json::Value expected_json_after_parsing;
-    expected_json_after_parsing[HEADER_JSON_LENPREDICT] = 8;
+    expected_json_after_parsing[HEADER_JSON_LENPREDICT] = 4;
     expected_json_after_parsing[HEADER_JSON_NAME_STOCK] = "test";
 
     EXPECT_CALL(*ptr_predict_controller, makePredict(expected_json_after_parsing)).WillOnce(Return(expect_return));
     EXPECT_CALL(*http_response, setStatus(OK)).Times(1);
     EXPECT_CALL(*http_response, setHeader(PREDICT_DATA, PREDICT_DATA)).Times(1);
-    EXPECT_CALL(*http_response, setBody(data.toStyledString())).Times(1);
+    EXPECT_CALL(*http_response, setBody(data.toStyledString() + "\n" + date.toStyledString())).Times(1);
     
     EXPECT_NO_THROW(predict_handler.handle(http_request, http_response));
 }

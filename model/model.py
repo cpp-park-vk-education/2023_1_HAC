@@ -2,7 +2,7 @@ import sys
 
 import numpy as np
 
-from datetime import datetime
+from log import log
 
 import tensorflow.keras
 import pandas as pd
@@ -22,11 +22,6 @@ from tensorflow.keras.optimizers import Adam
 
 WINDOW_SIZE = 300
 
-
-def log(message):
-    with open('model/output.txt', 'a') as file:
-        current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        file.write(f"{current_time}: {message}\n")
 
 def stock_to_X_y(stock, window_size):
     stock_as_np = np.array(stock)
@@ -101,25 +96,4 @@ class Model:
     def download_model(self, name_stock):
         log(f"In download_model: model/model_{name_stock}/")
         self.model = load_model('model/model_' + name_stock + '/')
-
-
-
-
-
-if __name__ == '__main__':
-    #X = pd.read_csv('data.csv')
-    #y = pd.read_csv('labales.csv')
-    #X_train, y_train = X[:2000], y[:2000]
-    #X_val, y_val = X[2000:3000], y[2000:3000]
-    #X_test, y_test = X[3000:], y[3000:]
-
-    model = Model()
-    #model.fit(X_train=X_train, y_train=y_train, X_val=X_val, y_val=y_val, window_size=8)
-    model.download_model()
-    from server import take_predict
-    #print(result.shape)
-    
-    print(take_predict({"lenpredict": '10', 'data': '1 2 3 4 5 6 7 8'}))
-
-    #print(model.predict(X_test))
 

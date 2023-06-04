@@ -3,8 +3,6 @@
 
 HTTPResponseToBoostAdapter::HTTPResponseToBoostAdapter(httpResponse &response):response_(&response){}
 
-httpResponse HTTPResponseToBoostAdapter::toBoost(){};
-
 void HTTPResponseToBoostAdapter::setStatus(int status_code){
     response_->result(boost::beast::http::status(status_code));
 };
@@ -14,7 +12,6 @@ void HTTPResponseToBoostAdapter::setHeader(const std::string &header, const std:
 void HTTPResponseToBoostAdapter::setBody(const std::string &bytes){
     response_->body() = bytes; 
 };
-std::string HTTPResponseToBoostAdapter::getURL(){};
 int HTTPResponseToBoostAdapter::getStatus(){
     return response_->result_int();
 };
@@ -37,8 +34,6 @@ std::map<std::string, std::string> HTTPResponseToBoostAdapter::getHeaders(){
 std::string HTTPResponseToBoostAdapter::getBody() {
     return response_->body();
 };
-
-
 
 
 HTTPRequestToBoostAdapter::HTTPRequestToBoostAdapter(httpRequest &request): request_(&request){};
@@ -79,4 +74,3 @@ std::map<std::string, std::string> HTTPRequestToBoostAdapter::getHeaders(){
 std::string HTTPRequestToBoostAdapter::getBoby(){
     return request_->body();
 };
-void HTTPRequestToBoostAdapter::toIRequest(httpRequest){};

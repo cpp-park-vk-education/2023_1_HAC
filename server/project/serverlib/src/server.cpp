@@ -1,15 +1,28 @@
 #include "server.h"
 #include "logger.h"
 
+const std::string api_model_config_path = "";
+const std::string api_stock_config_path = "";
+
+const std::string AUTHORIZATION_ACTION_HANDLE = "POST:AUTHORIZATION";
+const std::string REGISTRATION_ACTION_HANDLE = "POST:REGISTRATION";
+const std::string DELETE_COOKIE_ACTION_HANDLE = "POST:DELETECOOKIE";
+const std::string PREDICT_ACTION_HANDLE = "GET:PREDICT";
+const std::string PLOT_ACTION_HANDLE = "GET:PLOT";
+const std::string CHANGE_EMAIL_ACTION_HANDLE = "POST:CHANGE_USER_EMAIL_SETTINGS";
+const std::string CHANGE_PASSWORD_ACTION_HANDLE = "POST:CHANGE_USER_PASSWORD_SETTINGS";
+const std::string CHECK_COOKIE_ACTION_HANDLE = "POST:CHECKCOOKIE";
+const std::string GET_NAME_STOCKS_ACTION_HANDLE = "GET:NAME_STOCKS";
+
 Config Server::parseConfigFhomFile(const std::string& path_to_config_file) {
     std::ifstream config_stream (path_to_config_file);
     if (!config_stream) {
-        throw market_mentor::InvalidServerConfig("Wrong config path");
+        throw market_mentor::InvalidServerConfig("Wrong server config path");
     }
     std::string address, port, threads;
     config_stream >> address >> port >> threads;
     if (!address.length() || !port.length() || !threads.length()) {
-        // throw market_mentor::InvalidServerConfig("Invalid config data");
+        throw market_mentor::InvalidServerConfig("Invalid server config data");
     }  
     Config config;
     try {
@@ -18,7 +31,7 @@ Config Server::parseConfigFhomFile(const std::string& path_to_config_file) {
         config.threads = stoi(threads);
     } 
     catch(std::invalid_argument){
-        throw market_mentor::InvalidServerConfig("Invalid config data");
+        throw market_mentor::InvalidServerConfig("Invalid server config data");
     } 
     return config;
 }
@@ -26,9 +39,9 @@ Config Server::parseConfigFhomFile(const std::string& path_to_config_file) {
 Server::Server(const std::string& path_to_config_file) {
     
     std::unique_ptr<api::IAPIModelRequest> api_model 
-                   = std::make_unique<api::APIModelRequest>();
+                   = std::make_unique<api::APIModelRequest>(api_model_config_path);
     std::unique_ptr<api::IAPIStockRequest> api_stock
-                   = std::make_unique<api::APIStockRequest>();
+                   = std::make_unique<api::APIStockRequest>(api_stock_config_path);
     std::unique_ptr<dbcontroller::IDataBaseController> database_controller 
                    = std::make_unique<dbcontroller::DataBaseController>();
 
@@ -91,15 +104,15 @@ Server::Server(const std::string& path_to_config_file) {
         throw market_mentor::CreatingNullptr("Creating server error");
     }
 
-    setHandlers("POST:AUTHORIZATION", authorize_handler.get());
-    setHandlers("POST:REGISTRATION",  register_handler.get());
-    setHandlers("POST:DELETECOOKIE",  exit_handler.get());
-    setHandlers("GET:PREDICT",  predict_handler.get());
-    setHandlers("GET:PLOT",  show_plot_handler.get());
-    setHandlers("POST:CHANGE_USER_EMAIL_SETTINGS", change_email_handler.get());
-    setHandlers("POST:CHANGE_USER_PASSWORD_SETTINGS", change_password_handler.get());
-    setHandlers("POST:CHECKCOOKIE", nullptr);
-    setHandlers("GET:NAME_STOCKS", getname_stoks_handler.get());
+    setHandlers(AUTHORIZATION_ACTION_HANDLE, authorize_handler.get());
+    setHandlers(REGISTRATION_ACTION_HANDLE,  register_handler.get());
+    setHandlers(DELETE_COOKIE_ACTION_HANDLE,  exit_handler.get());
+    setHandlers(PREDICT_ACTION_HANDLE,  predict_handler.get());
+    setHandlers(PLOT_ACTION_HANDLE,  show_plot_handler.get());
+    setHandlers(CHANGE_EMAIL_ACTION_HANDLE, change_email_handler.get());
+    setHandlers(CHANGE_PASSWORD_ACTION_HANDLE, change_password_handler.get());
+    setHandlers(CHECK_COOKIE_ACTION_HANDLE, nullptr);
+    setHandlers(GET_NAME_STOCKS_ACTION_HANDLE, getname_stoks_handler.get());
 
     prtToIHandler global_router = std::make_unique<handlers::Router>(handlers_, middleware_controller.get());
 
@@ -116,7 +129,8 @@ Server::Server(const std::string& path_to_config_file) {
         ioc,
         tcp::endpoint{net::ip::make_address(config_.address), config_.port},router_adapter.get())->run();
 
-    logger.log("Server started with params: ip " + config_.address + " port " + std::to_string(config_.port) + " threads " + std::to_string(config_.threads));
+    logger.log("Server started with params: ip " + config_.address + " port " + std::to_string(config_.port) + 
+                                                                " threads " + std::to_string(config_.threads));
     std::vector<std::thread> v;
     v.reserve(config_.threads - 1);
     for(auto i = config_.threads - 1; i > 0; --i)
@@ -128,7 +142,7 @@ Server::Server(const std::string& path_to_config_file) {
     ioc.run();
     jobThread.join(); 
 };
+
 void Server::setHandlers(const std::string& header, handlers::IHandler* hendler) {
     handlers_.insert(std::pair<std::string, handlers::IHandler*>(header, hendler));
 };
-handlers::ProtocolAPI Server::parseAPIConfigFhomFile(const std::string& path_to_API_config){};

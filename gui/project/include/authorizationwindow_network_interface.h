@@ -3,13 +3,13 @@
 
 #include <memory>
 
+#include "../include/ionetwork_interface.h"
+#include "../include/usecase_authorizationwindow_interface.h"
+
 struct AuthInput {
     std::string login;
     std::string password;
 };
-#include "../include/ionetwork_interface.h"
-#include "../include/usecase_authorizationwindow_interface.h"
-//#include "../include/ionetwork_interface.h"
 
 class IONetworkInterface;
 using ptr_to_inetwork = std::shared_ptr<IONetworkInterface>;

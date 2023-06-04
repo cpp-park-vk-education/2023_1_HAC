@@ -5,10 +5,7 @@
 #include <QTime>
 #include <QElapsedTimer>
 
-#include <iostream>
-#include <chrono>
-#include <thread>
-
+static const QString PATH_TO_PICTURE = "../../project/loading.png";
 static const int LOAD_TIME_MSEC = 5 * 1000;
 
 LoadingWindow::LoadingWindow(QWidget *parent) :
@@ -29,10 +26,7 @@ LoadingWindow::LoadingWindow(QWidget *parent) :
     p.setColor(QPalette::Highlight, QColor(56, 27, 161));
     progress->setPalette(p);
 
-    //progress->setCo
-    //QPixmap image("/home/sofi_flin/Desktop/DB/MMM/gui/project/load.png");
-    //QPixmap image("../../project/load.png");
-    QPixmap image("../../project/loading.png");
+    QPixmap image(PATH_TO_PICTURE);
     QPixmap pixmapScaled = image.scaled(QSize(300,500),Qt::IgnoreAspectRatio,Qt::SmoothTransformation);
     image_label->setPixmap(pixmapScaled);
     percent = 1;
@@ -41,6 +35,12 @@ LoadingWindow::LoadingWindow(QWidget *parent) :
 LoadingWindow::~LoadingWindow()
 {
     delete ui;
+    delete image_label;
+}
+
+void LoadingWindow::setWindowManager(
+        ptr_to_iwindow_manager wind_manager_ptr) {
+    window_manager_ptr = wind_manager_ptr;
 }
 
 void LoadingWindow::perform_progress() {

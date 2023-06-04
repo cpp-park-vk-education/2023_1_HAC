@@ -13,7 +13,6 @@ public:
     }
     void onGetRegistrationResponse(const Error& error_state) override {}
     void setUser(const std::string user) override {}
-    std::string getUrl() override {}
     void setUrl(const std::string url) override {}
     RegInput reg_params_;
 };
@@ -69,7 +68,7 @@ public:
     override {}
     void setRegistrationNetwork(ptr_to_iregistration_network reg_net_ptr)
     override {}
-    ptr_to_iregistration_window getRegistrationWindow() override {}
+    ptr_to_iregistration_window getRegistrationWindow() override {return nullptr;}
     void regHandler(const std::string& email,
                     const std::string& login,
                     const std::string& password,
@@ -83,8 +82,6 @@ public:
     void setUser(const std::string &user) override {
         user_ = user;
     }
-    std::string getUrl() override {}
-    void setUrl(const std::string &url) override {}
     void openAuthorizationWindow() override {}
     std::string error_type;
     std::string user_;

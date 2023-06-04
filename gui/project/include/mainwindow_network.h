@@ -1,9 +1,10 @@
 #ifndef MAINWINDOW_NETWORK_H
 #define MAINWINDOW_NETWORK_H
 
-#include "../include/mainwindow_network_interface.h"
 #include <string>
 #include <sstream>
+
+#include "../include/mainwindow_network_interface.h"
 
 class NetworkMainWindow : public INetworkMainWindow {
 public:

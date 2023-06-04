@@ -18,9 +18,8 @@ public:
                             const std::vector<std::string>& x_predict) = 0;
     virtual void showErrorMessage() = 0;
     virtual void createErrorMessage(const Error& error_message) = 0;
-
-    virtual void start_actions(const std::vector<std::string>& action_strs) = 0;
-    virtual void get_actions_data() = 0;
+    virtual void startActions(const std::vector<std::string>& action_strs) = 0;
+    virtual void getActionsData() = 0;
 };
 
 #endif // MAINWINDOW_INTERFACE_H

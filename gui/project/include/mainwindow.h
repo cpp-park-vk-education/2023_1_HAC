@@ -1,17 +1,16 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
+#include <vector>
+#include <iostream>
+
 #include <QWidget>
 #include <QPushButton>
 #include <QVector>
 #include <QErrorMessage>
 #include <QDebug>
-#include <vector>
-#include <iostream>
 #include <QSignalMapper>
 #include <QVector>
-//#include <QList>
-
 #include <qcustomplot.h>
 
 #include "../include/mainwindow_interface.h"
@@ -35,19 +34,17 @@ public:
     void showErrorMessage() override;
     void createErrorMessage(const Error& error_message) override;
 
-    //QPushButton* get_apple_btn();
-    QPushButton* get_predict_btn();
-    QPushButton* get_user_set_btn();
+    QPushButton* getPredictBtn();
+    QPushButton* getUserSetBtn();
 
-    void start_actions(const std::vector<std::string>& action_strs) override;
-    void get_actions_data() override;
+    void startActions(const std::vector<std::string>& action_strs) override;
+    void getActionsData() override;
 
-    void start_plot(const std::string& stock);
+    void startPlot(const std::string& stock);
 
 public slots:
-    //void start_apple_plot();
-    void start_predict();
-    void open_user_set();
+    void startPredict();
+    void openUserSet();
 
 private slots:
     void slotMousePress(QMouseEvent * event);
@@ -57,10 +54,9 @@ private:
     Ui::MainWindow *ui;
     ptr_to_main_handler main_handler_ptr;
 
-    //QPushButton* btn_apple;
     QPushButton* btn_predict;
     QPushButton* btn_user_set;
-    QErrorMessage* errorMes;
+    QErrorMessage* error_mes_;
     QVector<double> y;
     QVector<double> y_new;
     QVector<std::string> x_dates;
@@ -70,17 +66,15 @@ private:
 
     int predict_parm;
 
-    QSignalMapper *mapper;
     QVector<QPushButton*> actions;
     int counter;
 
-    QCustomPlot *customPlot;    // Объявляем графическое полотно
-    QCPGraph *graphic;          // Объявляем график
+    QCustomPlot *custom_plot;    // Объявляем графическое полотно
     QCPCurve *verticalLine;     // Объявляем объект для вертикальной линии
     QCPItemTracer *tracer;      // Трасировщик по точкам графика
 
     std::string stock_name;
-    double mi, ma, curenti;
+    double min_el, max_el, current_x;
 };
 
 #endif // MAINWINDOW_H

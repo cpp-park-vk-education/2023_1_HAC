@@ -102,8 +102,6 @@ public:
     void getActionsDataHandler() override {}
     void setActionsDataHandler(std::istream& network_output) override {}
     void sendError(const Error &error_message) override {}
-    std::string getUrl() override {}
-    void setUrl(const std::string& url) override {}
     void openUserSettings() override {}
     std::string out;
 };
@@ -122,8 +120,6 @@ public:
     void sendError(const Error &error_message) override {
         error_type = error_message.type;
     }
-    std::string getUrl() override {}
-    void setUrl(const std::string& url) override {}
     void openUserSettings() override {}
     std::string error_type;
 };

@@ -5,14 +5,11 @@
 #include <QStackedWidget>
 
 #include "../include/guicontroller_interface.h"
-
-//#include "../include/authorizationwindow.h"
 #include "../include/mainwindow.h"
 #include "../include/registrationwindow.h"
 #include "../include/settings/usersettingswindow.h"
 #include "../include/settings/passwordsettingswindow.h"
 #include "../include/settings/emailsettingswindow.h"
-
 #include "../include/loadingwindow.h"
 
 class AuthorizationWindow;
@@ -41,14 +38,10 @@ class INetworkRegistrationWindow;
 using ptr_to_iregistration_network =
         std::shared_ptr<INetworkRegistrationWindow>;
 
-class IHandlerUserSettingsWindow;
-using ptr_to_mainsettings_handler = std::shared_ptr<IHandlerUserSettingsWindow>;
 class IHandlerPasswordSettingsWindow;
 using ptr_to_passwordsettings_handler = std::shared_ptr<IHandlerPasswordSettingsWindow>;
 class IHandlerEmailSettingsWindow;
 using ptr_to_emailsettings_handler = std::shared_ptr<IHandlerEmailSettingsWindow>;
-class IHandlerUserSettingsWindow;
-using ptr_to_mainsettings_handler = std::shared_ptr<IHandlerUserSettingsWindow>;
 class INetworkUserSettingsWindow;
 using ptr_to_isettings_network = std::shared_ptr<INetworkUserSettingsWindow>;
 
@@ -65,13 +58,7 @@ public:
     GUIController(QWidget *parent = nullptr);
     ~GUIController();
 
-    void openMainWindow() override {
-        if (first_time_in_main) {
-            main_window->get_actions_data();
-            first_time_in_main = false;
-        }
-        pages->setCurrentIndex(1);
-    };
+    void openMainWindow() override;
     void openAuthorizationWindow() override;
     void openRegistrationWindow() override;
     void openUserSettingsWindow() override;
@@ -79,14 +66,8 @@ public:
     void openEmailSettingsWindow() override;
 
 
-    std::string getUser() override {
-        return user_;
-    };
-    std::string getUrl() override {};
-    void setUser(const std::string user) override {
-        user_ = user;
-    };
-
+    std::string getUser() override;
+    void setUser(const std::string& user) override;
     void stop_timer() override;
     void set_start_status(const std::string& status) override {
         start_status = status;
@@ -134,7 +115,5 @@ private:
     bool first_time_in_main;
 
     QTimer* timer;
-
-    //созданние usecase and network_inner as well
 };
 #endif // GUICONTROLLER_H

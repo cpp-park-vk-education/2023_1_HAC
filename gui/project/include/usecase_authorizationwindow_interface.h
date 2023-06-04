@@ -32,12 +32,10 @@ public:
     virtual void passToMain(const std::string& user) = 0;
     virtual void sendError(const Error& error_message) = 0;
     virtual void setUser(const std::string& user) = 0;
-    virtual std::string getUser() = 0;
-    //virtual std::string getUrl() = 0;
-    //virtual void setUrl(const std::string& url) = 0;
-    virtual void check_cookie() = 0;
+    virtual void checkCookie() = 0;
     virtual void openRegistrationWindow() = 0;
-    virtual void checked_cookie(const std::string& user, const std::string& status) = 0;
+    virtual void checkedCookie(const std::string& user, const std::string&
+    status) = 0;
 };
 
 #endif // USECASE_AUTHORIZATIONWINDOW_INTERFACE_H

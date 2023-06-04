@@ -1,14 +1,16 @@
 #include "utils.h"
 
 #include "ionetwork_interface.h"
-#include "usecase_passwordsettingswindow.h"
-#include "passwordsettingswindow_interface.h"
-#include "usersettingswindow_network.h"
+#include "settings/usecase_passwordsettingswindow.h"
+#include "settings/passwordsettingswindow_interface.h"
+#include "settings/usersettingswindow_network.h"
 
 class MNetworkUserSettingsWindow : public INetworkUserSettingsWindow {
 public:
-    void setUserPasswordSettingsHandler(ptr_to_passwordsettings_handler set_passwordhandler_ptr) override;
-    void setUserEmailSettingsHandler(ptr_to_emailsettings_handler set_emailhandler_ptr) override;
+    void setUserPasswordSettingsHandler(ptr_to_passwordsettings_handler
+    set_passwordhandler_ptr) override {}
+    void setUserEmailSettingsHandler(ptr_to_emailsettings_handler
+    set_emailhandler_ptr) override {}
     void setUserSettingsNetwork(ptr_to_inetwork net_ptr) override {}
     void getUserPasswordSettings(const ConfirmEdit& confirm_passwords) override {
         confirm_params = confirm_passwords;
@@ -27,16 +29,16 @@ public:
 class MIONetworkInterface: public IONetworkInterface {
 public:
 
-    void PostRequest(const std::string& url, const std::string& body, std::function<void(const Error& error_state)> callback) {
+    void PostRequest(const std::string& url, const std::string& body, std::function<void(const Error& error_state)> callback) override {
         url_ = url;
     }
 
     void GetRequest(const std::string& url, std::istream& body, std::function<void(std::istream& network_output,
                                     const Error& error_state)> callback) override {}
 
-    virtual void setConfig(const std::string& host) { }
-    void setCookie(const std::string& cookie_data) override;
-    void setWindowManager(ptr_to_iwindow_manager wind_manager_ptr) override;
+    void setConfig(const std::string& host) override { }
+    void setCookie(const std::string& cookie_data) override {}
+    void setWindowManager(ptr_to_iwindow_manager wind_manager_ptr) override{}
 
     std::string url_;
 };
@@ -106,7 +108,7 @@ public:
     void setWindowManager(ptr_to_iwindow_manager wind_manager_ptr) override {}
     void setPasswordSettingsWindowHandler(ptr_to_ipasswordsettings_window user_set_ptr) override {}
     void setUserSettingsNetwork(ptr_to_isettings_network settings_net_ptr) override {}
-    ptr_to_ipasswordsettings_window getPasswordSettingsWindow() override {}
+    ptr_to_ipasswordsettings_window getPasswordSettingsWindow() override {return nullptr;}
     void sendError(const Error &error_message) override {
         error_type = error_message.type;
     }
@@ -114,12 +116,12 @@ public:
     void confirmHandler(const std::string& old_password,
                         const std::string& new_password,
                         const std::string&  repeat_password) override {}
-    std::string getUser() override {}
+    std::string getUser() override {return{};}
     void setUser(const std::string &user) override {}
     std::string error_type;
 };
 
-//check that getEditUserSettings is called from ConfirmHandler
+//check that getEditUserSettings is called from confirmHandler
 TEST(PasswordSetQtLogicTest, TestUserSettingsHandler) {
     UseCasePasswordSettingsWindow handler_user_set;
     MNetworkUserSettingsWindow net_user_set;
@@ -187,9 +189,9 @@ TEST(PasswordSetQtLogicTest, TestUserSettingsNewNotConfirmed) {
 //check if new password is empty
 TEST(PasswordSetQtLogicTest, TestUserSettingsNewIsEmpty) {
     UseCasePasswordSettingsWindow handler_user_set;
-    StubMPasswordSettingsWindow  user_set_window;
-    std::shared_ptr<StubMPasswordSettingsWindow> ptr_to_user_set_window =
-            std::make_shared<StubMPasswordSettingsWindow>(user_set_window);
+    NewPassSettingsWindow  user_set_window;
+    std::shared_ptr<NewPassSettingsWindow> ptr_to_user_set_window =
+            std::make_shared<NewPassSettingsWindow>(user_set_window);
     handler_user_set.setPasswordSettingsWindowHandler(ptr_to_user_set_window);
     handler_user_set.confirmHandler(handler_user_set
                                             .getPasswordSettingsWindow()->getOldPassword(),
@@ -197,7 +199,7 @@ TEST(PasswordSetQtLogicTest, TestUserSettingsNewIsEmpty) {
                                             .getPasswordSettingsWindow()->getNewPassword(),
                                     handler_user_set
                                             .getPasswordSettingsWindow()->getRepeatPassword());
-    std::string expected = "BadNewPassword";
+    std::string expected = "BadPassword";
     EXPECT_EQ(expected, ptr_to_user_set_window->error_message_.type);
 }
 
@@ -214,10 +216,11 @@ TEST(PasswordSetQtLogicTest, TestUserSettingsOldIsEmpty) {
                                             .getPasswordSettingsWindow()->getNewPassword(),
                                     handler_user_set
                                             .getPasswordSettingsWindow()->getRepeatPassword());
-    std::string expected = "BadOldPassword";
+    std::string expected = "BadPassword";
     EXPECT_EQ(expected, ptr_to_user_set_window->error_message_.type);
 }
 
+//check if error is set
 TEST(PasswordSetQtLogicTest, TestUserSettingsErrorRespose) {
     NetworkUserSettingsWindow net_user_set;
     MockUseCaseUserSettingsWindow handler_user_set;

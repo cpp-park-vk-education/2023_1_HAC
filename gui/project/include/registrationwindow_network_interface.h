@@ -4,14 +4,14 @@
 #include <memory>
 #include <string>
 
+#include "../include/ionetwork_interface.h"
+#include "../include/usecase_registrationwindow_interface.h"
+
 struct RegInput {
     std::string email;
     std::string login;
     std::string password;
 };
-
-#include "../include/ionetwork_interface.h"
-#include "../include/usecase_registrationwindow_interface.h"
 
 class IHandlerRegistrationWindow;
 using ptr_to_registration_handler = std::shared_ptr<IHandlerRegistrationWindow>;
@@ -26,7 +26,6 @@ public:
     virtual void getRegistration(const RegInput& reg_params) = 0;
     virtual void onGetRegistrationResponse(const Error& error_state) = 0;
     virtual void setUser(const std::string user) = 0;
-    virtual std::string getUrl() = 0;
     virtual void setUrl(const std::string url) = 0;
 };
 

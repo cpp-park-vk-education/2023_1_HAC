@@ -19,15 +19,11 @@ set(PROJECT_SOURCES
 
         src/guicontroller.cpp
         src/authorizationwindow.cpp
-        src/usecase_authorizationwindow.cpp
         src/mainwindow.cpp
         src/registrationwindow.cpp
-        # src/usersettingswindow.cpp
         src/ionetwork.cpp
-        # src/usersettingswindow_network.cpp
-        # src/usecase_usersettingswindow.cpp
         src/authorizationwindow_network.cpp
-        src/usecase_authorization_window.cpp
+        src/usecase_authorizationwindow.cpp
 
         src/settings/usersettingswindow.cpp
         src/settings/usersettingswindow_network.cpp
@@ -77,12 +73,6 @@ set(PROJECT_SOURCES
         include/usecase_mainwindow_interface.h
         include/mainwindow_network.h
         include/mainwindow_network_interface.h
-
-        # include/usersettingswindow.h
-        # include/usersettingswindow_interface.h
-        # include/usecase_usersettingswindow.h
-        # include/usersettingswindow_network.h
-        # include/usersettingswindow_network_interface.h
         
         include/settings/usersettingswindow.h
         include/settings/usersettingswindow_interface.h

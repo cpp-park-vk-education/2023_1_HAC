@@ -2,24 +2,22 @@
 #include "repositories.hpp"
 #include "repositorycache.hpp"
 
-using namespace repository;
-
 const int kTimeSeriesCacheSize = 5;
 const int kStocksCacheSize = 1;
 
-TimeSeriesRepository::TimeSeriesRepository(): database_(nullptr), 
-        timeseries_cache_(std::make_shared<RepositoryCache<std::string, TimeSeriesData>>(kTimeSeriesCacheSize)),
-        stocks_cache_(std::make_shared<RepositoryCache<std::string, AllStocks>>(kStocksCacheSize)) {
+repository::TimeSeriesRepository::TimeSeriesRepository(): database_(nullptr), 
+        timeseries_cache_(std::make_shared<cache::RepositoryCache<std::string, TimeSeriesData>>(kTimeSeriesCacheSize)),
+        stocks_cache_(std::make_shared<cache::RepositoryCache<std::string, AllStocks>>(kStocksCacheSize)) {
 }
 
 
-TimeSeriesRepository::TimeSeriesRepository(const std::shared_ptr<IDataBase>& db): database_(db),
-        timeseries_cache_(std::make_shared<RepositoryCache<std::string, TimeSeriesData>>(kTimeSeriesCacheSize)),
-        stocks_cache_(std::make_shared<RepositoryCache<std::string, AllStocks>>(kStocksCacheSize)) {
+repository::TimeSeriesRepository::TimeSeriesRepository(const std::shared_ptr<database::IDataBase>& db): database_(db),
+        timeseries_cache_(std::make_shared<cache::RepositoryCache<std::string, TimeSeriesData>>(kTimeSeriesCacheSize)),
+        stocks_cache_(std::make_shared<cache::RepositoryCache<std::string, AllStocks>>(kStocksCacheSize)) {
 }
 
 
-bool TimeSeriesRepository::Insert(const std::shared_ptr<TimeSeriesData>& data){
+bool repository::TimeSeriesRepository::Insert(const std::shared_ptr<TimeSeriesData>& data){
     if (!database_->IsOpen()) {
         return false;
     }    
@@ -37,7 +35,7 @@ bool TimeSeriesRepository::Insert(const std::shared_ptr<TimeSeriesData>& data){
     return result;    
 }
 
-bool TimeSeriesRepository::InsertArray(const std::shared_ptr<TimeSeriesData>& data) {
+bool repository::TimeSeriesRepository::InsertArray(const std::shared_ptr<TimeSeriesData>& data) {
     if (!database_->IsOpen()) {
         return false;
     }    
@@ -69,7 +67,7 @@ bool TimeSeriesRepository::InsertArray(const std::shared_ptr<TimeSeriesData>& da
 }
 
 
-std::shared_ptr<TimeSeriesData> TimeSeriesRepository::TimeSeriesResponseParse(const Json::Value& db_response) {
+std::shared_ptr<TimeSeriesData> repository::TimeSeriesRepository::TimeSeriesResponseParse(const Json::Value& db_response) {
     const int kTimeSeriesId = 0;
     const int kNameId = 1;
     const int kParamId = 3;
@@ -99,8 +97,9 @@ std::shared_ptr<TimeSeriesData> TimeSeriesRepository::TimeSeriesResponseParse(co
 }
 
 
-std::shared_ptr<TimeSeriesData> TimeSeriesRepository::GetByKey(const std::string& name_stock, const size_t& len_lags, 
-                                const std::string& start_date /* = "" */, const std::string& finish_date /* = "" */) {
+std::shared_ptr<TimeSeriesData> repository::TimeSeriesRepository::GetByKey(const std::string& name_stock,
+                                const size_t& len_lags, const std::string& start_date /* = "" */, 
+                                const std::string& finish_date /* = "" */) {
 
     std::string key = name_stock + "::" + std::to_string(len_lags);
     if (timeseries_cache_->Has(key)) {
@@ -142,7 +141,7 @@ std::shared_ptr<TimeSeriesData> TimeSeriesRepository::GetByKey(const std::string
     return result;
 }
 
-std::shared_ptr<AllStocks> TimeSeriesRepository::StocksResponseParse(const Json::Value& db_response) {
+std::shared_ptr<AllStocks> repository::TimeSeriesRepository::StocksResponseParse(const Json::Value& db_response) {
     if (db_response.size() == 0) {
         return nullptr;
     }
@@ -161,7 +160,7 @@ std::shared_ptr<AllStocks> TimeSeriesRepository::StocksResponseParse(const Json:
     return result;
 }
 
-std::shared_ptr<AllStocks> TimeSeriesRepository::GetAllStocks() { 
+std::shared_ptr<AllStocks> repository::TimeSeriesRepository::GetAllStocks() { 
     if (!database_->IsOpen()) {
         return nullptr;
     }   

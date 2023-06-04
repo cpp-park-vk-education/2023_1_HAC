@@ -1,16 +1,12 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
 #include "repositories.hpp"
-// #include "tokenrepository.hpp"
 
 using ::testing::Return;
 using ::testing::Throw;
 using ::testing::_;
 
-using namespace repository;
-using namespace database;
-
-class DatabaseMock: public IDataBase {
+class DatabaseMock: public database::IDataBase {
 public:
     ~DatabaseMock() = default;
     MOCK_METHOD(bool, IsOpen, (),(override));
@@ -20,7 +16,7 @@ public:
     MOCK_METHOD(bool, Connect,(), (override));
 };
 
-class MemoryDatabaseMock: public IMemoryDataBase {
+class MemoryDatabaseMock: public database::IMemoryDataBase {
 public:
     ~MemoryDatabaseMock() = default;
     MOCK_METHOD(bool, IsOpen, (),(override));
@@ -36,16 +32,19 @@ public:
 
 class RepositoryTest: public ::testing::Test {
 public:
-    RepositoryTest(): db(new DatabaseMock), redis(new MemoryDatabaseMock), client_rep(new ClientRepository(db)),
-         timeseries_rep(new TimeSeriesRepository(db)) , sub_rep(new SubscriptionRepository(db)), token_rep(new TokenRepository(redis)) {}
+    RepositoryTest(): db(new DatabaseMock), redis(new MemoryDatabaseMock), 
+            client_rep(new repository::ClientRepository(db)),
+            timeseries_rep(new repository::TimeSeriesRepository(db)) , 
+            sub_rep(new repository::SubscriptionRepository(db)), 
+            token_rep(new repository::TokenRepository(redis)) {}
 
 protected:
     std::shared_ptr<DatabaseMock> db;
     std::shared_ptr<MemoryDatabaseMock> redis;
-    std::shared_ptr<IClientRepository> client_rep;
-    std::shared_ptr<ITimeSeriesRepository> timeseries_rep;
-    std::shared_ptr<ISubscriptionRepository> sub_rep;
-    std::shared_ptr<ITokenRepository> token_rep;
+    std::shared_ptr<repository::IClientRepository> client_rep;
+    std::shared_ptr<repository::ITimeSeriesRepository> timeseries_rep;
+    std::shared_ptr<repository::ISubscriptionRepository> sub_rep;
+    std::shared_ptr<repository::ITokenRepository> token_rep;
 };
 
 

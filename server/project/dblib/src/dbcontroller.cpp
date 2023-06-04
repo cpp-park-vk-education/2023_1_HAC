@@ -4,23 +4,26 @@
 #include "redisserver.hpp"
 #include "postgresserver.hpp"
 
-using namespace dbcontroller;
-
-DataBaseController::DataBaseController(): postgres_database_ (std::make_shared<PostgresServer>(postgres_host_addr_, 
-                postgres_port_, postgres_db_name_, postgres_user_, postgres_password_)), 
-                redis_database_(std::make_shared<RedisServer>(redis_host_addr_, redis_port_, redis_password_)) {
+dbcontroller::DataBaseController::DataBaseController(): postgres_database_ 
+        (std::make_shared<database::PostgresServer>(postgres_host_addr_,  
+        postgres_port_, postgres_db_name_, postgres_user_, postgres_password_)), 
+        redis_database_(std::make_shared<database::RedisServer>(redis_host_addr_, redis_port_, redis_password_)) {
 }
 
 
-DataBaseController::DataBaseController(const std::shared_ptr<IDataBase>& sql_db, const std::shared_ptr<IMemoryDataBase>& no_sqldb,
-        const std::shared_ptr<IClientRepository>& client_rep, const std::shared_ptr<ITimeSeriesRepository>& timeseries_rep, 
-        const std::shared_ptr<ISubscriptionRepository>& subscription_rep, const std::shared_ptr<ITokenRepository>& token_rep): 
-        postgres_database_(sql_db), redis_database_(no_sqldb), clien_rep_(client_rep), timeseries_rep_(timeseries_rep), 
+dbcontroller::DataBaseController::DataBaseController(const std::shared_ptr<database::IDataBase>& sql_db, 
+        const std::shared_ptr<database::IMemoryDataBase>& no_sqldb,
+        const std::shared_ptr<repository::IClientRepository>& client_rep, 
+        const std::shared_ptr<repository::ITimeSeriesRepository>& timeseries_rep, 
+        const std::shared_ptr<repository::ISubscriptionRepository>& subscription_rep, 
+        const std::shared_ptr<repository::ITokenRepository>& token_rep): 
+        postgres_database_(sql_db), redis_database_(no_sqldb), 
+        clien_rep_(client_rep), timeseries_rep_(timeseries_rep), 
         subscription_rep_(subscription_rep), token_rep_(token_rep) {
 }
 
 
-bool DataBaseController::ConnectToDatabase() {
+bool dbcontroller::DataBaseController::ConnectToDatabase() {
     if (!postgres_database_->Connect()) {
         std::cerr << "Can't connect to Postgres" << std::endl;
         return false;
@@ -31,16 +34,17 @@ bool DataBaseController::ConnectToDatabase() {
         return false;
     }
 
-    clien_rep_ = std::make_shared<ClientRepository>(postgres_database_);
-    timeseries_rep_ = std::make_shared<TimeSeriesRepository>(postgres_database_);
-    subscription_rep_ = std::make_shared<SubscriptionRepository>(postgres_database_);
-    token_rep_ = std::make_shared<TokenRepository>(redis_database_);
+    clien_rep_ = std::make_shared<repository::ClientRepository>(postgres_database_);
+    timeseries_rep_ = std::make_shared<repository::TimeSeriesRepository>(postgres_database_);
+    subscription_rep_ = std::make_shared<repository::SubscriptionRepository>(postgres_database_);
+    token_rep_ = std::make_shared<repository::TokenRepository>(redis_database_);
     return true;
 }
 
 
-void DataBaseController::SetDatabaseConfig(const std::string&  addr, const std::string&  port,
+void dbcontroller::DataBaseController::SetDatabaseConfig(const std::string&  addr, const std::string&  port,
          const std::string&  db_name, const std::string&  user, const std::string&  pass) {
+
     postgres_host_addr_ = addr;
     postgres_port_ = port;
     postgres_db_name_ = db_name;
@@ -49,7 +53,9 @@ void DataBaseController::SetDatabaseConfig(const std::string&  addr, const std::
 }
 
 
-void DataBaseController::SetMemoryDatabaseConfig(const std::string& addr, const std::string&  port, const std::string&  pass) {
+void dbcontroller::DataBaseController::SetMemoryDatabaseConfig(const std::string& addr, 
+            const std::string&  port, const std::string&  pass) {
+
     redis_host_addr_ = addr;
     redis_password_ = pass;
     try {
@@ -62,7 +68,7 @@ void DataBaseController::SetMemoryDatabaseConfig(const std::string& addr, const 
 }
 
 
-bool DataBaseController::DatabaseIsOpen() {
+bool dbcontroller::DataBaseController::DatabaseIsOpen() {
     if (!postgres_database_.get()) {
         return false;
     }
@@ -75,7 +81,7 @@ bool DataBaseController::DatabaseIsOpen() {
 }
 
 
-bool DataBaseController::MemoryDatabaseIsOpen() {
+bool dbcontroller::DataBaseController::MemoryDatabaseIsOpen() {
     if (!redis_database_.get()) {
         return false;
     }
@@ -88,7 +94,7 @@ bool DataBaseController::MemoryDatabaseIsOpen() {
 }
 
 
-Json::Value DataBaseController::DataRequest(const Json::Value& request) noexcept {
+Json::Value dbcontroller::DataBaseController::DataRequest(const Json::Value& request) noexcept {
     Json::Value response; 
     if (request["Type"] == GET_REQUEST) {
         GetRequestRouter(request, response);
@@ -102,7 +108,8 @@ Json::Value DataBaseController::DataRequest(const Json::Value& request) noexcept
 }
 
 
-void DataBaseController::GetRequestRouter(const Json::Value& request, Json::Value& response) {
+void dbcontroller::DataBaseController::GetRequestRouter(const Json::Value& request, 
+        Json::Value& response) {
     // Получить таймсерии
     if (request["TypeData"] == TIMESERIES_REQUEST) {
         response = TimeSeriesGet(request);
@@ -126,7 +133,8 @@ void DataBaseController::GetRequestRouter(const Json::Value& request, Json::Valu
 }
 
 
-void DataBaseController::PostRequestRouter(const Json::Value& request, Json::Value& response) {
+void dbcontroller::DataBaseController::PostRequestRouter(const Json::Value& request, 
+        Json::Value& response) {
     // Получить данные пользователя
     if (request["TypeData"] == AUTHORIZATION) {
         std::string key = response["token"].asString();
@@ -162,7 +170,7 @@ void DataBaseController::PostRequestRouter(const Json::Value& request, Json::Val
 }
 
 // Таймсерии и акции 
-Json::Value DataBaseController::TimeSeriesPost(const Json::Value& data) {
+Json::Value dbcontroller::DataBaseController::TimeSeriesPost(const Json::Value& data) {
     Json::Value response; 
     if (!DatabaseIsOpen()) {
         response["status"] = false;
@@ -180,7 +188,7 @@ Json::Value DataBaseController::TimeSeriesPost(const Json::Value& data) {
     return response;
 }
 
-Json::Value DataBaseController::TimeSeriesFill(const Json::Value& data) {
+Json::Value dbcontroller::DataBaseController::TimeSeriesFill(const Json::Value& data) {
     Json::Value response; 
     if (!DatabaseIsOpen()) {
         response["status"] = false;
@@ -199,7 +207,7 @@ Json::Value DataBaseController::TimeSeriesFill(const Json::Value& data) {
 }
 
 
-Json::Value DataBaseController::TimeSeriesGet(const Json::Value& data) {
+Json::Value dbcontroller::DataBaseController::TimeSeriesGet(const Json::Value& data) {
     Json::Value response;
     if (!DatabaseIsOpen()) {
         response["status"] = false;
@@ -248,7 +256,7 @@ Json::Value DataBaseController::TimeSeriesGet(const Json::Value& data) {
 }
 
 
-Json::Value DataBaseController::StocksGet() {
+Json::Value dbcontroller::DataBaseController::StocksGet() {
     Json::Value response;
     if (!DatabaseIsOpen()) {
         response["status"] = false;
@@ -270,7 +278,7 @@ Json::Value DataBaseController::StocksGet() {
 }
 
 // Клиент
-Json::Value DataBaseController::ClientRequestPost(const Json::Value& data) {
+Json::Value dbcontroller::DataBaseController::ClientRequestPost(const Json::Value& data) {
     Json::Value response;
     if (!DatabaseIsOpen()) {
         response["status"] = false;
@@ -289,7 +297,8 @@ Json::Value DataBaseController::ClientRequestPost(const Json::Value& data) {
 }
 
 
-Json::Value DataBaseController::ClientRequestGet(const TypeData& request_type, const std::string& key) {
+Json::Value dbcontroller::DataBaseController::ClientRequestGet(const TypeData& request_type, const std::string& key) {
+
     Json::Value response;
     if (!DatabaseIsOpen()) {
         response["status"] = false;
@@ -318,7 +327,7 @@ Json::Value DataBaseController::ClientRequestGet(const TypeData& request_type, c
 }
 
 
-Json::Value DataBaseController::ClientRequestUpdate(const Json::Value& data) {
+Json::Value dbcontroller::DataBaseController::ClientRequestUpdate(const Json::Value& data) {
     Json::Value response;
     if (!DatabaseIsOpen()) {
         response["status"] = false;
@@ -345,7 +354,7 @@ Json::Value DataBaseController::ClientRequestUpdate(const Json::Value& data) {
 
 // Токен
 
-Json::Value DataBaseController::TokenRequestGet(const Json::Value& request) {
+Json::Value dbcontroller::DataBaseController::TokenRequestGet(const Json::Value& request) {
     Json::Value response;
     if (!MemoryDatabaseIsOpen()) {
         response["status"] = false;
@@ -368,7 +377,7 @@ Json::Value DataBaseController::TokenRequestGet(const Json::Value& request) {
     return response;    
 }
 
-Json::Value DataBaseController::TokenRequestPost(const Json::Value& request) {
+Json::Value dbcontroller::DataBaseController::TokenRequestPost(const Json::Value& request) {
     Json::Value response;
     if (!MemoryDatabaseIsOpen()) {
         response["status"] = false;
@@ -394,7 +403,7 @@ Json::Value DataBaseController::TokenRequestPost(const Json::Value& request) {
     return response;
 }
 
-Json::Value DataBaseController::TokenRequestDelete(const std::string& key) {
+Json::Value dbcontroller::DataBaseController::TokenRequestDelete(const std::string& key) {
     Json::Value response;
     if (!MemoryDatabaseIsOpen()) {
         response["status"] = false;

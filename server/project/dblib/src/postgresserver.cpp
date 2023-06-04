@@ -1,19 +1,17 @@
 #include <iostream>
 #include "postgresserver.hpp"
 
-using namespace database;
-
-PostgresServer::PostgresServer(): host_addr_("0.0.0.0"), port_("5433"), db_name_("marketmentor"),
+database::PostgresServer::PostgresServer(): host_addr_("0.0.0.0"), port_("5433"), db_name_("marketmentor"),
      user_("marketmentor_server"), password_("marketmentor_password") {
 }
 
-PostgresServer::PostgresServer(const std::string&  addr, const std::string&  port,
+database::PostgresServer::PostgresServer(const std::string&  addr, const std::string&  port,
          const std::string&  db_name, const std::string&  user, const std::string&  pass): host_addr_(addr),
         port_(port), db_name_(db_name), user_(user), password_(pass) {
 }
 
 
-bool PostgresServer::IsOpen() {
+bool database::PostgresServer::IsOpen() {
     if (conn_ == nullptr) {
         return false;
     }
@@ -22,7 +20,7 @@ bool PostgresServer::IsOpen() {
 }
 
 
-bool PostgresServer::Connect() {
+bool database::PostgresServer::Connect() {
     std::string connecting_string = "dbname = " + db_name_+ " user = " + user_ + " password = " + password_ +
         " hostaddr = " + host_addr_ + " port = " + port_;
     std::cout << connecting_string << std::endl;
@@ -38,7 +36,7 @@ bool PostgresServer::Connect() {
 }
 
 
-bool PostgresServer::SendQuery(const std::string& query) {
+bool database::PostgresServer::SendQuery(const std::string& query) {
 pqxx::work transaction{*conn_};
     try{
         transaction.exec(query);
@@ -61,7 +59,7 @@ pqxx::work transaction{*conn_};
     return true;   
 }
 
-Json::Value PostgresServer::GetRow(const std::string& query) {
+Json::Value database::PostgresServer::GetRow(const std::string& query) {
     pqxx::nontransaction tx{*conn_};
     pqxx::row row;
     try {
@@ -94,7 +92,7 @@ Json::Value PostgresServer::GetRow(const std::string& query) {
     return result;
 }
 
-Json::Value PostgresServer::GetData(const std::string& query) {
+Json::Value database::PostgresServer::GetData(const std::string& query) {
     pqxx::nontransaction tx{*conn_};
     pqxx::result table;
     

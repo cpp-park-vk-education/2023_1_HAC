@@ -58,7 +58,6 @@ public:
     MOCK_METHOD(void, setStatus, (int status_code), (override));
     MOCK_METHOD(void, setHeader, (const std::string &header, const std::string &value), (override));
     MOCK_METHOD(void, setBody, (const std::string &bytes), (override));
-    MOCK_METHOD(std::string, getURL, (), (override));
     MOCK_METHOD(int, getStatus, (), (override));
     MOCK_METHOD((std::map<std::string, std::string>), getHeaders, (), (override));
     MOCK_METHOD(std::string, getBody, (), (override));

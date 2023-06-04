@@ -64,25 +64,33 @@ TEST_F(ShowPlotHandlerTest, CheckCorrectNegativeResponseIncorrectNameTokens) {
 TEST_F(ShowPlotHandlerTest, CheckCorrectPositiveResponseAndCorrectJSONPass) {
     handlers::ShowPlotHandler showplot_handler(ptr_showplot_controller);
 
-    EXPECT_CALL(*http_request, getURL()).WillOnce(Return("/?name=test&lag=8"));
+    EXPECT_CALL(*http_request, getURL()).WillOnce(Return("/?name=test&lag=4"));
 
     Json::Value data;
     data[0] = 1;
     data[1] = 2;
     data[2] = 3;
     data[3] = 4;
+
+    Json::Value date;
+    date[0] = 1;
+    date[1] = 2;
+    date[2] = 3;
+    date[3] = 4;
+
     Json::Value expect_return;
     expect_return[HEADER_JSON_STATUS] = true;
     expect_return[HEADER_JSON_DATA] = data;
+    expect_return[HEADER_JSON_DATE] = date;
 
     Json::Value expected_json_after_parsing;
-    expected_json_after_parsing[HEADER_JSON_LEN_LAGS] = 8;
+    expected_json_after_parsing[HEADER_JSON_LEN_LAGS] = 4;
     expected_json_after_parsing[HEADER_JSON_NAME_STOCK] = "test";
 
     EXPECT_CALL(*ptr_showplot_controller, createPlotData(expected_json_after_parsing)).WillOnce(Return(expect_return));
     EXPECT_CALL(*http_response, setStatus(OK)).Times(1);
     EXPECT_CALL(*http_response, setHeader(PLOT_DATA, PLOT_DATA)).Times(1);
-    EXPECT_CALL(*http_response, setBody(data.toStyledString())).Times(1);
+    EXPECT_CALL(*http_response, setBody(data.toStyledString() + "\n" + date.toStyledString())).Times(1);
     
     EXPECT_NO_THROW(showplot_handler.handle(http_request, http_response));
 }

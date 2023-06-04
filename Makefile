@@ -30,9 +30,7 @@ test_gui:
 	cd gui && ./build.sh && ./run_tests.sh
 
 memtest_server:
-	./server/build.sh -DWITH_MEMCHECK=ON
-	./server/run_tests.sh --memcheck
+	cd server && ./build.sh -DWITH_MEMCHECK=ON && ./run_tests.sh --memcheck
 
 memtest_gui:
-	./gui/build.sh -DWITH_MEMCHECK=ON
-	./gui/run_tests.sh --memcheck
+	cd gui && ./build.sh -DWITH_MEMCHECK=ON && ./run_tests.sh --memcheck

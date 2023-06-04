@@ -1,0 +1,32 @@
+name: tests
+
+on: push
+
+jobs:
+
+  build_server:
+    runs-on: ubuntu-latest
+    container: rbeketov/mm_server
+    steps:
+    - uses: actions/checkout@v2 
+    - run: make build_server
+
+  test_server:
+    runs-on: ubuntu-latest
+    container: rbeketov/mm_server
+    needs: [build]
+    steps:
+      - uses: actions/checkout@v2
+      - run: make test_server
+
+  memtest_server:
+      runs-on: ubuntu-latest
+      container: rbeketov/mm_server
+      needs: [test]
+      steps:
+        - uses: actions/checkout@v2
+        - run: make memtest_server
+        - name: Upload artifacts
+          uses: actions/upload-artifact@v2
+          with:
+            path: ./server/build/report

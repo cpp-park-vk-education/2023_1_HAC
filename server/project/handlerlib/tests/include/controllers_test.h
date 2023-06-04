@@ -16,7 +16,7 @@ using ::testing::Throw;
 using ::testing::_;
 
 // CONST
-const size_t WINDOW_SIZE = 8;
+const size_t WINDOW_SIZE = 300;
 
 const std::string HEADER_JSON_NAME_STOCK = "name_stock";
 const std::string HEADER_JSON_LENPREDICT = "lenpredict";
@@ -24,6 +24,7 @@ const std::string HEADER_JSON_TYPE = "Type";
 const std::string HEADER_JSON_TYPEDATA = "TypeData";
 const std::string HEADER_JSON_LEN_LAGS = "len_lags";
 const std::string HEADER_JSON_DATA = "param";
+const std::string HEADER_JSON_DATE = "date";
 const std::string HEADER_JSON_STATUS = "status";
 const std::string HEADER_JSON_ERROR = "error";
 const std::string HEADER_JSON_DB_STATUS_OPEN = "DatabaseIsOpen";

@@ -35,24 +35,35 @@ TEST_F(PredictControllerTest, CheckCorrectPositiveResponse) {
 
 
     Json::Value data_db_response;
-    data_db_response[0] = 1;
-    data_db_response[1] = 2;
-    data_db_response[2] = 3;
-    data_db_response[3] = 4;
-    data_db_response[4] = 5;
-    data_db_response[5] = 6;
-    data_db_response[6] = 7;
-    data_db_response[7] = 8;
+    for (int i = 0; i < 300; ++i) {
+        data_db_response[i] = i;
+    }
+
+    Json::Value date_db_response;
+    date_db_response[0] = "2023-02-28 18:00:00";
+    for (int i = 1 ; i < 300; ++i) {
+        date_db_response[i] = i;
+    }
+
     Json::Value expected_db_return;
     expected_db_return[HEADER_JSON_STATUS] = true;
     expected_db_return[HEADER_JSON_DB_STATUS_OPEN] = true;
     expected_db_return[HEADER_JSON_DATA] = data_db_response;
+    expected_db_return[HEADER_JSON_DATE] = date_db_response;
 
     EXPECT_CALL(*ptr_db_controller, DataRequest(expected_json_to_db)).WillOnce(Return(expected_db_return));
     
+    std::vector<double> samples;
+    for (int i = 0; i < 300; ++i) {
+        samples.push_back(i);
+    }
+
     controllers::TimeSeriesPredicts ts;
     ts.lenpredict = 2;
-    ts.matrix_samples = std::vector<double>{1, 2, 3, 4, 5, 6, 7, 8};
+    ts.matrix_samples = samples;
+    ts.action = "predict";
+    ts.stock_name = "test";
+
 
     Json::Value data_predict;
     data_predict[0] = 1;
@@ -62,6 +73,11 @@ TEST_F(PredictControllerTest, CheckCorrectPositiveResponse) {
     expected_model_return[HEADER_JSON_DATA] = data_predict;
 
     EXPECT_CALL(*ptr_model_controller, callModelApi(ts)).WillOnce(Return(expected_model_return));
+
+    Json::Value date_predict;
+    date_predict[0] = "2023-02-28 19-00-00";
+    date_predict[1] = "2023-02-28 20-00-00";
+    expected_model_return[HEADER_JSON_DATE] = date_predict;
 
     Json::Value request;
     request[HEADER_JSON_NAME_STOCK] = "test";

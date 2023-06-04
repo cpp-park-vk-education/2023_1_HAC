@@ -14,7 +14,7 @@ jobs:
   test_server:
     runs-on: ubuntu-latest
     container: rbeketov/mm_server
-    needs: [build]
+    needs: [build_server]
     steps:
       - uses: actions/checkout@v2
       - run: make test_server
@@ -22,7 +22,7 @@ jobs:
   memtest_server:
       runs-on: ubuntu-latest
       container: rbeketov/mm_server
-      needs: [test]
+      needs: [test_server]
       steps:
         - uses: actions/checkout@v2
         - run: make memtest_server

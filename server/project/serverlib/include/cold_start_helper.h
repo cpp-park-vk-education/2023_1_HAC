@@ -17,10 +17,12 @@ class IColdStartHelper{
 
 class ColdStartHelper : public IColdStartHelper{
  public:
-    ColdStartHelper(dbcontroller::IDataBaseController* ptr_to_database, api::IAPIStockRequest* ptr_to_api_stock, api::IAPIModelRequest* ptr_to_api_model);
+    ColdStartHelper(dbcontroller::IDataBaseController* ptr_to_database, api::IAPIStockRequest* ptr_to_api_stock, 
+                                                                        api::IAPIModelRequest* ptr_to_api_model);
     void updateData(controllers::IGetStocksController* prt_to_getstocks_controller) override;
  
  private:
+    std::tm* getLocalTime();
     std::time_t convertDateTimeToTimeT(const std::string& date_time_str);
     void getAndInsertData(handlers::ProtocolAPI protocol, std::string stock_name);
     dbcontroller::IDataBaseController* ptr_to_database_;

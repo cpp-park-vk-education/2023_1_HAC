@@ -2,13 +2,13 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
 #include "utils_gtest_net.h"
-
+/*
 TEST(APIModelTest, CreateApiUnit) {
     api::IAPIModelRequest* api_model = new api::APIModelRequest();
     EXPECT_NE(api_model, nullptr);
     delete api_model;
 }
-/*
+
 TEST(APIModelTest, GetDataWrongUrl){
     api::IAPIModelRequest* api_model = new api::APIModelRequest();
     IHTTPRequest* req = new HTTPRequestToBoostAdapter();

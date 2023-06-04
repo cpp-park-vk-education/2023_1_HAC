@@ -26,4 +26,28 @@ namespace market_mentor {
         ConnectionException(const std::string& s) :
             MarketMentorException(s){};
     };
+
+    class ReedDataException : public MarketMentorException {
+        public:
+            ReedDataException(const std::string& s) :
+            MarketMentorException(s){};
+    };
+
+    class ParseDataException : public MarketMentorException {
+        public:
+            ParseDataException(const std::string& s) :
+            MarketMentorException(s){};
+    };
+
+    class UpdateDataException : public MarketMentorException {
+        public:
+            UpdateDataException() :
+            MarketMentorException("Cannot create update data job"){};
+    };
+
+    class ColdStartException : public MarketMentorException {
+        public:
+            ColdStartException() :
+            MarketMentorException("Cannot start server"){};
+    };
 }

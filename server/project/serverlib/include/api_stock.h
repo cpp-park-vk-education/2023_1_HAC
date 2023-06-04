@@ -41,18 +41,17 @@ class IAPIStockRequest {
 
 class APIStockRequest : public IAPIStockRequest{
  public:
-    APIStockRequest();
+    APIStockRequest(const std::string& path_to_config_file);
     Json::Value getOneStockPrise(const handlers::ProtocolAPI& protocol) override;
     Json::Value getSeveralStockPrice(const handlers::ProtocolAPI& protocol) override;
  private:
     Json::Value getData(const handlers::ProtocolAPI& protocol) override;
     void parseApiProtocol(const handlers::ProtocolAPI& protocol);
-    void doConnect(const handlers::ProtocolAPI& protocol);
-    IHTTPResponse* onConnect(ssl::stream<tcp::socket> stream);
     std::string convertIntToDateTime(int unixTime);
-    std::string host;
+    std::string host_;
     std::string port = "443";
     std::string target;
+    std::string token_;
 };
 
 } // namespace api_stock 

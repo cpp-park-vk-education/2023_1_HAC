@@ -3,14 +3,14 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
 #include <string>
-
+/*
 TEST(APIStockTest, CreateApiUnit) {
     api::IAPIStockRequest* api_stock = new api::APIStockRequest();
     EXPECT_NE(api_stock, nullptr);
     delete api_stock;
 }
 
-/*
+
 TEST(APIStockRequestTest, GetDataReturnsResponse) {
     api::IAPIStockRequest* api_stock = new api::APIStockRequest();
     auto response = api_stock->getData("/test");

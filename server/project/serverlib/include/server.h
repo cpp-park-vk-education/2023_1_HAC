@@ -71,5 +71,4 @@ private:
 
     void setHandlers(const std::string& header, handlers::IHandler* hendler);
     Config parseConfigFhomFile(const std::string& path_to_config_file);
-    handlers::ProtocolAPI parseAPIConfigFhomFile(const std::string& path_to_API_config);
 }; 

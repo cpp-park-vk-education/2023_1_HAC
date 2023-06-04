@@ -22,7 +22,8 @@ const std::string PLOT_DATA = "Plot-Data";
 const std::string HEADER_JSON_NAME_STOCK = "name_stock";
 const std::string HEADER_JSON_LEN_LAGS = "len_lags";
 const std::string HEADER_JSON_LENPREDICT = "lenpredict";
-const std::string HEADER_JSON_DATA = "data";
+const std::string HEADER_JSON_DATA = "param";
+const std::string HEADER_JSON_DATE = "date";
 const std::string HEADER_JSON_STATUS = "status";
 const std::string HEADER_JSON_DB_STATUS_OPEN = "DatabaseIsOpen";
 const std::string HEADER_JSON_SERVER_ERROR = "server_error";
@@ -60,6 +61,6 @@ public:
     MOCK_METHOD(std::string, getURL, (), (override));
     MOCK_METHOD(int, getStatus, (), (override));
     MOCK_METHOD((std::map<std::string, std::string>), getHeaders, (), (override));
-    MOCK_METHOD(std::string, getBoby, (), (override));
+    MOCK_METHOD(std::string, getBody, (), (override));
     
 };

@@ -5,7 +5,7 @@
 class MockShowPlotController : public controllers::IShowPlotController {
 public:
    MOCK_METHOD(Json::Value, createPlotData, (const Json::Value& request), (override));
-   MOCK_METHOD(Json::Value, makeDBProtocol, (const Json::Value& request), (override));
+   // MOCK_METHOD(Json::Value, makeDBProtocol, (const Json::Value& request), (override));
 };
 
 

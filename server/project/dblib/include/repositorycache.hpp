@@ -2,7 +2,7 @@
 
 #include <list>
 #include <unordered_map>
-#include "irepositories.hpp"
+#include "irepositorycache.hpp"
 
 namespace cache {
 

@@ -6,14 +6,18 @@ const int kTimeSeriesCacheSize = 5;
 const int kStocksCacheSize = 1;
 
 repository::TimeSeriesRepository::TimeSeriesRepository(): database_(nullptr), 
-        timeseries_cache_(std::make_shared<cache::RepositoryCache<std::string, TimeSeriesData>>(kTimeSeriesCacheSize)),
-        stocks_cache_(std::make_shared<cache::RepositoryCache<std::string, AllStocks>>(kStocksCacheSize)) {
+        timeseries_cache_(std::make_shared<cache::RepositoryCache<std::string, 
+                    std::shared_ptr<TimeSeriesData>>>(kTimeSeriesCacheSize)),
+        stocks_cache_(std::make_shared<cache::RepositoryCache<std::string, 
+                    std::shared_ptr<AllStocks>>>(kStocksCacheSize)) {
 }
 
 
 repository::TimeSeriesRepository::TimeSeriesRepository(const std::shared_ptr<database::IDataBase>& db): database_(db),
-        timeseries_cache_(std::make_shared<cache::RepositoryCache<std::string, TimeSeriesData>>(kTimeSeriesCacheSize)),
-        stocks_cache_(std::make_shared<cache::RepositoryCache<std::string, AllStocks>>(kStocksCacheSize)) {
+        timeseries_cache_(std::make_shared<cache::RepositoryCache<std::string,
+                     std::shared_ptr<TimeSeriesData>>>(kTimeSeriesCacheSize)),
+        stocks_cache_(std::make_shared<cache::RepositoryCache<std::string, 
+                    std::shared_ptr<AllStocks>>>(kStocksCacheSize)) {
 }
 
 
@@ -103,7 +107,7 @@ std::shared_ptr<TimeSeriesData> repository::TimeSeriesRepository::GetByKey(const
 
     std::string key = name_stock + "::" + std::to_string(len_lags);
     if (timeseries_cache_->Has(key)) {
-        auto result = std::make_shared<TimeSeriesData>(timeseries_cache_->Get(key));
+        auto result = timeseries_cache_->Get(key);
         return result;    
     }
 
@@ -137,7 +141,7 @@ std::shared_ptr<TimeSeriesData> repository::TimeSeriesRepository::GetByKey(const
     auto result = TimeSeriesResponseParse(buffer);
     result->name_stock = name_stock;
     key = name_stock + "::" + std::to_string(name_stock.size());
-    timeseries_cache_->Insert(key, *result);
+    timeseries_cache_->Insert(key, result);
     return result;
 }
 
@@ -167,7 +171,7 @@ std::shared_ptr<AllStocks> repository::TimeSeriesRepository::GetAllStocks() {
     
     std::string key = "list";
     if (stocks_cache_->Has(key)) {
-        auto result = std::make_shared<AllStocks>(stocks_cache_->Get(key));
+        auto result = stocks_cache_->Get(key);
         return result;    
     }
 
@@ -188,7 +192,7 @@ std::shared_ptr<AllStocks> repository::TimeSeriesRepository::GetAllStocks() {
 
     auto result = StocksResponseParse(buffer);
     if (result != nullptr) {
-        stocks_cache_->Insert(key, *result);
+        stocks_cache_->Insert(key, result);
     }
     
     return result;

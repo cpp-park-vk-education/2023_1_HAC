@@ -7,12 +7,14 @@ const int kClienCacheSize = 20;
 // ClientRepository
 
 repository::ClientRepository::ClientRepository(): database_(nullptr), 
-        client_cache_(std::make_shared<cache::RepositoryCache<std::string, ClientData>>(kClienCacheSize)) {
+        client_cache_(std::make_shared<cache::RepositoryCache<std::string, 
+                    std::shared_ptr<ClientData>>>(kClienCacheSize)) {
 }
 
 
 repository::ClientRepository::ClientRepository(const std::shared_ptr<database::IDataBase>& db): database_(db),
-         client_cache_(std::make_shared<cache::RepositoryCache<std::string, ClientData>>(kClienCacheSize)) {
+         client_cache_(std::make_shared<cache::RepositoryCache<std::string,
+                         std::shared_ptr<ClientData>>>(kClienCacheSize)) {
 }
 
 
@@ -45,7 +47,7 @@ bool repository::ClientRepository::Insert(const std::shared_ptr<ClientData>& dat
 
     bool result = database_->SendQuery(query);
     if (result) {
-        client_cache_->Insert(data->login, *data);
+        client_cache_->Insert(data->login, data);
     }    
 
     return result;
@@ -69,7 +71,7 @@ std::shared_ptr<ClientData> repository::ClientRepository::DatabaseResponseParse(
 std::shared_ptr<ClientData> repository::ClientRepository::GetByKey(const ClientGetType& type, const std::string& key){
     
     if (client_cache_->Has(key)) {
-        std::shared_ptr<ClientData> result = std::make_shared<ClientData>(client_cache_->Get(key));
+        std::shared_ptr<ClientData> result = client_cache_->Get(key);
         return result;
     }
 
@@ -107,7 +109,7 @@ std::shared_ptr<ClientData> repository::ClientRepository::GetByKey(const ClientG
     }
 
     auto result = DatabaseResponseParse(buffer);
-    client_cache_->Insert(result->login, *result);
+    client_cache_->Insert(result->login, result);
     return result;
 }
 
@@ -138,7 +140,7 @@ bool repository::ClientRepository::Update(const ClientUpdateType& type, const st
 
     std::shared_ptr<ClientData> cache_data;
     if (client_cache_->Has(key)) {
-        cache_data = std::make_shared<ClientData>(client_cache_->Get(key));        
+        cache_data = client_cache_->Get(key);        
     }
 
     if (SpecialCharacterCheck(key)) {
@@ -175,7 +177,7 @@ bool repository::ClientRepository::Update(const ClientUpdateType& type, const st
 void repository::ClientRepository::CacheUpdate(const ClientUpdateType& type,
                  const std::string& key, const std::shared_ptr<ClientData>& data) {
     std::shared_ptr<ClientData> cache_data;
-    cache_data = std::make_shared<ClientData>(client_cache_->Get(key));  
+    cache_data = client_cache_->Get(key);  
 
     switch (type) {
     case UPDATE_EMAIL:
@@ -191,5 +193,5 @@ void repository::ClientRepository::CacheUpdate(const ClientUpdateType& type,
     }    
  
     client_cache_->Delete(key);
-    client_cache_->Insert(key, *cache_data);
+    client_cache_->Insert(key, cache_data);
 }

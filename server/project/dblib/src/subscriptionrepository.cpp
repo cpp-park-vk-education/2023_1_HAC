@@ -7,12 +7,14 @@
 const int kSubCacheSize = 5;
 
 repository::SubscriptionRepository::SubscriptionRepository(): database_(nullptr), 
-        subscription_cache_(std::make_shared<cache::RepositoryCache<std::string, SubscriptionData>>(kSubCacheSize)) {
+        subscription_cache_(std::make_shared<cache::RepositoryCache<std::string,
+                 std::shared_ptr<SubscriptionData>>>(kSubCacheSize)) {
 }
 
 
 repository::SubscriptionRepository::SubscriptionRepository(const std::shared_ptr<database::IDataBase>& db): database_(db), 
-        subscription_cache_(std::make_shared<cache::RepositoryCache<std::string, SubscriptionData>>(kSubCacheSize)) {
+        subscription_cache_(std::make_shared<cache::RepositoryCache<std::string, 
+                std::shared_ptr<SubscriptionData>>>(kSubCacheSize)) {
 }
 
 std::shared_ptr<SubscriptionData> repository::SubscriptionRepository::DatabaseResponseParse(const Json::Value& db_response) {
@@ -37,7 +39,7 @@ std::shared_ptr<SubscriptionData> repository::SubscriptionRepository::DatabaseRe
 
 std::shared_ptr<SubscriptionData> repository::SubscriptionRepository::GetByKey(const std::string& key) {
     if (subscription_cache_->Has(key)) {
-        std::shared_ptr<SubscriptionData> result = std::make_shared<SubscriptionData>(subscription_cache_->Get(key));
+        std::shared_ptr<SubscriptionData> result = subscription_cache_->Get(key);
         return result;
     }
 
@@ -61,7 +63,7 @@ std::shared_ptr<SubscriptionData> repository::SubscriptionRepository::GetByKey(c
     }
 
     auto result = DatabaseResponseParse(buffer);
-    subscription_cache_->Insert(result->name, *result);
+    subscription_cache_->Insert(result->name, result);
     return result;
 }
 

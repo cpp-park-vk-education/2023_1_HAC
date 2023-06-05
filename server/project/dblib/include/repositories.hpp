@@ -23,7 +23,7 @@ private:
     bool SpecialCharacterCheck(const std::string& word);
 
     std::shared_ptr<database::IDataBase> database_;
-    std::shared_ptr<cache::IRepositoryCache<std::string, ClientData>> client_cache_;
+    std::shared_ptr<cache::IRepositoryCache<std::string, std::shared_ptr<ClientData>>> client_cache_;
 };
 
 
@@ -44,8 +44,8 @@ private:
     std::shared_ptr<AllStocks> StocksResponseParse(const Json::Value& db_response);
 
     std::shared_ptr<database::IDataBase> database_; 
-    std::shared_ptr<cache::IRepositoryCache<std::string, TimeSeriesData>> timeseries_cache_;
-    std::shared_ptr<cache::IRepositoryCache<std::string, AllStocks>> stocks_cache_;
+    std::shared_ptr<cache::IRepositoryCache<std::string, std::shared_ptr<TimeSeriesData>>> timeseries_cache_;
+    std::shared_ptr<cache::IRepositoryCache<std::string, std::shared_ptr<AllStocks>>> stocks_cache_;
 };
 
 
@@ -61,7 +61,7 @@ private:
     std::shared_ptr<SubscriptionData> DatabaseResponseParse(const Json::Value& db_response);
     
     std::shared_ptr<database::IDataBase> database_; 
-    std::shared_ptr<cache::IRepositoryCache<std::string, SubscriptionData>> subscription_cache_;
+    std::shared_ptr<cache::IRepositoryCache<std::string, std::shared_ptr<SubscriptionData>>> subscription_cache_;
 };
 
 

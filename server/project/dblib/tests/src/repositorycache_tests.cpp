@@ -4,12 +4,13 @@
 struct TestStruct {
     std::string name;
 };
+
 class RepositoryCacheTest: public ::testing::Test {
 public:
     RepositoryCacheTest(): cache_(new cache::RepositoryCache<std::string, TestStruct>){}
 
 protected:
-    std::unique_ptr<cache::IRepositoryCache<std::string, TestStruct>> cache_;
+    std::shared_ptr<cache::IRepositoryCache<std::string, TestStruct>> cache_;
 };
 
 TEST_F(RepositoryCacheTest, InsertCase) {

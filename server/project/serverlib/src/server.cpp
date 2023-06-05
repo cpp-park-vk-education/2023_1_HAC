@@ -1,8 +1,8 @@
 #include "server.h"
 #include "logger.h"
 
-const std::string api_model_config_path = "";
-const std::string api_stock_config_path = "";
+const std::string api_model_config_path = "../../project/utils/api_model_confing.txt";
+const std::string api_stock_config_path = "../../project/utils/api_stock_confing.txt";
 
 const std::string AUTHORIZATION_ACTION_HANDLE = "POST:AUTHORIZATION";
 const std::string REGISTRATION_ACTION_HANDLE = "POST:REGISTRATION";
@@ -37,7 +37,7 @@ Config Server::parseConfigFhomFile(const std::string& path_to_config_file) {
 }
 
 Server::Server(const std::string& path_to_config_file) {
-    
+    FileLogger& logger = FileLogger::getInstance();  
     std::unique_ptr<api::IAPIModelRequest> api_model 
                    = std::make_unique<api::APIModelRequest>(api_model_config_path);
     std::unique_ptr<api::IAPIStockRequest> api_stock
@@ -82,14 +82,22 @@ Server::Server(const std::string& path_to_config_file) {
         throw market_mentor::CreatingNullptr("Creating server error");
     }
 
-    std::unique_ptr<IColdStartHelper> cold_start_helper
-                   = std::make_unique<ColdStartHelper>(database_controller.get(), api_stock.get(), api_model.get());
-    cold_start_helper->updateData(getstocks_controller.get());
+    try{
+        std::unique_ptr<IColdStartHelper> cold_start_helper
+                    = std::make_unique<ColdStartHelper>(database_controller.get(), api_stock.get(), api_model.get());
+        cold_start_helper->updateData(getstocks_controller.get());
+    } catch(...){
+        logger.log("Cold start error. Starting with unknown base state");
+    }
 
-
-    std::thread jobThread([&]() {
-        getNewDataByTimer(getstocks_controller.get(), database_controller.get(), api_stock.get());
-    });
+    try{
+        std::thread jobThread([&]() {
+            getNewDataByTimer(getstocks_controller.get(), database_controller.get(), api_stock.get());
+        });
+        jobThread.join();
+    } catch (...) {
+        logger.log("Update data error");
+    } 
 
     prtToIHandler predict_handler = std::make_unique<handlers::PredictHandler>(predict_controller.get());
     prtToIHandler register_handler = std::make_unique<handlers::RegisterHandler>(register_contoller.get());
@@ -120,8 +128,7 @@ Server::Server(const std::string& path_to_config_file) {
 
     if (!global_router || !router_adapter){
         throw market_mentor::CreatingNullptr("Creating server error");
-    }
-    FileLogger& logger = FileLogger::getInstance();   
+    } 
     config_ = Server::parseConfigFhomFile(path_to_config_file); 
     net::io_context ioc{config_.threads};
 
@@ -140,7 +147,6 @@ Server::Server(const std::string& path_to_config_file) {
             ioc.run();
         });
     ioc.run();
-    jobThread.join(); 
 };
 
 void Server::setHandlers(const std::string& header, handlers::IHandler* hendler) {

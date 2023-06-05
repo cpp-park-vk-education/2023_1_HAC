@@ -15,6 +15,8 @@
 // CONST
 const std::string INVALID_HTTP_PREDICT = "Invalid HTTP request (predict)";
 const std::string INVALID_HTTP_PLOT = "Invalid HTTP request (plot)";
+const std::string INVALID_HTTP_PREDICT_REGISTRATION = "Invalid HTTP request (registration)";
+const std::string INVALID_HTTP_PREDICT_AUTHORIZATION = "Invalid HTTP request (authorization)";
 
 const std::string ERROR_MESSAGE = "Error-Message";
 const std::string PREDICT_DATA = "Predict-Data";
@@ -28,7 +30,14 @@ const std::string HEADER_JSON_STATUS = "status";
 const std::string HEADER_JSON_DB_STATUS_OPEN = "DatabaseIsOpen";
 const std::string HEADER_JSON_SERVER_ERROR = "server_error";
 const std::string HEADER_JSON_ERROR = "error";
+const std::string HEADER_JSON_LOGIN = "login";
+const std::string HEADER_JSON_PASSWORD = "password";
+const std::string HEADER_JSON_TOKEN = "token";
+const std::string COOKIE = "cookie";
+const std::string HEADER_JSON_EMAIL = "email";
 
+
+const int FORBIDDEN = 403;
 const int OK = 200;
 const int BAD_REQUEST = 400;
 const int NOT_FOUND = 404;
@@ -50,7 +59,7 @@ public:
     MOCK_METHOD(void, setBody, (const std::string &bytes), (override));
     MOCK_METHOD(std::string, getURL, (), (override));
     MOCK_METHOD((std::map<std::string, std::string>), getHeaders, (), (override));
-    MOCK_METHOD(std::string, getBoby, (), (override));
+    MOCK_METHOD(std::string, getBody, (), (override));
 };
 
 class MockHTTPResponse: public IHTTPResponse {

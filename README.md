@@ -49,15 +49,13 @@
 <li>docker-compose</li>
 <li>CI</li>
 <li>Dockerfiles</li>
-<li>linters</li>
-<li>valgrind</li>
 </ul>
 </li>
 </ul>
 </li>
 <li>Лебедева София
 <ul>
-<li>Фронтенд
+<li>Фронтенд&nbsp;
 <ul>
 <li>gui/*, без окна "настройки пользователя"</li>
 </ul>

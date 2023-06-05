@@ -71,6 +71,6 @@ std::map<std::string, std::string> HTTPRequestToBoostAdapter::getHeaders(){
     
     return headers;
 };
-std::string HTTPRequestToBoostAdapter::getBoby(){
+std::string HTTPRequestToBoostAdapter::getBody(){
     return request_->body();
 };

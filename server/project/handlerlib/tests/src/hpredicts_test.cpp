@@ -5,9 +5,6 @@
 class MockPredictController : public controllers::IPredictController {
 public:
    MOCK_METHOD(Json::Value, makePredict, (const Json::Value& request), (override));
-   // MOCK_METHOD(controllers::TimeSeriesPredicts, makeTimeSeries, (const std::vector<double>& samples_data, size_t lenpredict), (override));
-   // MOCK_METHOD(Json::Value, makeDBProtocol, (const Json::Value& request), (override));
-   // MOCK_METHOD(std::vector<double>, parseDBProtocol, (const Json::Value& response), (override));
 };
 
 

@@ -70,5 +70,5 @@ TEST(HTTPRequestToBoostAdapterTest, GetBodyTest) {
     request_.method(boost::beast::http::verb::post);
     request_.body() = body;
     HTTPRequestToBoostAdapter request(request_);
-    EXPECT_EQ(request.getBoby(), body);
+    EXPECT_EQ(request.getBody(), body);
 }

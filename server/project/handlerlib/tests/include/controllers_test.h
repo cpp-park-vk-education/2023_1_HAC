@@ -30,6 +30,12 @@ const std::string HEADER_JSON_ERROR = "error";
 const std::string HEADER_JSON_DB_STATUS_OPEN = "DatabaseIsOpen";
 const std::string HEADER_JSON_SERVER_ERROR = "server_error";
 
+const std::string HEADER_JSON_PASSWORD = "password";
+const std::string HEADER_JSON_TOKEN = "token";
+const std::string COOKIE = "cookie";
+const std::string HEADER_JSON_EMAIL = "email";
+const std::string HEADER_JSON_LOGIN = "login";
+
 // MOCKS
 class MockDataBaseController : public dbcontroller::IDataBaseController {
 public:

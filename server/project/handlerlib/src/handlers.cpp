@@ -253,7 +253,7 @@ RegisterHandler::RegisterHandler(ptrToRegisterController controller)
 void RegisterHandler::handle(IHTTPRequest_ request, IHTTPResponse_ response) {
     // post / body
     try {
-        Json::Value request_json = parseInputHttpRequest(request->getBoby());
+        Json::Value request_json = parseInputHttpRequest(request->getBody());
         Json::Value response_json = controller_->registration(request_json);
         makeResponse(response, response_json);
 
@@ -302,7 +302,7 @@ AuthorizeHandler::AuthorizeHandler(ptrToAuthorizeController controller)
 void AuthorizeHandler::handle(IHTTPRequest_ request, IHTTPResponse_ response) {
     // post / body
     try {
-        Json::Value request_json = parseInputHttpRequest(request->getBoby());
+        Json::Value request_json = parseInputHttpRequest(request->getBody());
         Json::Value response_json = controller_->authorization(request_json);
         makeResponse(response, response_json);
 
@@ -395,7 +395,7 @@ ExitHandler::ExitHandler(ptrToExitController controller)
 void ExitHandler::handle(IHTTPRequest_ request, IHTTPResponse_ response) {
     // post / body
     try {
-        Json::Value request_json = parseInputHttpRequest(request->getBoby());
+        Json::Value request_json = parseInputHttpRequest(request->getBody());
         if (request->getHeaders().find(request_json[HEADER_JSON_LOGIN].asString()) == request->getHeaders().end()) {
             throw market_mentor::InvalidCookieError();
         }
@@ -446,7 +446,7 @@ ChangeEmailHandler::ChangeEmailHandler(ptrToChangeEmailController controller)
 void ChangeEmailHandler::handle(IHTTPRequest_ request, IHTTPResponse_ response) {
     // post / body
     try {
-        Json::Value request_json = parseInputHttpRequest(request->getBoby());
+        Json::Value request_json = parseInputHttpRequest(request->getBody());
         if (request->getHeaders().find(request_json[HEADER_JSON_LOGIN].asString()) == request->getHeaders().end()) {
             throw market_mentor::InvalidCookieError();
         }
@@ -497,7 +497,7 @@ ChangePasswordHandler::ChangePasswordHandler(ptrToChangePasswordController contr
 void ChangePasswordHandler::handle(IHTTPRequest_ request, IHTTPResponse_ response) {
     // post / body
     try {
-        Json::Value request_json = parseInputHttpRequest(request->getBoby());
+        Json::Value request_json = parseInputHttpRequest(request->getBody());
         if (request->getHeaders().find(request_json[HEADER_JSON_LOGIN].asString()) == request->getHeaders().end()) {
             throw market_mentor::InvalidCookieError();
         }

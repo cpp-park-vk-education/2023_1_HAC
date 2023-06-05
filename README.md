@@ -49,7 +49,6 @@
 <li>docker-compose</li>
 <li>CI</li>
 <li>Dockerfiles</li>
-<li>valgrind</li>
 </ul>
 </li>
 </ul>

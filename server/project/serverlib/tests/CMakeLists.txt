@@ -17,7 +17,6 @@ ADD_EXECUTABLE(
         src/routers_btest.cpp
         src/session_btest.cpp
         ${SOURCES_TEST}
-        #../src/http_protocol.cpp
 )
 TARGET_LINK_LIBRARIES(tests_server ${GTEST_BOTH_LIBRARIES} ${HANDLER_INCLUDE_DIRS} ${SERVERLIB_INCLUDE_DIRS}${DB_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT} -lgmock -lstdc++fs jsoncpp handlerlib dblib)
 

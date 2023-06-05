@@ -10,7 +10,6 @@ include_directories(${OPENSSL_INCLUDE_DIR})
 
 SET(HANDLER_INCLUDE_DIRS ${CMAKE_SOURCE_DIR}/project/handlerlib/include)
 SET(DB_INCLUDE_DIRS ${CMAKE_SOURCE_DIR}/project/dblib/include)
-#SET(SERVERLIB_INCLUDE_DIRS "include")
 SET(SERVER_INCLUDE_GENERAL ${CMAKE_SOURCE_DIR}/project/include)
 
 

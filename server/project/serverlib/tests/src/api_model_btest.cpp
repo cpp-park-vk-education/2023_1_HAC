@@ -1,39 +1,52 @@
 #include "api_model.h"
+#include <fstream>
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
 #include "utils_gtest_net.h"
-/*
-TEST(APIModelTest, CreateApiUnit) {
-    api::IAPIModelRequest* api_model = new api::APIModelRequest();
-    EXPECT_NE(api_model, nullptr);
-    delete api_model;
+#include "icontrollers.h"
+
+TEST(APIModelTest, CreateApiUnitWrongPath) {
+    EXPECT_THROW(api::APIModelRequest api_model(""), market_mentor::InvalidServerConfig);
 }
 
-TEST(APIModelTest, GetDataWrongUrl){
-    api::IAPIModelRequest* api_model = new api::APIModelRequest();
-    IHTTPRequest* req = new HTTPRequestToBoostAdapter();
-    req->setUrl("wrong_url");
-    auto resp = api_model->getData(req);
-    EXPECT_EQ(resp->getStatus(), 404);
-    delete api_model;
+TEST(APIModelTest, CreateApiUnitWrongConfig) {
+    const std::string path_to_config_file = "test_config.conf";
+    if (!std::ifstream(path_to_config_file)) {
+        std::ofstream create_file(path_to_config_file);
+        create_file.close();
+    }
+
+    std::ofstream file(path_to_config_file);
+    file << "0.0.0.0" << "\n" << "mmm" << "\n";
+    file.close();
+    EXPECT_THROW(api::APIModelRequest api_model(path_to_config_file), market_mentor::InvalidServerConfig);
 }
 
-TEST(APIModelTest, GetDataCorrectUrl){
-    api::IAPIModelRequest* api_model = new api::APIModelRequest();
-    IHTTPRequest* req = new HTTPRequestToBoostAdapter();
-    req->setUrl("api_model"); // Сейчас не знаю, какой у неё будет url, поменяю, когда сделаю 
-    auto resp = api_model->getData(req);
-    EXPECT_EQ(resp->getStatus(), 200);
-    delete api_model;
+TEST(APIModelTest, CreateApiUnitCorrectConfig) {
+    const std::string path_to_config_file = "test_config.conf";
+    if (!std::ifstream(path_to_config_file)) {
+        std::ofstream create_file(path_to_config_file);
+        create_file.close();
+    }
+
+    std::ofstream file(path_to_config_file);
+    file << "0.0.0.0" << "\n" << "8080" << "\n";
+    file.close();
+    EXPECT_NO_THROW(api::APIModelRequest api_model(path_to_config_file));
 }
 
-TEST(APIModelTest, GetDataEmptyHTTP) {
-    api::IAPIModelRequest* api_model = new api::APIModelRequest();
-    HTTPRequestToBoostAdapter* req;
+TEST(APIModelTest, CreateApiUnitGetDataWrongIP) {
+    const std::string path_to_config_file = "test_config.conf";
+    if (!std::ifstream(path_to_config_file)) {
+        std::ofstream create_file(path_to_config_file);
+        create_file.close();
+    }
 
-    auto response = api_model->getData(req);
-    const std::vector<char> empty_http; 
-    EXPECT_EQ(response->getBoby(), empty_http);
-    delete api_model;
+    std::ofstream file(path_to_config_file);
+    file << "266.266.266.266" << "\n" << "8080" << "\n";
+    file.close();
+    api::IAPIModelRequest* api_model = new api::APIModelRequest(path_to_config_file);
+
+    controllers::TimeSeriesPredicts samples_data;
+    EXPECT_THROW(api_model->getData(samples_data), market_mentor::ConnectionException);
 }
-*/

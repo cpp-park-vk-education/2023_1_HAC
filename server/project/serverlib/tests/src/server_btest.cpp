@@ -8,7 +8,7 @@ TEST(ServerTest, StartWithoutConfig){
     EXPECT_THROW(Server server(path_to_config_file), market_mentor::InvalidServerConfig);
 };
 
-TEST(ServerTest, StartWithConfig) {
+TEST(ServerTest, CreateServerWrongConfig) {
 
     const std::string path_to_config_file = "test_config.conf";
     if (!std::ifstream(path_to_config_file)) {

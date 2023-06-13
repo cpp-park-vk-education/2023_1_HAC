@@ -1,0 +1,20 @@
+name: tests
+
+on: push
+
+jobs:
+
+  build_server:
+    runs-on: ubuntu-latest
+    container: rbeketov/mm_server
+    steps:
+    - uses: actions/checkout@v2 
+    - run: make build_server
+
+  test_server:
+    runs-on: ubuntu-latest
+    container: rbeketov/mm_server
+    needs: [build_server]
+    steps:
+      - uses: actions/checkout@v2
+      - run: make test_server

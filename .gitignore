@@ -1,32 +1,8 @@
-# Prerequisites
-*.d
+.vscode
+.DS_Store
+/dump_db/dump
+.env
+/db
+.docker-compose.yml.swo
+.api_model.cpp.swp
 
-# Compiled Object files
-*.slo
-*.lo
-*.o
-*.obj
-
-# Precompiled Headers
-*.gch
-*.pch
-
-# Compiled Dynamic libraries
-*.so
-*.dylib
-*.dll
-
-# Fortran module files
-*.mod
-*.smod
-
-# Compiled Static libraries
-*.lai
-*.la
-*.a
-*.lib
-
-# Executables
-*.exe
-*.out
-*.app

@@ -1,0 +1,47 @@
+FIND_PACKAGE(GTest REQUIRED)
+FIND_PACKAGE(Threads REQUIRED)
+FIND_LIBRARY(PQXX_LIB pqxx)
+FIND_LIBRARY(PQ_LIB pq)
+
+FIND_PATH(REDIS_PLUS_PLUS_HEADER sw)
+FIND_PATH(HIREDIS_HEADER hiredis)
+
+FIND_LIBRARY(HIREDIS_LIB hiredis)
+FIND_LIBRARY(REDIS_PLUS_PLUS_LIB NAMES libredis++.a PATHS /usr/local/lib)
+
+
+INCLUDE_DIRECTORIES(include ${REDIS_PLUS_PLUS_HEADER} ${HIREDIS_HEADER} ${HANDLER_INCLUDE_DIRS} ${GTEST_INCLUDE_DIRS} ${DB_INCLUDE_DIRS} ${SERVER_INCLUDE_GENERAL})
+
+pkg_search_module(JSONCPP jsoncpp)
+
+FILE(GLOB SOURCES_TEST src/*)
+FILE(GLOB SOURCES_HANDELRS_LIB ../src/*)
+FILE(GLOB SOURCES_SERVER_LIB ../../serverlib/src/*)
+FILE(GLOB SOURCES_DB_LIB ../../dblib/src/*)
+
+
+ADD_EXECUTABLE(
+        tests_handler 
+        ${SOURCES_TEST}
+        ${SOURCES_HANDELRS_LIB}
+        ${SOURCES_SERVER_LIB}
+        ${SOURCES_DB_LIB}
+
+)
+TARGET_LINK_LIBRARIES(tests_handler ${JSONCPP_LIBRARIES} ${GTEST_BOTH_LIBRARIES} ${PQXX_LIB} ${PQ_LIB} ${CMAKE_THREAD_LIBS_INIT} ${REDIS_PLUS_PLUS_LIB} ${HIREDIS_LIB} -lgmock -lstdc++fs)
+
+SET(memcheck_command)
+
+IF (WITH_MEMCHECK)
+        MESSAGE("Memcheck enabled")
+        SET(memcheck_command ${CMAKE_SOURCE_DIR}/memtest.sh)
+ELSE()
+        MESSAGE("Memcheck disabled")
+ENDIF()
+
+SET(TEST_COMMAND ${memcheck_command} ${CMAKE_BINARY_DIR}/project/handlerlib/tests/tests_handler)
+
+ADD_TEST(
+        NAME HandlerTest
+        COMMAND ${TEST_COMMAND}
+)

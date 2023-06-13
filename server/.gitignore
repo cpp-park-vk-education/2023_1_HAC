@@ -1,0 +1,6 @@
+/build
+/project/.vscode
+.gitignore.swp
+.idea/
+cmake-build-debug/
+

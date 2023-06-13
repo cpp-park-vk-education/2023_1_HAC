@@ -1,0 +1,49 @@
+version: '3'
+
+# To start:
+# - docker-compose up
+# To finish:
+# - docker-compose down
+
+services:
+
+  server:
+    depends_on:
+      - redis 
+    build: ./
+    ports:
+      - 9988:8080
+    
+
+  model:
+    depends_on:
+      - db
+    build: ./model/
+    ports:
+      - 9950:9950
+    volumes:
+      - ./model/model/:/home/server/model
+
+  redis:
+    depends_on:
+      - model 
+    image: 'bitnami/redis:latest'
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
+    ports:
+      - 6379:6379
+
+  db: 
+    image: postgres:14.4
+    restart: always
+    env_file:
+      - .env
+    environment:
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    ports:
+      - 5433:5432
+    volumes:
+      - ./db/data:/var/lib/postgresql/data
+      - ./db/schema/:/docker-entrypoint-initdb.d

@@ -1,0 +1,5 @@
+/build
+/cmake-build-debug
+.idea
+CMakeLists.txt.user
+/project/tests/src/gui_user_settings_tests.cpp
